@@ -7,4 +7,5 @@ public class Card {
     String Mana;
     String ID;
     String HP;
+    // New txt
 }
