@@ -8,5 +8,5 @@ public class Card {
     String ID;
     String HP;
     // New txt
-    // Pabandymo testavimas
+    // Pabandymo testavimas 123
 }
