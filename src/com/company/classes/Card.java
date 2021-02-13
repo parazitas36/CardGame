@@ -4,4 +4,5 @@ public class Card {
     String Name;
     String type;
     String Mana;
+    String ID;
 }
