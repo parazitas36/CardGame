@@ -1,5 +1,5 @@
 # Projektas
-Žaidimo taisyklės - eiga:
+## Žaidimo taisyklės - eiga:
 Žaidėjas pradeda su 30 HP (gyvybių) ir 1 Mana.
 Maksimalus HP (gyvybių) - 30, Mana - 5.
 Negalima viršyti 30 HP, neišnaudota mana gali eit į atsargų dėklą (max 3).
