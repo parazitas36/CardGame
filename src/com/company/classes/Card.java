@@ -5,4 +5,5 @@ public class Card {
     String type;
     String Mana;
     String ID;
+    String HP;
 }
