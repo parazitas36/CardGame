@@ -1,4 +1,4 @@
-# Projektas
+# Technologinis Projektas
 ## Žaidimo taisyklės - eiga:
 #### Žaidėjas pradeda su 30 HP (gyvybių) ir 1 Mana.
 #### Maksimalus HP (gyvybių) - 30, Mana - 5.
