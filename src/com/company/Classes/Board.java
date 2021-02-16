@@ -10,13 +10,11 @@ public class Board {
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
     private Display display;
-    private Graphics g;
     private BufferStrategy buffer;
-    public Board(Display _display, Graphics _g){
+    public Board(Display _display){
         display = _display;
-        g = _g;
-        player1_slots = new ArrayList<>(5);
-        player2_slots = new ArrayList<>(5);
+        player1_slots = new ArrayList<CardSlot>(5);
+        player2_slots = new ArrayList<CardSlot>(5);
         generateBoard();
     }
     public void generateBoard(){
@@ -32,7 +30,6 @@ public class Board {
             slot.setWidth((int)(display.getWidth()*0.1));
             slot.setHeight((int)(display.getHeight()*0.2));
             player1_slots.add(slot);
-            System.out.println(ID.values()[i]);
         }
         for(int i = 10; i < 15; i++){
             CardSlot slot;
@@ -45,17 +42,10 @@ public class Board {
             slot.setWidth((int)(display.getWidth()*0.1));
             slot.setHeight((int)(display.getHeight()*0.2));
             player2_slots.add(slot);
-            System.out.println(ID.values()[i]);
         }
     }
 
-    public void render(){
-        buffer = display.getCanvas().getBufferStrategy();
-        if(buffer == null){
-            display.getCanvas().createBufferStrategy(3);
-            return;
-        }
-        g = buffer.getDrawGraphics();
+    public void render(Graphics g){
         g.setColor(Color.WHITE);
         for(CardSlot slot : player1_slots){
             slot.render(g);
@@ -65,9 +55,9 @@ public class Board {
         }
     }
     public ArrayList<CardSlot> getPlayer1_slots(){
-        return player1_slots;
+        return this.player1_slots;
     }
     public ArrayList<CardSlot> getPlayer2_slots(){
-        return player2_slots;
+        return this.player2_slots;
     }
 }

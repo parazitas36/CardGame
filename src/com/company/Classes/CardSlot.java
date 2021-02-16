@@ -7,10 +7,12 @@ public class CardSlot extends GameObject{
     private ID id;
     private int width;
     private int height;
+    private boolean hasCard = false;
     public CardSlot(Card _card, int x, int y, ID slotID){
         super(x, y);
         card = _card;
         id = slotID;
+        hasCard = card == null ? false : true;
     }
 
     @Override
@@ -19,31 +21,37 @@ public class CardSlot extends GameObject{
 
     @Override
     public void render(Graphics g) {
-        if(card != null) {
+        if(this.hasCard) {
             g.drawImage(card.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
         }else{
+            g.setColor(Color.WHITE);
             g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
         }
     }
     public void setCard(Card _card){
-        card = _card;
+        this.card = _card;
+        if(_card != null) { this.hasCard = true; }
+    }
+    public void removeCard(){
+        this.card = null;
+        hasCard = false;
     }
     public ID getId() {
-        return id;
+        return this.id;
     }
     public void setWidth(int _width){
-        width = _width;
+        this.width = _width;
     }
     public void setHeight(int _height){
-        height = _height;
+        this.height = _height;
     }
     public int getWidth(){
-        return width;
+        return this.width;
     }
     public int getHeight(){
-        return height;
+        return this.height;
     }
     public boolean cardOnBoard(){
-        return card == null ? false : true;
+        return hasCard;
     }
 }

@@ -32,8 +32,7 @@ public class Game implements Runnable{
     }
     private void init(){
         display = new Display(title, width, height);
-        board = new Board(display, g);
-        board.generateBoard();
+        board = new Board(display);
         player1_slots = board.getPlayer1_slots();
         player2_slots = board.getPlayer2_slots();
     }
@@ -50,8 +49,8 @@ public class Game implements Runnable{
         // Piesiam
         g.setColor(Color.BLACK);
         g.fillRect(0,0, width, height);
-        g.setColor(Color.WHITE);testImageDraw();
-        board.render();
+        g.setColor(Color.WHITE);testImageDraw();testImageDraw();
+        board.render(g);
         testImageDraw();
 
         //
@@ -96,9 +95,8 @@ public class Game implements Runnable{
         BufferedImage img;
         try {
             img = ImageIO.read(new File("src/com/company/Images/korta.png"));
-            g.drawImage(img, (int)(width*0.05), height/2 + (int)(height*0.05), null);
-            CardSlot slot = player1_slots.get(3);
-            slot.setCard(new Card("sdsad", 7, slot.getX(), slot.getY(), img));
+            player1_slots.get(3).setCard(new Card("sdsad", 7, player1_slots.get(3).getX(), player1_slots.get(3).getY(), img));
+            player2_slots.get(3).setCard(new Card("sdsad", 7, player2_slots.get(3).getX(), player2_slots.get(3).getY(), img));
         } catch (IOException e) {
             e.printStackTrace();
         }
