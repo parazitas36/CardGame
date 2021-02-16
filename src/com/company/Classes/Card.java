@@ -6,11 +6,13 @@ import java.awt.image.BufferedImage;
 public class Card extends GameObject {
     private String Name;
     private int ManaCost;
+    private ID id;
     private BufferedImage img;
-    public Card(String name, int manaCost, int x, int y, BufferedImage image){
+    public Card(String name, int manaCost, int x, int y, ID _id, BufferedImage image){
         super(x, y);
         this.Name = name;
         this.ManaCost = manaCost;
+        this.id = _id;
         this.img = image;
     }
 

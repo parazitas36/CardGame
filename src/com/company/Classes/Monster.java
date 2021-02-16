@@ -4,11 +4,11 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Monster extends Card {
-    private ID id;
-
-    public Monster(String name, int manaCost, int x, int y, BufferedImage img) {
-        super(name, manaCost, x, y, img);
-        id = ID.Monster;
+    private int attack,defense;
+    public Monster(String name, int manaCost, int x, int y, ID id,  int atk, int def, BufferedImage img) {
+        super(name, manaCost, x, y,id, img);
+        attack = atk;
+        defense = def;
     }
 
     @Override
