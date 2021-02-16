@@ -1,5 +1,6 @@
 package com.company.Classes;
 
+
 public class CardSlot extends GameObject{
     private Card card;
     public CardSlot(Card _card, int x, int y){
@@ -15,5 +16,4 @@ public class CardSlot extends GameObject{
     @Override
     public void render() {
         super.render();
-    }
 }

@@ -1,7 +1,7 @@
 package com.company.Classes;
 
 public class Monster extends Card{
-    ID id;
+    private ID id;
     public Monster(String name, int manaCost, int x, int y) {
         super(name, manaCost, x, y);
         id = ID.Monster;
@@ -15,5 +15,7 @@ public class Monster extends Card{
     @Override
     public void render() {
         super.render();
+    public ID getID(){
+        return this.id;
     }
 }

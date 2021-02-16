@@ -1,8 +1,8 @@
 package com.company.Classes;
 
 public class Card extends GameObject {
-    String Name;
-    int ManaCost;
+    private String Name;
+    private int ManaCost;
     public Card(String name, int manaCost, int x, int y){
         super(x, y);
         Name = name;
@@ -17,5 +17,11 @@ public class Card extends GameObject {
     @Override
     public void render() {
         super.render();
+    }
+    public String getName(){
+        return this.Name;
+    }
+    public int getManaCost(){
+        return this.ManaCost;
     }
 }
