@@ -1,16 +1,19 @@
 package com.company.Classes;
 
-public class CardSlot {
-    private int CardSlotID;
+public class CardSlot extends GameObject{
     private Card card;
-    public CardSlot(Card card1, int id){
-        this.card = card1;
-        this.CardSlotID = id;
+    public CardSlot(Card _card, int x, int y){
+        super(x, y);
+        card = _card;
     }
-    public Card getCard(){
-        return this.card;
+
+    @Override
+    public void tick() {
+        super.tick();
     }
-    public int getCardSlotID(){
-        return this.CardSlotID;
+
+    @Override
+    public void render() {
+        super.render();
     }
 }

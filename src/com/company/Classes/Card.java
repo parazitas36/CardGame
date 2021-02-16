@@ -1,16 +1,21 @@
 package com.company.Classes;
 
-public class Card {
-    private String Name;
-    private int ManaCost;
-    public Card(String name, int manaCost){
+public class Card extends GameObject {
+    String Name;
+    int ManaCost;
+    public Card(String name, int manaCost, int x, int y){
+        super(x, y);
         Name = name;
         ManaCost = manaCost;
     }
-    public String getName(){
-        return this.Name;
+
+    @Override
+    public void tick() {
+        super.tick();
     }
-    public int getManaCost(){
-        return this.ManaCost;
+
+    @Override
+    public void render() {
+        super.render();
     }
 }
