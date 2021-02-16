@@ -1,9 +1,6 @@
 package com.company.Engine;
 
-import com.company.Classes.Board;
-import com.company.Classes.Card;
-import com.company.Classes.CardSlot;
-import com.company.Classes.ID;
+import com.company.Classes.*;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -24,6 +21,7 @@ public class Game implements Runnable{
     private Graphics g;
     private BufferStrategy buffer;
     Board board;
+    MouseHandler handler;
     public Game(String _title, int _width, int _height){
         title = _title;
         width = _width;
@@ -34,7 +32,7 @@ public class Game implements Runnable{
         board = new Board(display, g);
     }
     private void tick(){
-
+        handler = new MouseHandler(display.getCanvas());
     }
     private void render(){
         buffer = display.getCanvas().getBufferStrategy();
