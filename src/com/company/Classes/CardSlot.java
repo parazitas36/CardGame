@@ -1,10 +1,10 @@
 package com.company.Classes;
 
-public class Buff extends Card{
-    ID id;
-    public Buff(String name, int manaCost, int x, int y) {
-        super(name, manaCost, x, y);
-        id = ID.Buff;
+public class CardSlot extends GameObject{
+    private Card card;
+    public CardSlot(Card _card, int x, int y){
+        super(x, y);
+        card = _card;
     }
 
     @Override
