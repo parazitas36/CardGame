@@ -1,5 +1,9 @@
 package com.company.Engine;
 
+import com.company.Classes.Card;
+import com.company.Classes.CardSlot;
+import com.company.Classes.ID;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
