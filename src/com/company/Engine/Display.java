@@ -1,5 +1,7 @@
 package com.company.Engine;
 
+import com.company.Utils.DragCard;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Dimension2D;
@@ -25,6 +27,9 @@ public class Display {
         frame.setResizable(false);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+        frame.setPreferredSize(new Dimension(width, height));
+        frame.setMaximumSize(new Dimension(width, height));
+        frame.setMinimumSize(new Dimension(width, height));
 
         canvas = new Canvas();
         canvas.setPreferredSize(new Dimension(width, height));
@@ -43,4 +48,8 @@ public class Display {
     public int getHeight(){
         return height;
     }
+    public JFrame getFrame(){
+        return frame;
+    }
+
 }

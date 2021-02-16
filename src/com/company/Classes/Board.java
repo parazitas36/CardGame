@@ -45,15 +45,15 @@ public class Board {
         }
     }
 
-    public void render(Graphics g){
-        g.setColor(Color.WHITE);
-        for(CardSlot slot : player1_slots){
-            slot.render(g);
-        }
-        for(CardSlot slot : player2_slots){
-            slot.render(g);
-        }
-    }
+//    public void render(Graphics g){
+//        g.setColor(Color.WHITE);
+//        for(CardSlot slot : player1_slots){
+//            slot.render(g);
+//        }
+//        for(CardSlot slot : player2_slots){
+//            slot.render(g);
+//        }
+//    }
     public ArrayList<CardSlot> getPlayer1_slots(){
         return this.player1_slots;
     }

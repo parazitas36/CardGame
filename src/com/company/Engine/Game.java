@@ -1,6 +1,7 @@
 package com.company.Engine;
 
 import com.company.Classes.*;
+import com.company.Utils.DragCard;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -23,8 +24,9 @@ public class Game implements Runnable{
     private ArrayList<CardSlot> player2_slots;
     private Graphics g;
     private BufferStrategy buffer;
+    private Handler handler;
     Board board;
-    MouseHandler handler;
+    MouseHandler m_handler;
     public Game(String _title, int _width, int _height){
         title = _title;
         width = _width;
@@ -33,11 +35,19 @@ public class Game implements Runnable{
     private void init(){
         display = new Display(title, width, height);
         board = new Board(display);
+        handler = new Handler();
         player1_slots = board.getPlayer1_slots();
+        for(CardSlot s: player1_slots){
+            handler.addObject(s);
+        }
         player2_slots = board.getPlayer2_slots();
+        for(CardSlot s: player2_slots){
+            handler.addObject(s);
+        }
     }
     private void tick(){
-        handler = new MouseHandler(display.getCanvas());
+        m_handler = new MouseHandler(display.getCanvas(), player1_slots);
+        handler.tick();
     }
     private void render(){
         buffer = display.getCanvas().getBufferStrategy();
@@ -50,7 +60,7 @@ public class Game implements Runnable{
         g.setColor(Color.BLACK);
         g.fillRect(0,0, width, height);
         g.setColor(Color.WHITE);testImageDraw();testImageDraw();
-        board.render(g);
+        handler.render(g);
         testImageDraw();
 
         //
@@ -61,9 +71,21 @@ public class Game implements Runnable{
     public void run() {
         init();
 
+        int fps = 60;
+        double timePerTick = 1000000000 / fps;
+        double delta = 0;
+        long now;
+        long lastTime = System.nanoTime();
+
         while(running){
-            tick();
-            render();
+            now = System.nanoTime();
+            delta += (now - lastTime) / timePerTick;
+            lastTime = now;
+            if(delta >= 1){
+                tick();
+                render();
+                delta--;
+            }
         }
 
         stop();
@@ -95,8 +117,8 @@ public class Game implements Runnable{
         BufferedImage img;
         try {
             img = ImageIO.read(new File("src/com/company/Images/korta.png"));
-            player1_slots.get(3).setCard(new Card("sdsad", 7, player1_slots.get(3).getX(), player1_slots.get(3).getY(), img));
-            player2_slots.get(3).setCard(new Card("sdsad", 7, player2_slots.get(3).getX(), player2_slots.get(3).getY(), img));
+            player1_slots.get(3).setCard(new Card("sdsad", 7, player1_slots.get(3).getX(), player1_slots.get(3).getY(), ID.Buff, img));
+            player2_slots.get(3).setCard(new Card("sdsad", 7, player2_slots.get(3).getX(), player2_slots.get(3).getY(), ID.Buff, img));
         } catch (IOException e) {
             e.printStackTrace();
         }
