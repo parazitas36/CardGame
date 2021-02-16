@@ -8,6 +8,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Game implements Runnable{
     private Display display;
@@ -18,6 +19,8 @@ public class Game implements Runnable{
     private Thread thread;
     private boolean running;
 
+    private ArrayList<CardSlot> player1_slots;
+    private ArrayList<CardSlot> player2_slots;
     private Graphics g;
     private BufferStrategy buffer;
     Board board;
@@ -30,6 +33,9 @@ public class Game implements Runnable{
     private void init(){
         display = new Display(title, width, height);
         board = new Board(display, g);
+        board.generateBoard();
+        player1_slots = board.getPlayer1_slots();
+        player2_slots = board.getPlayer2_slots();
     }
     private void tick(){
         handler = new MouseHandler(display.getCanvas());
@@ -44,10 +50,10 @@ public class Game implements Runnable{
         // Piesiam
         g.setColor(Color.BLACK);
         g.fillRect(0,0, width, height);
-        g.setColor(Color.WHITE);
+        g.setColor(Color.WHITE);testImageDraw();
         board.render();
-
         testImageDraw();
+
         //
         buffer.show();
         g.dispose();
@@ -91,6 +97,8 @@ public class Game implements Runnable{
         try {
             img = ImageIO.read(new File("src/com/company/Images/korta.png"));
             g.drawImage(img, (int)(width*0.05), height/2 + (int)(height*0.05), null);
+            CardSlot slot = player1_slots.get(3);
+            slot.setCard(new Card("sdsad", 7, slot.getX(), slot.getY(), img));
         } catch (IOException e) {
             e.printStackTrace();
         }
