@@ -33,7 +33,7 @@ public class CardReader {
                     Integer attack = Integer.getInteger(values[3]);
                     Integer defence = Integer.getInteger(values[4]);
 
-                    Monster monster = new Monster(name, manaCost, attack, defence);
+                   // Monster monster = new Monster(name, manaCost, attack, defence);
 
 
 
