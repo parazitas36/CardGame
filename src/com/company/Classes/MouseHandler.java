@@ -9,6 +9,7 @@ public class MouseHandler implements MouseListener {
 
     private Canvas canvas;
 
+
     public MouseHandler(Canvas canvas1){
         canvas = canvas1;
         canvas.addMouseListener(this);

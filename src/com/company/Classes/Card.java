@@ -9,9 +9,9 @@ public class Card extends GameObject {
     private BufferedImage img;
     public Card(String name, int manaCost, int x, int y, BufferedImage image){
         super(x, y);
-        Name = name;
-        ManaCost = manaCost;
-        img = image;
+        this.Name = name;
+        this.ManaCost = manaCost;
+        this.img = image;
     }
 
     @Override
