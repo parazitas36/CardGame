@@ -37,4 +37,10 @@ public class Display {
     public Canvas getCanvas(){
         return canvas;
     }
+    public int getWidth(){
+        return width;
+    }
+    public int getHeight(){
+        return height;
+    }
 }

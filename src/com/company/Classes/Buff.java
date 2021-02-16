@@ -16,8 +16,5 @@ public class Buff extends Card{
     @Override
     public void render() {
         super.render();
-      
-    public ID getID(){
-        return this.id;
     }
 }
