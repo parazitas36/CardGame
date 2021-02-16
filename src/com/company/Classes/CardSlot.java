@@ -2,7 +2,7 @@ package com.company.Classes;
 
 public class CardSlot extends GameObject{
     private Card card;
-    private ID id; //
+    private ID id;
     public CardSlot(Card _card, int x, int y, ID slotID){
         super(x, y);
         card = _card;
