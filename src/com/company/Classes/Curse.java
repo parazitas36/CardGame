@@ -6,7 +6,5 @@ public class Curse extends Card{
         super(name, manaCost, x, y);
         id = ID.Curse;
     }
-    public ID getID(){
-        return this.id;
-    }
+
 }
