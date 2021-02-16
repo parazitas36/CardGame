@@ -58,18 +58,16 @@ public class Board {
         g = buffer.getDrawGraphics();
         g.setColor(Color.WHITE);
         for(CardSlot slot : player1_slots){
-            if(slot.cardOnBoard()) {
-                System.out.println("Padeta korta");
-            }else{
-                g.fillRect(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
-            }
+            slot.render(g);
         }
         for(CardSlot slot : player2_slots){
-            if(slot.cardOnBoard()) {
-                System.out.println("Padeta korta");
-            }else{
-                g.fillRect(slot.getX(), slot.getY(), slot.getWidth(), slot.getHeight());
-            }
+            slot.render(g);
         }
+    }
+    public ArrayList<CardSlot> getPlayer1_slots(){
+        return player1_slots;
+    }
+    public ArrayList<CardSlot> getPlayer2_slots(){
+        return player2_slots;
     }
 }

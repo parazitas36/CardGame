@@ -1,5 +1,7 @@
 package com.company.Classes;
 
+import java.awt.*;
+
 public class CardSlot extends GameObject{
     private Card card;
     private ID id;
@@ -13,14 +15,19 @@ public class CardSlot extends GameObject{
 
     @Override
     public void tick() {
-        super.tick();
     }
 
     @Override
-    public void render() {
-        super.render();
+    public void render(Graphics g) {
+        if(card != null) {
+            g.drawImage(card.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+        }else{
+            g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+        }
     }
-
+    public void setCard(Card _card){
+        card = _card;
+    }
     public ID getId() {
         return id;
     }
