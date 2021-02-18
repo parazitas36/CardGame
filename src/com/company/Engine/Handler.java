@@ -8,7 +8,9 @@ import java.util.LinkedList;
 public class Handler {
     LinkedList<GameObject> objects = new LinkedList<GameObject>();
     public void tick(){
-
+        for(GameObject object : objects){
+            object.tick();
+        }
     }
     public void render(Graphics g){
         for(GameObject object : objects){

@@ -9,7 +9,9 @@ public class CardSlot extends GameObject{
     private int height;
     private boolean hasCard = false;
     public CardSlot(Card _card, int x, int y, ID slotID){
-        super(x, y);
+        super();
+        setX(x);
+        setY(y);
         card = _card;
         id = slotID;
         hasCard = card == null ? false : true;
@@ -52,6 +54,9 @@ public class CardSlot extends GameObject{
         return this.height;
     }
     public boolean cardOnBoard(){
-        return hasCard;
+        return this.hasCard;
+    }
+    public Card getCard(){
+        return this.card;
     }
 }

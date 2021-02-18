@@ -117,8 +117,15 @@ public class Game implements Runnable{
         BufferedImage img;
         try {
             img = ImageIO.read(new File("src/com/company/Images/korta.png"));
-            player1_slots.get(3).setCard(new Card("sdsad", 7, player1_slots.get(3).getX(), player1_slots.get(3).getY(), ID.Buff, img));
-            player2_slots.get(3).setCard(new Card("sdsad", 7, player2_slots.get(3).getX(), player2_slots.get(3).getY(), ID.Buff, img));
+            Card c = new Card("Player1 Monster", 7, ID.Buff, img);
+            c.setX(player1_slots.get(3).getX());
+            c.setY(player1_slots.get(3).getY());
+            Card d = new Card("Player2 Monster", 7, ID.Buff, img);
+            d.setX(player2_slots.get(2).getX());
+            d.setY(player2_slots.get(2).getY());
+            player1_slots.get(3).setCard(c);
+            player2_slots.get(2).setCard(d);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
