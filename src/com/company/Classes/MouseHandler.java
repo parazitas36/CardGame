@@ -11,10 +11,13 @@ public class MouseHandler implements MouseListener {
     private Canvas canvas;
 
     ArrayList<CardSlot> cardSlots;
-    public MouseHandler(Canvas canvas1, ArrayList<CardSlot> slots){
+    public MouseHandler(Canvas canvas1, ArrayList<CardSlot> slots1, ArrayList<CardSlot> slots2){
         canvas = canvas1;
         canvas.addMouseListener(this);
-        this.cardSlots = slots;
+        this.cardSlots = slots1;
+        for(CardSlot s : slots2){
+            cardSlots.add(s);
+        }
     }
     @Override
     public void mouseClicked(MouseEvent e) {

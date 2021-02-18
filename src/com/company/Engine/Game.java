@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Game implements Runnable{
     private Display display;
@@ -44,9 +45,9 @@ public class Game implements Runnable{
         for(CardSlot s: player2_slots){
             handler.addObject(s);
         }
+        m_handler = new MouseHandler(display.getCanvas(), player1_slots, player2_slots);
     }
     private void tick(){
-        m_handler = new MouseHandler(display.getCanvas(), player1_slots);
         handler.tick();
     }
     private void render(){
