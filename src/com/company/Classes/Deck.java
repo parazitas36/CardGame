@@ -9,7 +9,7 @@ public class Deck extends GameObject{
     Stack<Card> deck;
     private int size;
     public Deck(int _size, int x, int y) {
-        super(x, y);
+        super();
         this.deck = new Stack<Card>();
         this.size = _size;
     }

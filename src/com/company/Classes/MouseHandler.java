@@ -20,7 +20,11 @@ public class MouseHandler implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         for(CardSlot c : cardSlots){
             if(e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
-                System.out.println("Click: " + c.getId());
+                if(c.cardOnBoard()){
+                    System.out.println(c.getCard().getName());
+                }else {
+                    System.out.println("Click: " + c.getId());
+                }
             }
         }
     }
