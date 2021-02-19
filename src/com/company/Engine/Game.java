@@ -49,13 +49,12 @@ public class Game implements Runnable{
         cards = new ArrayList<Card>();
         try{
             ArrayList<Card> cardsCreate = new ArrayList<Card>();
-            cardsCreate.add(new Card("Player1 Monster_1", 1, ID.Monster_1, ImageIO.read(new File("src/com/company/Images/korta_variation1.png"))));
-            cardsCreate.add(new Card("Player1 Monster_2", 2, ID.Monster_2, ImageIO.read(new File("src/com/company/Images/korta_variation2.png"))));
-            cardsCreate.add(new Card("Player1 Monster_3", 3, ID.Monster_3, ImageIO.read(new File("src/com/company/Images/korta_variation3.png"))));
-            cardsCreate.add(new Card("Player1 Monster_4", 4, ID.Monster_4, ImageIO.read(new File("src/com/company/Images/korta_variation4.png"))));
-            cardsCreate.add(new Card("Player1 Monster_5", 5, ID.Monster_5, ImageIO.read(new File("src/com/company/Images/korta_variation5.png"))));
-            cardsCreate.add(new Card("Player1 Monster_6", 6, ID.Monster_6, ImageIO.read(new File("src/com/company/Images/korta_variation6.png"))));
-            cardsCreate.add(new Card("Player1 Monster_7", 7, ID.Monster_7, ImageIO.read(new File("src/com/company/Images/korta_variation7.png"))));
+            cardsCreate.add(new Card("Player1 Monster_1", 1, ID.Monster_1, ImageIO.read(new File("src/com/company/Images/korta.png"))));
+            cardsCreate.add(new Card("Player1 Monster_2", 2, ID.Monster_2, ImageIO.read(new File("src/com/company/Images/korta2.png"))));
+            cardsCreate.add(new Card("Player1 Monster_3", 3, ID.Monster_3, ImageIO.read(new File("src/com/company/Images/korta3.jpg"))));
+            cardsCreate.add(new Card("Player1 Monster_4", 4, ID.Monster_4, ImageIO.read(new File("src/com/company/Images/korta4.png"))));
+            cardsCreate.add(new Card("Player1 Monster_5", 5, ID.Monster_5, ImageIO.read(new File("src/com/company/Images/korta5.png"))));
+            cardsCreate.add(new Card("Player1 Monster_6", 6, ID.Monster_6, ImageIO.read(new File("src/com/company/Images/korta6.jpg"))));
             for (Card c: cardsCreate) {
                 cards.add(c);
             }
@@ -150,15 +149,7 @@ public class Game implements Runnable{
     }
     public void testImageDraw(){
         BufferedImage img;
-        //img = ImageIO.read(new File("src/com/company/Images/korta.png"));
-        //Card c = new Card("Player1 Monster", 7, ID.Buff, img);
-        //c.setX(player1_slots.get(3).getX());
-        //c.setY(player1_slots.get(3).getY());
-        //Card d = new Card("Player2 Monster", 7, ID.Buff, img);
-        //d.setX(player2_slots.get(2).getX());
-        //d.setY(player2_slots.get(2).getY());
-        //player1_slots.get(3).setCard(c);
-        //player2_slots.get(2).setCard(d);
+
 
         player1_slots.get(5).setCard(cards.get(0));
         player1_slots.get(6).setCard(cards.get(1));
@@ -166,7 +157,6 @@ public class Game implements Runnable{
         player1_slots.get(8).setCard(cards.get(3));
         player1_slots.get(9).setCard(cards.get(4));
         player1_slots.get(10).setCard(cards.get(5));
-        player1_slots.get(11).setCard(cards.get(6));
 
         if(mouseHolding) {
             draggingSlot.setCard(getCardWithID(selectedCard));
