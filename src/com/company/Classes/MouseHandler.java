@@ -26,12 +26,22 @@ public class MouseHandler implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         for(CardSlot c : cardSlots){
             if(e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
+                if(c.getId() == ID.Player1_Deck){
+                    Card card = c.getDeck().drawCard();
+                    for(CardSlot slotas : cardSlots){
+                        if(slotas.getId().toString().contains("Player1") && slotas.getId().toString().contains("Player1_HandSlot")){
+                            if(slotas.getCard() == null){
+                                slotas.setCard(card);
+                                break;
+                            }
+                        }
+                    }
+                }
                 if(c.cardOnBoard()){
                     System.out.println(c.getCard().getName());
                 }else {
                     System.out.println("Click: " + c.getId());
                 }
-
             }
         }
     }

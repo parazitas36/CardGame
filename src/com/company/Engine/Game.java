@@ -86,8 +86,13 @@ public class Game implements Runnable{
         for(CardSlot s: player2_slots){
             handler.addObject(s);
         }
+        player1_slots.get(11).setDeck(deck);
         handler.addObject(draggingSlot);
-
+        deck.shuffle();
+//        for(int i = 5; i <11; i++){
+//            player1_slots.get(i).setCard(deck.drawCard());
+//        }
+        System.out.println(deck.getDeck().size());
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
     private void tick(){
@@ -157,17 +162,10 @@ public class Game implements Runnable{
         Game game = new Game("Title", 800, 640);
         game.start();
     }
+
     public void testImageDraw(){
         BufferedImage img;
 
-
-        player1_slots.get(5).setCard(cards.get(0));
-        player1_slots.get(6).setCard(cards.get(1));
-        player1_slots.get(7).setCard(cards.get(2));
-        player1_slots.get(8).setCard(cards.get(3));
-        player1_slots.get(9).setCard(cards.get(4));
-        player1_slots.get(10).setCard(cards.get(5));
-        player1_slots.set(11, new CardSlot(deck, player1_slots.get(11).getX(), player1_slots.get(11).getY(),ID.Player1_Deck));
         // Tempia korta
         if(mouseHolding) {
             draggingSlot.setCard(getCardWithID(selectedCard));

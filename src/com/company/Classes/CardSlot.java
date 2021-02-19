@@ -44,6 +44,9 @@ public class CardSlot extends GameObject{
         this.card = _card;
         if(_card != null) { this.hasCard = true; }
     }
+    public void setDeck(Deck _deck){
+        this.deck = _deck;
+    }
     public void removeCard(){
         this.card = null;
         hasCard = false;
@@ -68,5 +71,8 @@ public class CardSlot extends GameObject{
     }
     public Card getCard(){
         return this.card;
+    }
+    public Deck getDeck(){
+        return this.deck;
     }
 }

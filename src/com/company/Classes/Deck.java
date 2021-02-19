@@ -55,5 +55,8 @@ public class Deck extends GameObject{
     public BufferedImage getImage(){
         return image;
     }
+    public Stack getDeck(){
+        return deck;
+    }
 }
 
