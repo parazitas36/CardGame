@@ -33,6 +33,7 @@ public class Game implements Runnable{
     private BufferStrategy buffer;
     private Handler handler;
     Board board;
+    Deck deck;
     MouseHandler m_handler;
     private int dragginCardOffsetX = -50, dragginCardOffsetY = -100;
 
@@ -47,22 +48,24 @@ public class Game implements Runnable{
         handler = new Handler();
 
         cards = new ArrayList<Card>();
+        ArrayList<Card> cardsCreate = new ArrayList<Card>();
         try{
-            ArrayList<Card> cardsCreate = new ArrayList<Card>();
             cardsCreate.add(new Card("Player1 Monster_1", 1, ID.Monster_1, ImageIO.read(new File("src/com/company/Images/korta.png"))));
             cardsCreate.add(new Card("Player1 Monster_2", 2, ID.Monster_2, ImageIO.read(new File("src/com/company/Images/korta2.png"))));
             cardsCreate.add(new Card("Player1 Monster_3", 3, ID.Monster_3, ImageIO.read(new File("src/com/company/Images/korta3.jpg"))));
             cardsCreate.add(new Card("Player1 Monster_4", 4, ID.Monster_4, ImageIO.read(new File("src/com/company/Images/korta4.png"))));
+
+
             cardsCreate.add(new Card("Player1 Monster_5", 5, ID.Monster_5, ImageIO.read(new File("src/com/company/Images/korta5.png"))));
             cardsCreate.add(new Card("Player1 Monster_6", 6, ID.Monster_6, ImageIO.read(new File("src/com/company/Images/korta6.jpg"))));
             for (Card c: cardsCreate) {
                 cards.add(c);
             }
 
-            draggingSlot = new CardSlot(null, 0, 0, ID.values()[0]);
+            draggingSlot = new CardSlot((Card) null, 0, 0, ID.values()[0]);
             draggingSlot.setWidth((int)(display.getWidth()*0.1));
             draggingSlot.setHeight((int)(display.getHeight()*0.2));
-            draggingCard = new Card("sdsad", 7, ID.Buff, ImageIO.read(new File("src/com/company/Images/korta.png")));
+            //draggingCard = new Card("sdsad", 7, ID.Buff, ImageIO.read(new File("src/com/company/Images/back.jpg")));
 
         } catch (IOException e) {
              e.printStackTrace();
@@ -72,13 +75,20 @@ public class Game implements Runnable{
         for(CardSlot s: player1_slots){
             handler.addObject(s);
         }
+        BufferedImage backImg = null;
+        try{
+            backImg = ImageIO.read(new File("src/com/company/Images/back.jpg"));
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        deck = new Deck(cardsCreate.size(), player1_slots.get(11).getX(), player1_slots.get(11).getY(), cardsCreate, backImg);
         player2_slots = board.getPlayer2_slots();
         for(CardSlot s: player2_slots){
             handler.addObject(s);
         }
         handler.addObject(draggingSlot);
 
-        m_handler = new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
+        new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
     private void tick(){
         handler.tick();
@@ -157,7 +167,8 @@ public class Game implements Runnable{
         player1_slots.get(8).setCard(cards.get(3));
         player1_slots.get(9).setCard(cards.get(4));
         player1_slots.get(10).setCard(cards.get(5));
-
+        player1_slots.set(11, new CardSlot(deck, player1_slots.get(11).getX(), player1_slots.get(11).getY(),ID.Player1_Deck));
+        // Tempia korta
         if(mouseHolding) {
             draggingSlot.setCard(getCardWithID(selectedCard));
             draggingSlot.setX(display.getFrame().getMousePosition().x + dragginCardOffsetX);
@@ -176,19 +187,23 @@ public class Game implements Runnable{
     }
     public Card getCardWithID(ID id){
         for(Card c: cards){
-            if(c.getID() == id){
+            if(c.getID() == id && id != ID.Player1_Deck){
                 return c;
             }
         }
         return null;
     }
 
+    // Padeda korta
     public void MouseReleased(){
         mouseHolding = false;
 
         for(CardSlot c : player1_slots){
             if(display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                c.setCard(draggingCard);
+                if(c.getId() != ID.Player1_Deck){
+                    c.setCard(draggingCard);
+                }
+
             }
         }
 

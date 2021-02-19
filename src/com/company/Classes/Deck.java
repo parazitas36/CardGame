@@ -3,6 +3,7 @@ package com.company.Classes;
 import com.company.Utils.CardReader;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
@@ -12,13 +13,10 @@ public class Deck extends GameObject{
      ArrayList <Card> cards;
     Stack<Card> deck;
     private int size;
-    public Deck(int _size, int x, int y) {
+    private BufferedImage image;
+    public Deck(int _size, int x, int y, ArrayList<Card> _card, BufferedImage img) {
         super();
-        this.deck = new Stack<Card>();
-        this.size = _size;
-    }
-    public Deck(int _size, int x, int y, ArrayList<Card> _card) {
-        super();
+        this.image = img;
         this.size = _size;
         this.deck = new Stack<Card>();
         this.transfer(_card);
@@ -34,7 +32,9 @@ public class Deck extends GameObject{
     public void tick() {
 
     }
-    public void add(Card card) { deck.add(card); }
+    public Card drawCard(){
+        return deck.pop();
+    }
 
      public void shuffle() {
         ArrayList<Card> temp = new ArrayList<>();
@@ -48,15 +48,12 @@ public class Deck extends GameObject{
         }
      }
 
-    public Card drawRandomCard() {
-        Random generator = new Random();
-        int index = generator.nextInt(deck.size());
-        return deck.remove(index);
-    }
-
     @Override
     public void render(Graphics g) {
 
+    }
+    public BufferedImage getImage(){
+        return image;
     }
 }
 

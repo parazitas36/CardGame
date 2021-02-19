@@ -4,6 +4,7 @@ import java.awt.*;
 
 public class CardSlot extends GameObject{
     private Card card;
+    private Deck deck;
     private ID id;
     private int width;
     private int height;
@@ -16,16 +17,25 @@ public class CardSlot extends GameObject{
         id = slotID;
         hasCard = card == null ? false : true;
     }
-
+    public CardSlot(Deck _deck, int x, int y, ID slotID){
+        super();
+        deck = _deck;
+        setX(x);
+        setY(y);
+        id = slotID;
+    }
     @Override
     public void tick() {
     }
 
     @Override
     public void render(Graphics g) {
-        if(this.hasCard) {
+        if(this.hasCard ) {
             g.drawImage(card.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
-        }else{
+        }else if(deck != null){
+            g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+        }
+        else{
             g.setColor(Color.WHITE);
             g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
         }
