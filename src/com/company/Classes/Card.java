@@ -32,4 +32,5 @@ public class Card extends GameObject {
         return this.ManaCost;
     }
     public BufferedImage getImage(){return this.img;}
+    public ID getID() { return this.id; }
 }

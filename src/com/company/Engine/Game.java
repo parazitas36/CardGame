@@ -9,6 +9,7 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -23,11 +24,18 @@ public class Game implements Runnable{
 
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
+    private CardSlot draggingSlot;
+    private ArrayList<Card> cards;
+    private Card draggingCard;
+    private boolean mouseHolding;
+    private ID selectedCard;
     private Graphics g;
     private BufferStrategy buffer;
     private Handler handler;
     Board board;
     MouseHandler m_handler;
+    private int dragginCardOffsetX = -50, dragginCardOffsetY = -100;
+
     public Game(String _title, int _width, int _height){
         title = _title;
         width = _width;
@@ -37,6 +45,30 @@ public class Game implements Runnable{
         display = new Display(title, width, height);
         board = new Board(display);
         handler = new Handler();
+
+        cards = new ArrayList<Card>();
+        try{
+            ArrayList<Card> cardsCreate = new ArrayList<Card>();
+            cardsCreate.add(new Card("Player1 Monster_1", 1, ID.Monster_1, ImageIO.read(new File("src/com/company/Images/korta_variation1.png"))));
+            cardsCreate.add(new Card("Player1 Monster_2", 2, ID.Monster_2, ImageIO.read(new File("src/com/company/Images/korta_variation2.png"))));
+            cardsCreate.add(new Card("Player1 Monster_3", 3, ID.Monster_3, ImageIO.read(new File("src/com/company/Images/korta_variation3.png"))));
+            cardsCreate.add(new Card("Player1 Monster_4", 4, ID.Monster_4, ImageIO.read(new File("src/com/company/Images/korta_variation4.png"))));
+            cardsCreate.add(new Card("Player1 Monster_5", 5, ID.Monster_5, ImageIO.read(new File("src/com/company/Images/korta_variation5.png"))));
+            cardsCreate.add(new Card("Player1 Monster_6", 6, ID.Monster_6, ImageIO.read(new File("src/com/company/Images/korta_variation6.png"))));
+            cardsCreate.add(new Card("Player1 Monster_7", 7, ID.Monster_7, ImageIO.read(new File("src/com/company/Images/korta_variation7.png"))));
+            for (Card c: cardsCreate) {
+                cards.add(c);
+            }
+
+            draggingSlot = new CardSlot(null, 0, 0, ID.values()[0]);
+            draggingSlot.setWidth((int)(display.getWidth()*0.1));
+            draggingSlot.setHeight((int)(display.getHeight()*0.2));
+            draggingCard = new Card("sdsad", 7, ID.Buff, ImageIO.read(new File("src/com/company/Images/korta.png")));
+
+        } catch (IOException e) {
+             e.printStackTrace();
+        }
+
         player1_slots = board.getPlayer1_slots();
         for(CardSlot s: player1_slots){
             handler.addObject(s);
@@ -45,7 +77,9 @@ public class Game implements Runnable{
         for(CardSlot s: player2_slots){
             handler.addObject(s);
         }
-        m_handler = new MouseHandler(display.getCanvas(), player1_slots, player2_slots);
+        handler.addObject(draggingSlot);
+
+        m_handler = new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
     private void tick(){
         handler.tick();
@@ -116,19 +150,57 @@ public class Game implements Runnable{
     }
     public void testImageDraw(){
         BufferedImage img;
-        try {
-            img = ImageIO.read(new File("src/com/company/Images/korta.png"));
-            Card c = new Card("Player1 Monster", 7, ID.Buff, img);
-            c.setX(player1_slots.get(3).getX());
-            c.setY(player1_slots.get(3).getY());
-            Card d = new Card("Player2 Monster", 7, ID.Buff, img);
-            d.setX(player2_slots.get(2).getX());
-            d.setY(player2_slots.get(2).getY());
-            player1_slots.get(3).setCard(c);
-            player2_slots.get(2).setCard(d);
+        //img = ImageIO.read(new File("src/com/company/Images/korta.png"));
+        //Card c = new Card("Player1 Monster", 7, ID.Buff, img);
+        //c.setX(player1_slots.get(3).getX());
+        //c.setY(player1_slots.get(3).getY());
+        //Card d = new Card("Player2 Monster", 7, ID.Buff, img);
+        //d.setX(player2_slots.get(2).getX());
+        //d.setY(player2_slots.get(2).getY());
+        //player1_slots.get(3).setCard(c);
+        //player2_slots.get(2).setCard(d);
 
-        } catch (IOException e) {
-            e.printStackTrace();
+        player1_slots.get(5).setCard(cards.get(0));
+        player1_slots.get(6).setCard(cards.get(1));
+        player1_slots.get(7).setCard(cards.get(2));
+        player1_slots.get(8).setCard(cards.get(3));
+        player1_slots.get(9).setCard(cards.get(4));
+        player1_slots.get(10).setCard(cards.get(5));
+        player1_slots.get(11).setCard(cards.get(6));
+
+        if(mouseHolding) {
+            draggingSlot.setCard(getCardWithID(selectedCard));
+            draggingSlot.setX(display.getFrame().getMousePosition().x + dragginCardOffsetX);
+            draggingSlot.setY(display.getFrame().getMousePosition().y + dragginCardOffsetY);
+        }else{
+            draggingSlot.setX(-1000);
+            draggingSlot.setY(-1000);
         }
+
+    }
+    public void SlotClicked(ID id){
+        mouseHolding = true;
+        selectedCard = id;
+        draggingCard = getCardWithID(selectedCard);
+        System.out.println("Selected card: " + id);
+    }
+    public Card getCardWithID(ID id){
+        for(Card c: cards){
+            if(c.getID() == id){
+                return c;
+            }
+        }
+        return null;
+    }
+
+    public void MouseReleased(){
+        mouseHolding = false;
+
+        for(CardSlot c : player1_slots){
+            if(display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
+                c.setCard(draggingCard);
+            }
+        }
+
     }
 }
