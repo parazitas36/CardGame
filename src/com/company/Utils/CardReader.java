@@ -29,14 +29,13 @@ public class CardReader {
             String type = values[0];
             String name = values[1];
             int manaCost = Integer.getInteger(values[2]);
-            int x = Integer.getInteger(values[3]);
-            int y = Integer.getInteger(values[4]);
+
             switch (type) {
                 case "M" :
-                    int attack = Integer.getInteger(values[5]);
-                    int defence = Integer.getInteger(values[6]);
+                    int attack = Integer.getInteger(values[3]);
+                    int defence = Integer.getInteger(values[4]);
 
-                //    Monster monster = new Monster(name, manaCost, x, y, attack, defence);
+                //    Monster monster = new Monster(name, manaCost, attack, defence);
 
                 case "B":
                     int _attack = Integer.getInteger(values[3]);
