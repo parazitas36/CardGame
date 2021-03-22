@@ -48,21 +48,20 @@ public class Board {
         }
 
         // Take these variables from somewhere else in the code later:
-        int handSize = 7;
+        int handSize = 5;
         int handSizeLimit = 8;
         // Generating hand slots
         for(int i = 0; i < handSize; i++){
             CardSlot slot;
-            if(i < handSize - 1) {
+            if(i == 0) {
+                slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - 7 * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
+                        display.getHeight() / 2 + (int) (display.getHeight() * 0.05) + offsetYHand, ID.Player1_Deck);
+                slot.setWidth((int) (display.getWidth() * 0.1));
+                slot.setHeight((int) (display.getHeight() * 0.2));
+                player1_slots.add(slot);
+            }else{
                 slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - handSize * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
                         display.getHeight() / 2 + (int) (display.getHeight() * 0.05) + offsetYHand, ID.values()[15 + i]);
-                slot.setWidth((int)(display.getWidth()*0.1));
-                slot.setHeight((int)(display.getHeight()*0.2));
-                player1_slots.add(slot);
-            }
-            else{
-                slot = new CardSlot((Deck) null, (int) display.getWidth() / 2 - handSize * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
-                        display.getHeight() / 2 + (int) (display.getHeight() * 0.05) + offsetYHand, ID.Player1_Deck);
                 slot.setWidth((int)(display.getWidth()*0.1));
                 slot.setHeight((int)(display.getHeight()*0.2));
                 player1_slots.add(slot);
@@ -70,7 +69,57 @@ public class Board {
         }
     }
 
-//    public void render(Graphics g){
+    public void updateBoard(int handSize){
+        player1_slots.clear();
+        int firstPos = 0;
+        for(int i = 5; i < 10; i++){
+            CardSlot slot;
+            if(i == 5){
+                slot = new CardSlot((Card)null, (int)(display.getWidth()*0.05), display.getHeight()/2 + (int)(display.getHeight()*0.05) + offsetY, ID.values()[i]);
+                firstPos = (int)(display.getWidth()*0.05)+(int)(display.getWidth()*0.1);
+            }else{
+                slot = new CardSlot((Card)null, firstPos + ((i-5)*(int)(display.getWidth()*0.1) + (i-6)*(int)(display.getWidth()*0.1)), display.getHeight()/2 + (int)(display.getHeight()*0.05) + offsetY, ID.values()[i]);
+            }
+            slot.setWidth((int)(display.getWidth()*0.1));
+            slot.setHeight((int)(display.getHeight()*0.2));
+            player1_slots.add(slot);
+        }
+        for(int i = 10; i < 15; i++){
+            CardSlot slot;
+            if(i == 10){
+                slot = new CardSlot((Card)null, (int)(display.getWidth()*0.05), display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + offsetY, ID.values()[i]);
+                firstPos = (int)(display.getWidth()*0.05)+(int)(display.getWidth()*0.1);
+            }else{
+                slot = new CardSlot((Card) null, firstPos + ((i-10)*(int)(display.getWidth()*0.1) + (i-11)*(int)(display.getWidth()*0.1)), display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + offsetY, ID.values()[i]);
+            }
+            slot.setWidth((int)(display.getWidth()*0.1));
+            slot.setHeight((int)(display.getHeight()*0.2));
+            player2_slots.add(slot);
+        }
+
+        // Take these variables from somewhere else in the code later:
+        int handSizeLimit = 8;
+        // Generating hand slots
+        for(int i = 0; i < handSize; i++){
+            CardSlot slot;
+            if(i == 0) {
+                slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - 7 * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
+                        display.getHeight() / 2 + (int) (display.getHeight() * 0.05) + offsetYHand, ID.Player1_Deck);
+                slot.setWidth((int) (display.getWidth() * 0.1));
+                slot.setHeight((int) (display.getHeight() * 0.2));
+                player1_slots.add(slot);
+            }else{
+                slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - handSize * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
+                        display.getHeight() / 2 + (int) (display.getHeight() * 0.05) + offsetYHand, ID.values()[15 + i]);
+                slot.setWidth((int)(display.getWidth()*0.1));
+                slot.setHeight((int)(display.getHeight()*0.2));
+                player1_slots.add(slot);
+            }
+        }
+    }
+
+
+    //    public void render(Graphics g){
 //        g.setColor(Color.WHITE);
 //        for(CardSlot slot : player1_slots){
 //            slot.render(g);

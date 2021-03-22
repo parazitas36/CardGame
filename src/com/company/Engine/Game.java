@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class Game implements Runnable{
     private Display display;
@@ -32,23 +33,37 @@ public class Game implements Runnable{
     private Graphics g;
     private BufferStrategy buffer;
     private Handler handler;
+    public int handSize;
     Board board;
     Deck deck;
     MouseHandler m_handler;
     private int dragginCardOffsetX = -50, dragginCardOffsetY = -100;
+
+    boolean needBoardUpdate = false;
+    public void UpdateBoard(int handSize){
+        this.handSize = handSize;
+        needBoardUpdate = true;
+        //board.updateBoard(handSize);
+    }
+
+    
 
     public Game(String _title, int _width, int _height){
         title = _title;
         width = _width;
         height = _height;
     }
+
+    private ArrayList<Card> cardsCreate;
+    public BufferedImage backImg;
     private void init(){
+        handSize = 1;
         display = new Display(title, width, height);
         board = new Board(display);
         handler = new Handler();
 
         cards = new ArrayList<Card>();
-        ArrayList<Card> cardsCreate = new ArrayList<Card>();
+        cardsCreate = new ArrayList<Card>();
         try{
             cardsCreate.add(new Card("Player1 Monster_1", 1, ID.Monster_1, ImageIO.read(new File("src/com/company/Images/korta.png"))));
             cardsCreate.add(new Card("Player1 Monster_2", 2, ID.Monster_2, ImageIO.read(new File("src/com/company/Images/korta2.png"))));
@@ -75,18 +90,18 @@ public class Game implements Runnable{
         for(CardSlot s: player1_slots){
             handler.addObject(s);
         }
-        BufferedImage backImg = null;
+        backImg = null;
         try{
             backImg = ImageIO.read(new File("src/com/company/Images/back.jpg"));
         }catch (IOException e){
             e.printStackTrace();
         }
-        deck = new Deck(cardsCreate.size(), player1_slots.get(11).getX(), player1_slots.get(11).getY(), cardsCreate, backImg);
+        deck = new Deck(cardsCreate.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cardsCreate, backImg);
         player2_slots = board.getPlayer2_slots();
         for(CardSlot s: player2_slots){
             handler.addObject(s);
         }
-        player1_slots.get(11).setDeck(deck);
+        player1_slots.get(5).setDeck(deck);
         handler.addObject(draggingSlot);
         deck.shuffle();
 //        for(int i = 5; i <11; i++){
@@ -97,6 +112,31 @@ public class Game implements Runnable{
     }
     private void tick(){
         handler.tick();
+        if(needBoardUpdate){
+            System.out.println("HAND SIZE: " + handSize);
+            System.out.println("REMOVEING: " + player1_slots.size());
+            List<CardSlot> player1HandList = player1_slots.subList(0, player1_slots.size() - 2);
+            for(CardSlot s: player1HandList){
+                handler.removeObject(s);
+            }
+           // while(player1_slots.size() > 15){
+               // player1_slots.remove(player1_slots.size()-1);
+           // }
+            board.updateBoard(handSize);
+            //for(CardSlot s: board.getPlayer1_slots()) {
+            //    player1_slots.add(s);
+            //}
+            for(CardSlot s: board.getPlayer1_slots()) {
+                handler.addObject(s);
+            }
+            deck = new Deck(cardsCreate.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cardsCreate, backImg);
+            player1_slots.get(5).setDeck(deck);
+
+            //for(int i = 0; i< board.getPlayer1_slots().size(); i++){
+            //    player1_slots.add(board.getPlayer1_slots().get(i));
+           // }
+            needBoardUpdate = false;
+        }
     }
     private void render(){
         buffer = display.getCanvas().getBufferStrategy();

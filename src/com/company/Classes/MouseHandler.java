@@ -26,7 +26,10 @@ public class MouseHandler implements MouseListener {
     public void mouseClicked(MouseEvent e) {
         for(CardSlot c : cardSlots){
             if(e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
-                if(c.getId() == ID.Player1_Deck){
+
+                if(c.getId() == ID.Player1_Deck && c != null){
+                    //System.out.println("ZZZ: " + c.getId());
+                    //game.UpdateBoard(game.handSize + 1);
                     Card card = c.getDeck().drawCard();
                     for(CardSlot slotas : cardSlots){
                         if(slotas.getId().toString().contains("Player1") && slotas.getId().toString().contains("Player1_HandSlot")){
@@ -50,8 +53,7 @@ public class MouseHandler implements MouseListener {
     public void mousePressed(MouseEvent e) {
         for(CardSlot c : cardSlots){
             if(e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
-                System.out.println("Pressed: " + c.getId());
-                if(c.getId() != ID.Player1_Deck){
+                if(c.getId() != ID.Player1_Deck && c.getCard() != null){
                     game.SlotClicked(c.getCard().getID());
                 }
 
