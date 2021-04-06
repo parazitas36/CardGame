@@ -20,4 +20,12 @@ public class Monster extends Card {
     public void render(Graphics g) {
 
     }
+
+    @Override
+    public String toString() {
+        return "Monster{" +
+                "attack=" + attack +
+                ", defense=" + defense +
+                '}';
+    }
 }

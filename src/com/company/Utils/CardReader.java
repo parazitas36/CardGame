@@ -2,12 +2,14 @@ package com.company.Utils;
 
 import com.company.Classes.*;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Array;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
 
 public class CardReader {
@@ -15,42 +17,76 @@ public class CardReader {
 
     public static ArrayList<Card> Read(String path) {
         ArrayList<Card> cards = new ArrayList<>();
+
         Scanner scan = null;
         try {
-
             scan = new Scanner(new File(path));
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        while(scan != null ) {
+
+        while(scan.hasNextLine()) {
+            //--------------------------------------------
+            // Reads the data every card has
+            //--------------------------------------------
             String line = scan.nextLine();
             String[] values = line.split(";");
+
             String type = values[0];
             String name = values[1];
-            int manaCost = Integer.getInteger(values[2]);
-            int x = Integer.getInteger(values[3]);
-            int y = Integer.getInteger(values[4]);
+            int manaCost = Integer.parseInt(values[2]);
+            String imgPath = values[3];
+
+            BufferedImage img = null;
+            try {
+                img = ImageIO.read(new File(imgPath));
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+            //--------------------------------------------
+            // Reads additional data for each type of card
+            //--------------------------------------------
             switch (type) {
-                case "M" :
-                    int attack = Integer.getInteger(values[5]);
-                    int defence = Integer.getInteger(values[6]);
-
-                //    Monster monster = new Monster(name, manaCost, x, y, attack, defence);
-
+                //--------------------------------------------
+                // Reads monster card data
+                //--------------------------------------------
+                case "M":
+                    int atk = Integer.parseInt(values[4]);
+                    int def = Integer.parseInt(values[5]);
+                    Card monster = new Monster(name, manaCost, ID.Monster, atk, def, img);
+                    cards.add(monster);
+                    break;
+                //--------------------------------------------
+                // Reads buff card data
+                //--------------------------------------------
                 case "B":
-                    int _attack = Integer.getInteger(values[3]);
-                    int _defence = Integer.getInteger(values[4]);
-                    int hp = Integer.getInteger(values[5]);
-
-                     // Buff buff = new Buff(name, manaCost, _attack, _defence, hp);
-
+                    String effect = values[4];
+                    if(!effect.equals("atk") && !effect.equals("def")){
+                       Card buff = new Buff(name, manaCost, ID.Buff, img, effect);
+                       cards.add(buff);
+                    }else{
+                        int amount = Integer.parseInt(values[5]);
+                        Card buff = new Buff(name, manaCost, ID.Buff, img, effect, amount);
+                        cards.add(buff);
+                    }
+                    break;
+                //--------------------------------------------
+                // Reads curse card data
+                //--------------------------------------------
                 case "C":
-                    int __attack = Integer.getInteger(values[3]);
-                    int __defence = Integer.getInteger(values[4]);
-                    int __stun = Integer.getInteger(values[5]);
-
-                   // Curse curse = new Curse(name, manaCost, __attack, __defence, __stun);
+                    String eff = values[4];
+                    if(!eff.equals("atk") && !eff.equals("def")){
+                        Card curse = new Curse(name, manaCost, ID.Curse, img, eff);
+                        cards.add(curse);
+                    }else{
+                        int amount = Integer.parseInt(values[5]);
+                        Card curse = new Curse(name, manaCost, ID.Curse, img, eff, amount);
+                        cards.add(curse);
+                    }
+                    break;
+                //--------------------------------------------
+                default:
+                    break;
             }
         }
         Collections.shuffle(cards);
