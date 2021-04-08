@@ -4,9 +4,20 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Buff extends Card{
-
-    public Buff(String name, int manaCost,  ID id, BufferedImage img) {
+    private boolean special; // Special card like "unstun" or something like that
+    private String effect;
+    private int amount;
+    public Buff(String name, int manaCost,  ID id, BufferedImage img, String eff, int _amount) {
         super(name, manaCost, id, img);
+        effect = eff;
+        amount = _amount;
+        special = false;
+    }
+
+    public Buff(String name, int manaCost,  ID id, BufferedImage img, String eff) {
+        super(name, manaCost, id, img);
+        effect = eff;
+        special = true;
     }
 
     @Override
