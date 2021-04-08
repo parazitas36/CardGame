@@ -1,6 +1,7 @@
 package com.company.Classes;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class CardSlot extends GameObject{
     private Card card;
@@ -41,12 +42,6 @@ public class CardSlot extends GameObject{
                 g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
             }else{
                 g.drawImage(deck.getImage(),this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
-            }
-        }
-        else{
-            if(!this.id.toString().contains("HandSlot")) {
-                g.setColor(Color.WHITE);
-                g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
             }
         }
     }

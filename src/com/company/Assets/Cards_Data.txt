@@ -4,3 +4,4 @@ M;Dark Magician;3;src/com/company/Images/korta3.jpg;2500;2100
 C;name;2;src/com/company/Images/korta4.png;atk;3
 C;Masked;1;src/com/company/Images/korta5.png;destroy
 B;Blue Eyed Dragon;1;src/com/company/Images/korta6.jpg;atk;1
+M;Monster 1;5;src/com/company/Images/Card_Monster_1.png;0;0
