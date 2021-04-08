@@ -71,6 +71,14 @@ public class Board {
                 slot.setHeight((int)(display.getHeight()*0.2));
                 player1_slots.add(slot);
         }
+        for(int i = 0; i < handSize; i++){
+            CardSlot slot;
+            slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - handSize * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
+                    display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + (offsetY-150) - offsetYHand, ID.values()[23 + i]);
+            slot.setWidth((int)(display.getWidth()*0.1));
+            slot.setHeight((int)(display.getHeight()*0.2));
+            player2_slots.add(slot);
+        }
     }
 
 //    public void render(Graphics g){
