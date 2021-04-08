@@ -19,6 +19,7 @@ public class Game implements Runnable{
     private String title;
     private int width;
     private int height;
+    private BufferedImage boardImg;
 
     private Thread thread;
     private boolean running;
@@ -30,6 +31,7 @@ public class Game implements Runnable{
     private Card draggingCard;
 
     private ArrayList<Card> cards;
+    private ID currentPlayer;
 
     private boolean mouseHolding;
     private Graphics g;
@@ -38,6 +40,7 @@ public class Game implements Runnable{
 
     Board board;
     Deck deck;
+    Deck opponentDeck;
     private int dragginCardOffsetX = -50, dragginCardOffsetY = -100;
 
     public Game(String _title, int _width, int _height){
@@ -64,17 +67,30 @@ public class Game implements Runnable{
         BufferedImage backImg = null;
         try{
             backImg = ImageIO.read(new File("src/com/company/Images/back.jpg"));
+            boardImg = ImageIO.read(new File("src/com/company/Images/Board.png"));
         }catch (IOException e){
             e.printStackTrace();
         }
-        deck = new Deck(cards.size(), player1_slots.get(11).getX(), player1_slots.get(11).getY(), cards, backImg);
+        deck = new Deck(cards.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cards, backImg);
+        player1_slots.get(5).setDeck(deck);
+        deck.shuffle();
+        currentPlayer = ID.Player1;
+
         player2_slots = board.getPlayer2_slots();
         for(CardSlot s: player2_slots){
             handler.addObject(s);
         }
-        player1_slots.get(11).setDeck(deck);
+
+        opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
+        player2_slots.get(5).setDeck(opponentDeck);
+
+        for(int i = 0; i < 5; i++){
+            player2_slots.get(i+6).setCard(opponentDeck.drawCard());
+        }
+
+
         handler.addObject(draggingSlot);
-        deck.shuffle();
+
         System.out.println(deck.getDeck().size());
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
@@ -89,8 +105,7 @@ public class Game implements Runnable{
         }
         g = buffer.getDrawGraphics();
         // Piesiam
-        g.setColor(Color.BLACK);
-        g.fillRect(0,0, width, height);
+        g.drawImage(boardImg, 0, 0, width, height, null);
         g.setColor(Color.WHITE);testImageDraw();testImageDraw();
         handler.render(g);
         testImageDraw();
@@ -147,7 +162,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("Title", 800, 640);
+        Game game = new Game("Title", 1440, 980);
         game.start();
     }
 
@@ -185,7 +200,7 @@ public class Game implements Runnable{
 
         for(CardSlot c : player1_slots){
             if(display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(c.getId() != ID.Player1_Deck){
+                if(c.getId() != ID.Player1_Deck && c.getId().toString().contains(currentPlayer.toString())){
                     c.setCard(draggingCard);
                 }
             }

@@ -1,6 +1,7 @@
 package com.company.Classes;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
 
 public class CardSlot extends GameObject{
     private Card card;
@@ -31,13 +32,17 @@ public class CardSlot extends GameObject{
     @Override
     public void render(Graphics g) {
         if(this.hasCard ) {
-            g.drawImage(card.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            if(this.id.toString().contains("Player1") || this.id.toString().contains("Dragging_Slot")) {
+                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            }else{
+                g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+            }
         }else if(deck != null){
-            g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
-        }
-        else{
-            g.setColor(Color.WHITE);
-            g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            if(id.toString().contains("Player1")){
+                g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            }else{
+                g.drawImage(deck.getImage(),this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+            }
         }
     }
     public void setCard(Card _card){
