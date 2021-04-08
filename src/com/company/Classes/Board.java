@@ -1,8 +1,7 @@
 package com.company.Classes;
 
-import com.company.Engine.Display;
+import com.company.Engine.*;
 
-import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
 
