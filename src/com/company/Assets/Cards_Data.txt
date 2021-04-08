@@ -1,7 +1,24 @@
-M;Uria, Lord Of Searing Flames;5;src/com/company/Images/korta.png;0;0
-M;Slifer The Sky Dragon;4;src/com/company/Images/korta2.png;5000;5000
-M;Dark Magician;3;src/com/company/Images/korta3.jpg;2500;2100
-C;name;2;src/com/company/Images/korta4.png;atk;3
-C;Masked;1;src/com/company/Images/korta5.png;destroy
-B;Blue Eyed Dragon;1;src/com/company/Images/korta6.jpg;atk;1
-M;Monster 1;5;src/com/company/Images/Card_Monster_1.png;0;0
+M;Monster 1;1;src/com/company/Images/Card_Monster_1.png;0;0
+M;Monster 2;3;src/com/company/Images/Card_Monster_2.png;0;0
+M;Monster 3;4;src/com/company/Images/Card_Monster_3.png;0;0
+M;Monster 4;4;src/com/company/Images/Card_Monster_4.png;0;0
+M;Monster 5;7;src/com/company/Images/Card_Monster_5.png;0;0
+M;Monster 6;5;src/com/company/Images/Card_Monster_6.png;0;0
+M;Monster 7;3;src/com/company/Images/Card_Monster_7.png;0;0
+M;Monster 8;4;src/com/company/Images/Card_Monster_8.png;0;0
+M;Monster 9;6;src/com/company/Images/Card_Monster_9.png;0;0
+M;Monster 10;2;src/com/company/Images/Card_Monster_10.png;0;0
+M;Monster 11;4;src/com/company/Images/Card_Monster_11.png;0;0
+M;Monster 12;5;src/com/company/Images/Card_Monster_12.png;0;0
+M;Monster 13;3;src/com/company/Images/Card_Monster_13.png;0;0
+M;Super;7;src/com/company/Images/Card_Monster_SUPER.png;0;0
+C;Bleed;1;src/com/company/Images/Card_Curse_HP-.png;hp;-
+C;Destroy;1;src/com/company/Images/Card_Curses.png;destroy
+C;Stun;1;src/com/company/Images/Card_Curses_Stun.png;stun
+B;Att+1;1;src/com/company/Images/Card_Buff_Att_1.png;atk;1
+B;Att+2;2;src/com/company/Images/Card_Buff_Att_2.png;atk;2
+B;Att+3;3;src/com/company/Images/Card_Buff_Att_3.png;atk;3
+B;Def+1;1;src/com/company/Images/Card_Buff_Def_1.png;def;1
+B;Def+2;2;src/com/company/Images/Card_Buff_Def_2.png;def;2
+B;Def+3;3;src/com/company/Images/Card_Buff_Def_3.png;def;3
+B;HP+1;3;src/com/company/Images/Card_Buff_HP.png;hp;3
