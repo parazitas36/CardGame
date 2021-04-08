@@ -1,5 +1,5 @@
 M;Uria, Lord Of Searing Flames;5;src/com/company/Images/korta.png;0;0
-M;Slifer The Sky Dragon;4;src/com/company/Images/korta2.png;5000;5000
+M;Monster 1;4;src/com/company/Images/Card_Monster_1.png;5000;5000
 M;Dark Magician;3;src/com/company/Images/korta3.jpg;2500;2100
 C;name;2;src/com/company/Images/korta4.png;atk;3
 C;Masked;1;src/com/company/Images/korta5.png;destroy

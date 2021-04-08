@@ -19,6 +19,22 @@ public class Board {
         player2_slots = new ArrayList<CardSlot>(5);
         generateBoard();
     }
+    private CardSlot generateAndScale(double widthscale, double heightScale, int idValue, int firstId)
+    {
+        // firstPos - represents which positiion is first in line number/
+        CardSlot slot;
+        int width = display.getWidth(); //number represents display window width
+        int height = display.getHeight(); // number represents display window height
+        if(idValue == firstId) // if card is first in that line
+        {
+            slot = new CardSlot((Card)null, (int)(width*widthscale), height/2 + (int)(height*heightScale) + offsetY, ID.values()[idValue]);
+        }else // if card is not first in that line
+        {
+            slot = new CardSlot((Card)null, firstPos + ((idValue-5)*(int)(width*0.1) + (idValue-6)*(int)(width*0.1)), height/2 + (int)(height*0.05) + offsetY, ID.values()[idValue]);
+        }
+
+        return slot;
+    }
     public void generateBoard(){
         int firstPos = 0;
         for(int i = 5; i < 10; i++){
