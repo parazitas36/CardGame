@@ -32,5 +32,6 @@ public enum ID {
     Monster_6,
     Monster_7,
     Player1_Deck,
+    Player2_Deck,
     Dragging_Slot;
 }

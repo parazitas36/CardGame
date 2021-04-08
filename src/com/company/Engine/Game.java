@@ -1,6 +1,8 @@
 package com.company.Engine;
+
 import com.company.Classes.*;
 import com.company.Utils.CardReader;
+import com.company.Utils.DragCard;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -8,7 +10,9 @@ import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Game implements Runnable{
     private Display display;
@@ -34,6 +38,7 @@ public class Game implements Runnable{
 
     Board board;
     Deck deck;
+    Deck opponentDeck;
     private int dragginCardOffsetX = -50, dragginCardOffsetY = -100;
 
     public Game(String _title, int _width, int _height){
@@ -63,14 +68,20 @@ public class Game implements Runnable{
         }catch (IOException e){
             e.printStackTrace();
         }
-        deck = new Deck(cards.size(), player1_slots.get(11).getX(), player1_slots.get(11).getY(), cards, backImg);
+        deck = new Deck(cards.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cards, backImg);
+        player1_slots.get(5).setDeck(deck);
+        deck.shuffle();
+
+
         player2_slots = board.getPlayer2_slots();
         for(CardSlot s: player2_slots){
             handler.addObject(s);
         }
-        player1_slots.get(11).setDeck(deck);
+
+        opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
+        player2_slots.get(5).setDeck(opponentDeck);
         handler.addObject(draggingSlot);
-        deck.shuffle();
+
         System.out.println(deck.getDeck().size());
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
@@ -143,7 +154,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("Title", 1440, 1152);
+        Game game = new Game("Title", 1440, 980);
         game.start();
     }
 
