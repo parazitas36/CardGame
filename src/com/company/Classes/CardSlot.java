@@ -31,7 +31,11 @@ public class CardSlot extends GameObject{
     @Override
     public void render(Graphics g) {
         if(this.hasCard ) {
-            g.drawImage(card.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            if(this.id.toString().contains("Player1") || this.id.toString().contains("Dragging_Slot")) {
+                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            }else{
+                g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+            }
         }else if(deck != null){
             if(id.toString().contains("Player1")){
                 g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);

@@ -80,6 +80,12 @@ public class Game implements Runnable{
 
         opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
         player2_slots.get(5).setDeck(opponentDeck);
+
+        for(int i = 0; i < 5; i++){
+            player2_slots.get(i+6).setCard(opponentDeck.drawCard());
+        }
+
+
         handler.addObject(draggingSlot);
 
         System.out.println(deck.getDeck().size());
