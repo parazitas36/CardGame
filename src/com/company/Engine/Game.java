@@ -188,9 +188,8 @@ public class Game implements Runnable{
                 if(c.getId() != ID.Player1_Deck){
                     c.setCard(draggingCard);
                 }
-
             }
         }
-
+        draggingCard = null;
     }
 }
