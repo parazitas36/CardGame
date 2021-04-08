@@ -33,11 +33,17 @@ public class CardSlot extends GameObject{
         if(this.hasCard ) {
             g.drawImage(card.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
         }else if(deck != null){
-            g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            if(id.toString().contains("Player1")){
+                g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            }else{
+                g.drawImage(deck.getImage(),this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+            }
         }
         else{
-            g.setColor(Color.WHITE);
-            g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            if(!this.id.toString().contains("HandSlot")) {
+                g.setColor(Color.WHITE);
+                g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            }
         }
     }
     public void setCard(Card _card){
