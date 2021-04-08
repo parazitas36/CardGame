@@ -58,7 +58,7 @@ public class Board {
             player1_slots.add(slot);
 
             if(i == 9){
-                slot = new CardSlot((Card)null, firstPos + ((i-4)*(int)(display.getWidth()*0.05) + (i-5)*(int)(display.getWidth()*0.1)), display.getHeight()/2 + (int)(display.getHeight()*0.05) + offsetY, ID.Player1_Deck);
+                slot = new CardSlot((Deck)null, firstPos + ((i-4)*(int)(display.getWidth()*0.05) + (i-5)*(int)(display.getWidth()*0.1)), display.getHeight()/2 + (int)(display.getHeight()*0.05) + offsetY, ID.Player1_Deck);
                 slot.setWidth((int)(display.getWidth()*0.1));
                 slot.setHeight((int)(display.getHeight()*0.2));
                 player1_slots.add(slot);
@@ -71,7 +71,7 @@ public class Board {
             slot.setHeight((int)(display.getHeight()*0.2));
             player2_slots.add(slot);
             if(i == 14){
-                slot = new CardSlot((Card) null, firstPos + ((i-9)*(int)(display.getWidth()*0.05) + (i-10)*(int)(display.getWidth()*0.1)), display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + offsetY, ID.Player2_Deck);
+                slot = new CardSlot((Deck) null, firstPos + ((i-9)*(int)(display.getWidth()*0.05) + (i-10)*(int)(display.getWidth()*0.1)), display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + offsetY, ID.Player2_Deck);
                 slot.setWidth((int)(display.getWidth()*0.1));
                 slot.setHeight((int)(display.getHeight()*0.2));
                 player2_slots.add(slot);
