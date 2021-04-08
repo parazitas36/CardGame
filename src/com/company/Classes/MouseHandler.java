@@ -52,7 +52,8 @@ public class MouseHandler implements MouseListener {
             if(e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
                 System.out.println("Pressed: " + c.getId());
                 if(c.getId() != ID.Player1_Deck){
-                    game.SlotClicked(c.getCard().getID());
+                    if(c.getCard() != null)
+                    game.SlotClicked(c.getCard());
                 }
 
             }

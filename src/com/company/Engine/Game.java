@@ -1,6 +1,7 @@
 package com.company.Engine;
 
 import com.company.Classes.*;
+import com.company.Utils.CardReader;
 import com.company.Utils.DragCard;
 
 import javax.imageio.ImageIO;
@@ -24,17 +25,19 @@ public class Game implements Runnable{
 
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
+
     private CardSlot draggingSlot;
-    private ArrayList<Card> cards;
     private Card draggingCard;
+
+    private ArrayList<Card> cards;
+
     private boolean mouseHolding;
-    private ID selectedCard;
     private Graphics g;
     private BufferStrategy buffer;
     private Handler handler;
+
     Board board;
     Deck deck;
-    MouseHandler m_handler;
     private int dragginCardOffsetX = -50, dragginCardOffsetY = -100;
 
     public Game(String _title, int _width, int _height){
@@ -47,29 +50,12 @@ public class Game implements Runnable{
         board = new Board(display);
         handler = new Handler();
 
-        cards = new ArrayList<Card>();
-        ArrayList<Card> cardsCreate = new ArrayList<Card>();
-        try{
-            cardsCreate.add(new Card("Player1 Monster_1", 1, ID.Monster_1, ImageIO.read(new File("src/com/company/Images/korta.png"))));
-            cardsCreate.add(new Card("Player1 Monster_2", 2, ID.Monster_2, ImageIO.read(new File("src/com/company/Images/korta2.png"))));
-            cardsCreate.add(new Card("Player1 Monster_3", 3, ID.Monster_3, ImageIO.read(new File("src/com/company/Images/korta3.jpg"))));
-            cardsCreate.add(new Card("Player1 Monster_4", 4, ID.Monster_4, ImageIO.read(new File("src/com/company/Images/korta4.png"))));
+        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
 
+        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot);
+        draggingSlot.setWidth((int)(display.getWidth()*0.1));
+        draggingSlot.setHeight((int)(display.getHeight()*0.2));
 
-            cardsCreate.add(new Card("Player1 Monster_5", 5, ID.Monster_5, ImageIO.read(new File("src/com/company/Images/korta5.png"))));
-            cardsCreate.add(new Card("Player1 Monster_6", 6, ID.Monster_6, ImageIO.read(new File("src/com/company/Images/korta6.jpg"))));
-            for (Card c: cardsCreate) {
-                cards.add(c);
-            }
-
-            draggingSlot = new CardSlot((Card) null, 0, 0, ID.values()[0]);
-            draggingSlot.setWidth((int)(display.getWidth()*0.1));
-            draggingSlot.setHeight((int)(display.getHeight()*0.2));
-            //draggingCard = new Card("sdsad", 7, ID.Buff, ImageIO.read(new File("src/com/company/Images/back.jpg")));
-
-        } catch (IOException e) {
-             e.printStackTrace();
-        }
 
         player1_slots = board.getPlayer1_slots();
         for(CardSlot s: player1_slots){
@@ -81,7 +67,7 @@ public class Game implements Runnable{
         }catch (IOException e){
             e.printStackTrace();
         }
-        deck = new Deck(cardsCreate.size(), player1_slots.get(11).getX(), player1_slots.get(11).getY(), cardsCreate, backImg);
+        deck = new Deck(cards.size(), player1_slots.get(11).getX(), player1_slots.get(11).getY(), cards, backImg);
         player2_slots = board.getPlayer2_slots();
         for(CardSlot s: player2_slots){
             handler.addObject(s);
@@ -89,9 +75,6 @@ public class Game implements Runnable{
         player1_slots.get(11).setDeck(deck);
         handler.addObject(draggingSlot);
         deck.shuffle();
-//        for(int i = 5; i <11; i++){
-//            player1_slots.get(i).setCard(deck.drawCard());
-//        }
         System.out.println(deck.getDeck().size());
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
@@ -135,6 +118,11 @@ public class Game implements Runnable{
                 render();
                 delta--;
             }
+            try {
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
 
         stop();
@@ -168,7 +156,7 @@ public class Game implements Runnable{
 
         // Tempia korta
         if(mouseHolding) {
-            draggingSlot.setCard(getCardWithID(selectedCard));
+            draggingSlot.setCard(draggingCard);
             draggingSlot.setX(display.getFrame().getMousePosition().x + dragginCardOffsetX);
             draggingSlot.setY(display.getFrame().getMousePosition().y + dragginCardOffsetY);
         }else{
@@ -177,11 +165,10 @@ public class Game implements Runnable{
         }
 
     }
-    public void SlotClicked(ID id){
+    public void SlotClicked(Card card){
         mouseHolding = true;
-        selectedCard = id;
-        draggingCard = getCardWithID(selectedCard);
-        System.out.println("Selected card: " + id);
+        draggingCard = card;
+        System.out.println("Selected card: " + card);
     }
     public Card getCardWithID(ID id){
         for(Card c: cards){
@@ -201,9 +188,8 @@ public class Game implements Runnable{
                 if(c.getId() != ID.Player1_Deck){
                     c.setCard(draggingCard);
                 }
-
             }
         }
-
+        draggingCard = null;
     }
 }
