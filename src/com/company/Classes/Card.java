@@ -8,8 +8,8 @@ public class Card extends GameObject {
     private int ManaCost;
     private ID id;
     private BufferedImage img;
-    public Card(String name, int manaCost, int x, int y, ID _id, BufferedImage image){
-        super(x, y);
+    public Card(String name, int manaCost, ID _id, BufferedImage image){
+        super();
         this.Name = name;
         this.ManaCost = manaCost;
         this.id = _id;
@@ -32,4 +32,5 @@ public class Card extends GameObject {
         return this.ManaCost;
     }
     public BufferedImage getImage(){return this.img;}
+    public ID getID() { return this.id; }
 }

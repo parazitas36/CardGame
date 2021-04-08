@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 
 public class Monster extends Card {
     private int attack,defense;
-    public Monster(String name, int manaCost, int x, int y, ID id,  int atk, int def, BufferedImage img) {
-        super(name, manaCost, x, y,id, img);
+    public Monster(String name, int manaCost,  ID id,  int atk, int def, BufferedImage img) {
+        super(name, manaCost,id, img);
         attack = atk;
         defense = def;
     }
@@ -19,5 +19,13 @@ public class Monster extends Card {
     @Override
     public void render(Graphics g) {
 
+    }
+
+    @Override
+    public String toString() {
+        return "Monster{" +
+                "attack=" + attack +
+                ", defense=" + defense +
+                '}';
     }
 }
