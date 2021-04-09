@@ -31,13 +31,25 @@ public class CardSlot extends GameObject{
     @Override
     public void render(Graphics g) {
         if(this.hasCard ) {
-            g.drawImage(card.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
+                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
+            {
+                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + 16, this.getY() + 155);
+                g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + 88, this.getY() + 155);
+            } else if(card.getID().toString() != ID.Monster.toString() && this.id.toString().contains("Player1_Slot")){
+                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            }
+            else{
+                g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+            }
         }else if(deck != null){
-            g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
-        }
-        else{
-            g.setColor(Color.WHITE);
-            g.fillRect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
+            if(id.toString().contains("Player1")){
+                g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            }else{
+                g.drawImage(deck.getImage(),this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+            }
         }
     }
     public void setCard(Card _card){
@@ -67,7 +79,7 @@ public class CardSlot extends GameObject{
         return this.height;
     }
     public boolean cardOnBoard(){
-        return this.hasCard;
+        return this.hasCard = this.card == null ? false : true;
     }
     public Card getCard(){
         return this.card;

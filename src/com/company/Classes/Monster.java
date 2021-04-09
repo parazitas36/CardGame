@@ -10,7 +10,12 @@ public class Monster extends Card {
         attack = atk;
         defense = def;
     }
-
+    public int getAttack(){
+        return this.attack;
+    }
+    public int getDefense(){
+        return this.defense;
+    }
     @Override
     public void tick() {
 
@@ -19,5 +24,19 @@ public class Monster extends Card {
     @Override
     public void render(Graphics g) {
 
+    }
+    public int getAttack(){
+        return this.attack;
+    }
+    public int getDef(){
+        return this.defense;
+    }
+
+    @Override
+    public String toString() {
+        return "Monster{" +
+                "attack=" + attack +
+                ", defense=" + defense +
+                '}';
     }
 }

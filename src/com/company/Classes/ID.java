@@ -24,6 +24,14 @@ public enum ID {
     Player1_HandSlot6,
     Player1_HandSlot7,
     Player1_HandSlot8,
+    Player2_HandSlot1,
+    Player2_HandSlot2,
+    Player2_HandSlot3,
+    Player2_HandSlot4,
+    Player2_HandSlot5,
+    Player2_HandSlot6,
+    Player2_HandSlot7,
+    Player2_HandSlot8,
     Monster_1,
     Monster_2,
     Monster_3,
@@ -31,5 +39,7 @@ public enum ID {
     Monster_5,
     Monster_6,
     Monster_7,
-    Player1_Deck;
+    Player1_Deck,
+    Player2_Deck,
+    Dragging_Slot;
 }
