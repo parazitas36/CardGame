@@ -23,7 +23,6 @@ public class Card extends GameObject {
 
     @Override
     public void render(Graphics g) {
-
     }
     public String getName(){
         return this.Name;
