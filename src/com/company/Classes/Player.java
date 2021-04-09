@@ -1,6 +1,6 @@
 package com.company.Classes;
 
-public class Player {
+public class Player{
     private int HP;
     private int Mana;
     private int ManaStack;

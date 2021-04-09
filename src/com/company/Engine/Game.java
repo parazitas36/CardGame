@@ -183,6 +183,7 @@ public class Game implements Runnable{
             mouseHolding = true;
             draggingCard = card;
             this.chosenCardSlot = slot;
+            this.chosenCardSlot.removeCard();
             System.out.println("Selected card: " + card);
         }
     }
@@ -204,7 +205,10 @@ public class Game implements Runnable{
                 if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.toString())) && !c.cardOnBoard()){
                     c.setCard(draggingCard);
                     this.chosenCardSlot.removeCard();
+                    this.chosenCardSlot = null;
                 }
+            }else if(draggingCard != null && this.chosenCardSlot != null){
+                this.chosenCardSlot.setCard(draggingCard);
             }
         }
         draggingCard = null;
