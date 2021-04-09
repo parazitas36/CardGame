@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class Game implements Runnable{
     private Display display;
     private String title;
-    private int width;
-    private int height;
+    private static int width = 1440;
+    private static int height = 980;
     private BufferedImage boardImg;
 
     private Thread thread;
@@ -43,8 +43,9 @@ public class Game implements Runnable{
 
     public Game(String _title, int _width, int _height){
         title = _title;
-        width = _width;
-        height = _height;
+        // commenting not to break stuff
+        //width = _width;
+        //height = _height;
     }
     private void init(){
         display = new Display(title, width, height);
@@ -54,6 +55,8 @@ public class Game implements Runnable{
         Player player2 = new Player(30, 5, 2, ID.Player2);
         handler.addObject(player1);
         handler.addObject(player2);
+
+        Phase.LoadImages();
 
         cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
 
@@ -108,6 +111,9 @@ public class Game implements Runnable{
         g = buffer.getDrawGraphics();
         // Piesiam
         g.drawImage(boardImg, 0, 0, width, height, null);
+        g.drawImage(Phase.GetCurrentPhaseImage(), Phase.GetEndTurnPosX() - Phase.GetEndTurnImgWidth(), Phase.GetEndTurnPosY(), Phase.GetPhaseIconWidth(), Phase.GetPhaseIconHeight(), null);
+        g.drawImage(Phase.GetEndTurnImage(), Phase.GetEndTurnPosX(), Phase.GetEndTurnPosY(), Phase.GetEndTurnImgWidth(), Phase.GetEndTurnImgHeight(), null);
+
         g.setColor(Color.WHITE);testImageDraw();testImageDraw();
         handler.render(g);
         testImageDraw();
@@ -215,6 +221,20 @@ public class Game implements Runnable{
                 this.chosenCardSlot.setCard(draggingCard);
             }
         }
+
+        if (this.display.getFrame().getMousePosition().x >= Phase.GetEndTurnPosX() && this.display.getFrame().getMousePosition().x <= Phase.GetEndTurnPosX() + Phase.GetEndTurnImgWidth() && this.display.getFrame().getMousePosition().y <= Phase.GetEndTurnPosY() + Phase.GetEndTurnImgHeight() && this.display.getFrame().getMousePosition().y >= Phase.GetEndTurnPosY()) {
+            Phase.NextPhase();
+            System.out.println("CLICKED END TURN");
+        }
+
         draggingCard = null;
+    }
+
+    public static int GetWidth(){
+        return width;
+    }
+
+    public static int GetHeight(){
+        return height;
     }
 }
