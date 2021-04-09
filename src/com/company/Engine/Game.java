@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class Game implements Runnable{
     private Display display;
     private String title;
-    private static int width = 1440;
-    private static int height = 900;
+    private int width;
+    private int height;
     private BufferedImage boardImg;
 
     private Thread thread;
@@ -41,19 +41,19 @@ public class Game implements Runnable{
     Deck opponentDeck;
     private int dragginCardOffsetX = -50, dragginCardOffsetY = -100;
 
-
     public Game(String _title, int _width, int _height){
         title = _title;
-        // just commented not to break stuff
-        //width = _width;
-        //height = _height;
-
+        width = _width;
+        height = _height;
     }
     private void init(){
         display = new Display(title, width, height);
         board = new Board(display);
         handler = new Handler();
-        Phase.LoadImages();
+        Player player1 = new Player(30, 5, 1, ID.Player1);
+        Player player2 = new Player(30, 5, 2, ID.Player2);
+        handler.addObject(player1);
+        handler.addObject(player2);
 
         cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
 
@@ -108,9 +108,6 @@ public class Game implements Runnable{
         g = buffer.getDrawGraphics();
         // Piesiam
         g.drawImage(boardImg, 0, 0, width, height, null);
-        g.drawImage(Phase.GetCurrentPhaseImage(), Phase.GetEndTurnPosX() - Phase.GetPhaseIconWidth(), Phase.GetEndTurnPosY(),
-                Phase.GetPhaseIconWidth(), Phase.GetPhaseIconHeight(), null);
-        g.drawImage(Phase.GetEndTurnImage(), Phase.GetEndTurnPosX(), Phase.GetEndTurnPosY(), Phase.GetEndTurnImgWidth(), Phase.GetEndTurnImgHeight(), null);
         g.setColor(Color.WHITE);testImageDraw();testImageDraw();
         handler.render(g);
         testImageDraw();
@@ -190,6 +187,7 @@ public class Game implements Runnable{
             mouseHolding = true;
             draggingCard = card;
             this.chosenCardSlot = slot;
+            this.chosenCardSlot.removeCard();
             System.out.println("Selected card: " + card);
         }
     }
@@ -211,22 +209,12 @@ public class Game implements Runnable{
                 if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.toString())) && !c.cardOnBoard()){
                     c.setCard(draggingCard);
                     this.chosenCardSlot.removeCard();
+                    this.chosenCardSlot = null;
                 }
+            }else if(draggingCard != null && this.chosenCardSlot != null){
+                this.chosenCardSlot.setCard(draggingCard);
             }
         }
-
-        if(display.getFrame().getMousePosition().x >= Phase.GetEndTurnPosX()  && display.getFrame().getMousePosition().x <= Phase.GetEndTurnPosX()+Phase.GetEndTurnImgWidth() && display.getFrame().getMousePosition().y <= Phase.GetEndTurnPosY() + Phase.GetEndTurnImgHeight() && display.getFrame().getMousePosition().y >= Phase.GetEndTurnPosY()){
-            Phase.NextPhase();
-            System.out.println("CLICKED END TURN");
-        }
-
         draggingCard = null;
-    }
-
-    public static int GetWidth(){
-        return width;
-    }
-    public static int GetHeight(){
-        return height;
     }
 }

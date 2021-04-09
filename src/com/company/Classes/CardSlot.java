@@ -30,14 +30,18 @@ public class CardSlot extends GameObject{
 
     @Override
     public void render(Graphics g) {
+        Font prevfont = g.getFont();
+        Font newfont = new Font("", Font.BOLD, 14);
         if(this.hasCard ) {
             if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
             }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
             {
+                g.setFont(newfont);
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
                 g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + 16, this.getY() + 155);
-                g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + 88, this.getY() + 155);
+                g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + 87, this.getY() + 155);
+                g.setFont(prevfont);
             } else if(card.getID().toString() != ID.Monster.toString() && this.id.toString().contains("Player1_Slot")){
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
             }

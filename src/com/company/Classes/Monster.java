@@ -10,7 +10,6 @@ public class Monster extends Card {
         attack = atk;
         defense = def;
     }
-
     @Override
     public void tick() {
 
