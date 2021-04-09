@@ -10,7 +10,12 @@ public class Monster extends Card {
         attack = atk;
         defense = def;
     }
-
+    public int getAttack(){
+        return this.attack;
+    }
+    public int getDefense(){
+        return this.defense;
+    }
     @Override
     public void tick() {
 

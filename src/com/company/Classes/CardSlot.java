@@ -79,7 +79,7 @@ public class CardSlot extends GameObject{
         return this.height;
     }
     public boolean cardOnBoard(){
-        return this.hasCard;
+        return this.hasCard = this.card == null ? false : true;
     }
     public Card getCard(){
         return this.card;
