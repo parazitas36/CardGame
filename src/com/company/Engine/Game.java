@@ -26,6 +26,7 @@ public class Game implements Runnable{
 
     private CardSlot draggingSlot;
     private Card draggingCard;
+    private CardSlot chosenCardSlot;
 
     private ArrayList<Card> cards;
     private ID currentPlayer;
@@ -177,10 +178,13 @@ public class Game implements Runnable{
         }
 
     }
-    public void SlotClicked(Card card){
-        mouseHolding = true;
-        draggingCard = card;
-        System.out.println("Selected card: " + card);
+    public void SlotClicked(Card card, CardSlot slot){
+        if(card != null) {
+            mouseHolding = true;
+            draggingCard = card;
+            this.chosenCardSlot = slot;
+            System.out.println("Selected card: " + card);
+        }
     }
     public Card getCardWithID(ID id){
         for(Card c: cards){
@@ -197,8 +201,9 @@ public class Game implements Runnable{
 
         for(CardSlot c : player1_slots){
             if(display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(c.getId() != ID.Player1_Deck && c.getId().toString().contains(currentPlayer.toString())){
+                if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.toString())) && !c.cardOnBoard()){
                     c.setCard(draggingCard);
+                    this.chosenCardSlot.removeCard();
                 }
             }
         }
