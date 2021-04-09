@@ -50,6 +50,10 @@ public class Game implements Runnable{
         display = new Display(title, width, height);
         board = new Board(display);
         handler = new Handler();
+        Player player1 = new Player(30, 5, 1, ID.Player1);
+        Player player2 = new Player(30, 5, 2, ID.Player2);
+        handler.addObject(player1);
+        handler.addObject(player2);
 
         cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
 
