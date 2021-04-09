@@ -20,6 +20,12 @@ public class Monster extends Card {
     public void render(Graphics g) {
 
     }
+    public int getAttack(){
+        return this.attack;
+    }
+    public int getDef(){
+        return this.defense;
+    }
 
     @Override
     public String toString() {
