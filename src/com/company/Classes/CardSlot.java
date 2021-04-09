@@ -1,7 +1,6 @@
 package com.company.Classes;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class CardSlot extends GameObject{
     private Card card;
@@ -32,9 +31,17 @@ public class CardSlot extends GameObject{
     @Override
     public void render(Graphics g) {
         if(this.hasCard ) {
-            if(this.id.toString().contains("Player1") || this.id.toString().contains("Dragging_Slot")) { // Player1 cards
+            if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
-            }else{ // Player 2 cards
+            }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
+            {
+                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + 16, this.getY() + 155);
+                g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + 88, this.getY() + 155);
+            } else if(card.getID().toString() != ID.Monster.toString() && this.id.toString().contains("Player1_Slot")){
+                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+            }
+            else{
                 g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
             }
         }else if(deck != null){
