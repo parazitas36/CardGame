@@ -32,9 +32,9 @@ public class CardSlot extends GameObject{
     @Override
     public void render(Graphics g) {
         if(this.hasCard ) {
-            if(this.id.toString().contains("Player1") || this.id.toString().contains("Dragging_Slot")) {
+            if(this.id.toString().contains("Player1") || this.id.toString().contains("Dragging_Slot")) { // Player1 cards
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
-            }else{
+            }else{ // Player 2 cards
                 g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
             }
         }else if(deck != null){
@@ -72,7 +72,7 @@ public class CardSlot extends GameObject{
         return this.height;
     }
     public boolean cardOnBoard(){
-        return this.hasCard;
+        return this.hasCard = this.card == null ? false : true;
     }
     public Card getCard(){
         return this.card;
