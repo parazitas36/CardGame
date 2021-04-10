@@ -56,7 +56,7 @@ public class Game implements Runnable{
 
         BufferedImage backImg = null;
         try{
-            backImg = ImageIO.read(new File("src/com/company/Images/back.jpg"));
+            backImg = ImageIO.read(new File("src/com/company/Images/back.png"));
             boardImg = ImageIO.read(new File("src/com/company/Images/Board.png"));
         }catch (IOException e){
             e.printStackTrace();
