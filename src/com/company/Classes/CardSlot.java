@@ -9,6 +9,7 @@ public class CardSlot extends GameObject{
     private int width;
     private int height;
     private boolean hasCard = false;
+    public boolean attacking;
     public CardSlot(Card _card, int x, int y, ID slotID){
         super();
         setX(x);
@@ -16,6 +17,7 @@ public class CardSlot extends GameObject{
         card = _card;
         id = slotID;
         hasCard = card == null ? false : true;
+        attacking = false;
     }
     public CardSlot(Deck _deck, int x, int y, ID slotID){
         super();
@@ -42,6 +44,12 @@ public class CardSlot extends GameObject{
                 g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + 16, this.getY() + 155);
                 g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + 87, this.getY() + 155);
                 g.setFont(prevfont);
+                if(attacking == true){
+                    Color c = g.getColor();
+                    g.setColor(Color.RED);
+                    g.drawRect(this.getX() - 10, this.getY() - 10, this.getWidth() + 20, this.getHeight() + 20);
+                    g.setColor(c);
+                }
             } else if(card.getID().toString() != ID.Monster.toString() && this.id.toString().contains("Player1_Slot")){
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
             }

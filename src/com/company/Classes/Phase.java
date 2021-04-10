@@ -9,7 +9,6 @@ import java.io.IOException;
 
 public final class Phase {
 
-    public static boolean isMyTurn;
     public static int currentPhase = 1;
     private int currentRound;
     private static int phaseIconWidth = 50, phaseIconHeight = 50;
@@ -18,8 +17,11 @@ public final class Phase {
     private static int endTurnPosY;
     private boolean start, attack, end, enemy;
     private int width, height;
+    private Player player1;
+    private Player player2;
+    private Player currentPlayer;
     private BufferedImage phaseStartImg, phaseAttackImg, phaseEndImg, phaseEnemyTurnImg, currentPhaseImg, endTurnImg, endPhaseImg, currentEndImg;
-    public Phase(int w, int h){
+    public Phase(int w, int h, Player p1, Player p2){
         width = w;
         height = h;
         this.LoadImages();
@@ -29,6 +31,12 @@ public final class Phase {
         enemy = false;
         currentRound = 1;
         currentPhaseImg = phaseStartImg;
+        player1 = p1;
+        player1.setPhase(this);
+        player2 = p2;
+        player2.setPhase(this);
+        currentPlayer = p1;
+        startPhaseActions();
     }
 
     private void LoadImages(){
@@ -69,14 +77,27 @@ public final class Phase {
             enemy = true;
             end = false;
             currentPhaseImg = phaseEnemyTurnImg;
+            currentPlayer = currentPlayer == player1 ? player2 : player1;
+            startPhaseActions();
         }else if(this.enemyTurn()){
             start = true;
             enemy = false;
             currentRound++;
             currentPhaseImg = phaseStartImg;
+            currentPlayer = currentPlayer == player1 ? player2 : player1;
+            startPhaseActions();
         }
     }
-
+    public void startPhaseActions(){
+        if(currentRound > 1){
+            currentPlayer.addMana();
+            currentPlayer.refillMana();
+        }
+        currentPlayer.drawCard();
+    }
+    public Player getOpponent(){
+        return currentPlayer == player1 ? player2 : player1;
+    }
     // Leave this just in case
 //    public void NextPhase(){
 //        currentPhase++;
@@ -107,7 +128,9 @@ public final class Phase {
     public BufferedImage GetEndTurnImage(){
         return currentEndImg;
     }
-
+    public Player getCurrentPlayer(){
+        return this.currentPlayer;
+    }
     public int GetPhaseIconWidth(){
        return phaseIconWidth;
     }
@@ -132,13 +155,6 @@ public final class Phase {
         return endTurnPosY;
     }
 
-    public void StartPlayerTurn(){
-        currentPhase = 1;
-        isMyTurn = true;
-    }
-    private void StarEnemyTurn(){
-        isMyTurn = false;
-    }
     public boolean startPhase(){ return this.start; }
     public boolean attackPhase(){ return this.attack; }
     public boolean endPhase() { return this.end; }

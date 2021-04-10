@@ -31,7 +31,7 @@ public class Game implements Runnable{
     private CardSlot chosenCardSlot;
 
     private ArrayList<Card> cards;
-    private ID currentPlayer;
+    public Player currentPlayer;
     private Phase phase;
 
     private boolean mouseHolding;
@@ -53,7 +53,7 @@ public class Game implements Runnable{
         display = new Display(title, width, height);
         board = new Board(display);
         handler = new Handler();
-        phase = new Phase(width, height);
+
         BufferedImage backImg = null;
         try{
             backImg = ImageIO.read(new File("src/com/company/Images/back.jpg"));
@@ -85,18 +85,20 @@ public class Game implements Runnable{
         player2_slots.get(5).setDeck(opponentDeck);
         opponentDeck.shuffle();
 
-        player1 = new Player(30, 5, 1, ID.Player1, deck, player1_slots);
-        player2 = new Player(30, 5, 2, ID.Player2, opponentDeck, player2_slots);
+        player1 = new Player(ID.Player1, deck, player1_slots);
+        player2 = new Player(ID.Player2, opponentDeck, player2_slots);
+        phase = new Phase(width, height, player1, player2);
         handler.addObject(player1);
         handler.addObject(player2);
 
         handler.addObject(draggingSlot);
-        currentPlayer = ID.Player1;
+        currentPlayer = player1;
         System.out.println(deck.getDeck().size());
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
     private void tick(){
         handler.tick();
+        currentPlayer = phase.getCurrentPlayer();
     }
     private void render(){
         buffer = display.getCanvas().getBufferStrategy();
@@ -109,7 +111,7 @@ public class Game implements Runnable{
         g.drawImage(boardImg, 0, 0, width, height, null);
         g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX() - 20, phase.GetEndTurnPosY() + 15, phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight() - 30, null);
 
-        g.setColor(Color.WHITE);testImageDraw();
+        g.setColor(Color.WHITE);
         handler.render(g);
         testImageDraw();
         //-------------------------------
@@ -204,10 +206,14 @@ public class Game implements Runnable{
 
         for(CardSlot c : player1_slots){
             if(display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.toString())) && !c.cardOnBoard()){
-                    c.setCard(draggingCard);
-                    this.chosenCardSlot.removeCard();
-                    this.chosenCardSlot = null;
+                if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.getID().toString())) && !c.cardOnBoard()){
+                    //c.setCard(draggingCard);
+                    if(currentPlayer.placeCard(c, draggingCard)) {
+                        this.chosenCardSlot.removeCard();
+                        this.chosenCardSlot = null;
+                    }else{
+                        this.chosenCardSlot.setCard(draggingCard);
+                    }
                 }
             }else if(draggingCard != null && this.chosenCardSlot != null){
                 this.chosenCardSlot.setCard(draggingCard);
@@ -226,7 +232,9 @@ public class Game implements Runnable{
     // 3 cards for the first player and 4 for the second.
     //----------------------------------------------------------
     public int startOfTheGame(int draws){
-        player1.drawCard();
+        if(draws < 3) {
+            player1.drawCard();
+        }
         player2.drawCard();
         draws++;
         try {
@@ -241,7 +249,6 @@ public class Game implements Runnable{
     // of the turn, places the first card in the hand on the board.
     //--------------------------------------------------------
     public void enemyTurn(){
-        player2.drawCard();
         render();
         try {
             Thread.sleep(500);
@@ -256,6 +263,6 @@ public class Game implements Runnable{
             e.printStackTrace();
         }
         phase.nextPhase();
-        player1.drawCard();
+        //player1.drawCard();
     }
 }

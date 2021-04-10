@@ -6,15 +6,20 @@ import java.util.ArrayList;
 public class Player  extends GameObject{
     private int HP;
     private int Mana;
+    private int ManaCapacity;
     private int ManaStack;
+    private int ManaStackCapacity;
     private ID id;
     private Deck deck;
     private ArrayList<CardSlot> playerSlots;
     private int handSizeLimit, cardsInHand;
-    public Player(int hp, int mana, int manaStack, ID _id, Deck _deck, ArrayList<CardSlot> slots){
-        HP = hp;
-        Mana = mana;
-        ManaStack = manaStack;
+    private Phase phase;
+    public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots){
+        HP = 30;
+        Mana = 1;
+        ManaCapacity = 1;
+        ManaStack = 0;
+        ManaStackCapacity = 3;
         id = _id;
         deck = _deck;
         playerSlots = slots;
@@ -35,7 +40,9 @@ public class Player  extends GameObject{
     }
     public Deck getDeck() { return this.deck; }
     public int getCardsInHand() { return this.cardsInHand; }
-
+    public void setPhase(Phase _phase){
+        this.phase = _phase;
+    }
     public void drawCard(){
         Card card = deck.drawCard();
         for(int i = 0; i < playerSlots.size(); i++){
@@ -48,6 +55,35 @@ public class Player  extends GameObject{
                     break;
                 }
             }
+        }
+    }
+    public boolean placeCard(CardSlot slot, Card card){
+        if(Mana >= card.getManaCost()) {
+            slot.setCard(card);
+            cardsInHand--;
+            Mana = Mana - card.getManaCost();
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public void addMana(){
+        if(ManaCapacity < 5){
+            ManaCapacity++;
+        }
+    }
+    public void refillMana(){
+        Mana = ManaCapacity;
+    }
+    public void takeDamage(int damage){
+        HP-=damage;
+    }
+    public boolean attack(Monster attacker, Monster defender){
+        if(attacker.getAttack() >= defender.getDef()){
+            phase.getOpponent().takeDamage(attacker.getAttack() - defender.getDef());
+            return true;
+        }else{
+            return false;
         }
     }
     //--------------------------
@@ -85,7 +121,7 @@ public class Player  extends GameObject{
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), 10, 590);
             g.drawString(String.format("%s", getHP()), 7, 493);
-            g.drawString(String.format("%s", getManaStack()) + "/3", 76, 600);
+            g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), 76, 600);
             g.setFont(prevFont);
         }else{
             Font font = new Font("", Font.BOLD, 22);
