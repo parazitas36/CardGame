@@ -1,17 +1,25 @@
 package com.company.Classes;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Player  extends GameObject{
     private int HP;
     private int Mana;
     private int ManaStack;
     private ID id;
-    public Player(int hp, int mana, int manaStack, ID _id){
+    private Deck deck;
+    private ArrayList<CardSlot> playerSlots;
+    private int handSizeLimit, cardsInHand;
+    public Player(int hp, int mana, int manaStack, ID _id, Deck _deck, ArrayList<CardSlot> slots){
         HP = hp;
         Mana = mana;
         ManaStack = manaStack;
-        id = _id; // Player1 ir Player2 tures skirtingus id
+        id = _id;
+        deck = _deck;
+        playerSlots = slots;
+        handSizeLimit = 7;
+        cardsInHand = 0;
     }
     public ID getID(){
         return this.id;
@@ -25,7 +33,44 @@ public class Player  extends GameObject{
     public int getManaStack(){
         return this.ManaStack;
     }
+    public Deck getDeck() { return this.deck; }
+    public int getCardsInHand() { return this.cardsInHand; }
 
+    public void drawCard(){
+        Card card = deck.drawCard();
+        for(int i = 0; i < playerSlots.size(); i++){
+            CardSlot slot = playerSlots.get(i);
+            if(slot.getId().toString().contains(String.format("%s_HandSlot", this.id))){
+                if(!slot.cardOnBoard()&& handSizeLimit > cardsInHand){
+                    slot.setCard(card);
+                    cardsInHand++;
+                    System.out.println(String.format("Player: %s cards: %d", this.id.toString(), this.cardsInHand));
+                    break;
+                }
+            }
+        }
+    }
+    //--------------------------
+    //Use only for AI opponent
+    //--------------------------
+    public void setCardOnBoard(){
+        for(int i = 0; i < playerSlots.size(); i++){
+            CardSlot slot = playerSlots.get(i);
+            if(slot.getId().toString().contains(String.format("%s_HandSlot", this.id)) && slot.cardOnBoard()){
+                for(int j = 0; j < playerSlots.size(); j++){
+                    CardSlot tempSlot = playerSlots.get(j);
+                    if(tempSlot.getId().toString().contains(String.format("%s_Slot", this.id))){
+                        if(!tempSlot.cardOnBoard()){
+                            tempSlot.setCard(slot.getCard());
+                            slot.removeCard();
+                            cardsInHand--;
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
     @Override
     public void tick() {
 

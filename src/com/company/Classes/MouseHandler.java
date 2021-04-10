@@ -31,7 +31,7 @@ public class MouseHandler implements MouseListener {
                     Card card = c.getDeck().drawCard();
                     for(CardSlot slotas : cardSlots){
                         if(slotas.getId().toString().contains("Player1_HandSlot")){
-                            if(slotas.getCard() == null){
+                            if(slotas.getCard() == null && card != null){
                                 slotas.setCard(card);
                                 break;
                             }

@@ -14,8 +14,8 @@ import java.util.ArrayList;
 public class Game implements Runnable{
     private Display display;
     private String title;
-    private static int width = 1440;
-    private static int height = 980;
+    private int width;
+    private int height;
     private BufferedImage boardImg;
 
     private Thread thread;
@@ -23,6 +23,8 @@ public class Game implements Runnable{
 
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
+    private Player player1;
+    private Player player2;
 
     private CardSlot draggingSlot;
     private Card draggingCard;
@@ -30,6 +32,7 @@ public class Game implements Runnable{
 
     private ArrayList<Card> cards;
     private ID currentPlayer;
+    private Phase phase;
 
     private boolean mouseHolding;
     private Graphics g;
@@ -43,32 +46,14 @@ public class Game implements Runnable{
 
     public Game(String _title, int _width, int _height){
         title = _title;
-        // commenting not to break stuff
-        //width = _width;
-        //height = _height;
+        width = _width;
+        height = _height;
     }
     private void init(){
         display = new Display(title, width, height);
         board = new Board(display);
         handler = new Handler();
-        Player player1 = new Player(30, 5, 1, ID.Player1);
-        Player player2 = new Player(30, 5, 2, ID.Player2);
-        handler.addObject(player1);
-        handler.addObject(player2);
-
-        Phase.LoadImages();
-
-        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
-
-        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot);
-        draggingSlot.setWidth((int)(display.getWidth()*0.1));
-        draggingSlot.setHeight((int)(display.getHeight()*0.2));
-
-
-        player1_slots = board.getPlayer1_slots();
-        for(CardSlot s: player1_slots){
-            handler.addObject(s);
-        }
+        phase = new Phase(width, height);
         BufferedImage backImg = null;
         try{
             backImg = ImageIO.read(new File("src/com/company/Images/back.jpg"));
@@ -76,26 +61,37 @@ public class Game implements Runnable{
         }catch (IOException e){
             e.printStackTrace();
         }
-        deck = new Deck(cards.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cards, backImg);
-        player1_slots.get(5).setDeck(deck);
-        deck.shuffle();
-        currentPlayer = ID.Player1;
 
+        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot);
+        draggingSlot.setWidth((int)(display.getWidth()*0.1));
+        draggingSlot.setHeight((int)(display.getHeight()*0.2));
+
+        // Creates card slots for both players
+        player1_slots = board.getPlayer1_slots();
+        for(CardSlot s: player1_slots){
+            handler.addObject(s);
+        }
         player2_slots = board.getPlayer2_slots();
         for(CardSlot s: player2_slots){
             handler.addObject(s);
         }
 
+        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt"); // Reads cards data from file
+        deck = new Deck(cards.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cards, backImg);
+        player1_slots.get(5).setDeck(deck);
+        deck.shuffle();
+
         opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
         player2_slots.get(5).setDeck(opponentDeck);
+        opponentDeck.shuffle();
 
-        for(int i = 0; i < 5; i++){
-            player2_slots.get(i+6).setCard(opponentDeck.drawCard());
-        }
-
+        player1 = new Player(30, 5, 1, ID.Player1, deck, player1_slots);
+        player2 = new Player(30, 5, 2, ID.Player2, opponentDeck, player2_slots);
+        handler.addObject(player1);
+        handler.addObject(player2);
 
         handler.addObject(draggingSlot);
-
+        currentPlayer = ID.Player1;
         System.out.println(deck.getDeck().size());
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
@@ -109,16 +105,14 @@ public class Game implements Runnable{
             return;
         }
         g = buffer.getDrawGraphics();
-        // Piesiam
+        // Drawing
         g.drawImage(boardImg, 0, 0, width, height, null);
-        g.drawImage(Phase.GetCurrentPhaseImage(), Phase.GetEndTurnPosX() - Phase.GetEndTurnImgWidth(), Phase.GetEndTurnPosY(), Phase.GetPhaseIconWidth(), Phase.GetPhaseIconHeight(), null);
-        g.drawImage(Phase.GetEndTurnImage(), Phase.GetEndTurnPosX(), Phase.GetEndTurnPosY(), Phase.GetEndTurnImgWidth(), Phase.GetEndTurnImgHeight(), null);
+        g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX() - 20, phase.GetEndTurnPosY() + 15, phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight() - 30, null);
 
-        g.setColor(Color.WHITE);testImageDraw();testImageDraw();
+        g.setColor(Color.WHITE);testImageDraw();
         handler.render(g);
         testImageDraw();
-
-        //
+        //-------------------------------
         buffer.show();
         g.dispose();
     }
@@ -131,7 +125,7 @@ public class Game implements Runnable{
         double delta = 0;
         long now;
         long lastTime = System.nanoTime();
-
+        int draws = 0;
         while(running){
             now = System.nanoTime();
             delta += (now - lastTime) / timePerTick;
@@ -139,6 +133,12 @@ public class Game implements Runnable{
             if(delta >= 1){
                 tick();
                 render();
+                if(phase.startPhase() && phase.getCurrentRound() == 1 && draws < 4){
+                    draws = startOfTheGame(draws);
+                }
+                if(phase.enemyTurn()){
+                    enemyTurn();
+                }
                 delta--;
             }
             try {
@@ -170,14 +170,14 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("Title", 1440, 980);
+        Game game = new Game("UbiHard Card Game", 1440, 980);
         game.start();
     }
 
     public void testImageDraw(){
         BufferedImage img;
 
-        // Tempia korta
+        // Drags a card
         if(mouseHolding) {
             draggingSlot.setCard(draggingCard);
             draggingSlot.setX(display.getFrame().getMousePosition().x + dragginCardOffsetX);
@@ -197,16 +197,8 @@ public class Game implements Runnable{
             System.out.println("Selected card: " + card);
         }
     }
-    public Card getCardWithID(ID id){
-        for(Card c: cards){
-            if(c.getID() == id && id != ID.Player1_Deck){
-                return c;
-            }
-        }
-        return null;
-    }
 
-    // Padeda korta
+    // Places card on the board
     public void MouseReleased(){
         mouseHolding = false;
 
@@ -222,19 +214,48 @@ public class Game implements Runnable{
             }
         }
 
-        if (this.display.getFrame().getMousePosition().x >= Phase.GetEndTurnPosX() && this.display.getFrame().getMousePosition().x <= Phase.GetEndTurnPosX() + Phase.GetEndTurnImgWidth() && this.display.getFrame().getMousePosition().y <= Phase.GetEndTurnPosY() + Phase.GetEndTurnImgHeight() && this.display.getFrame().getMousePosition().y >= Phase.GetEndTurnPosY()) {
-            Phase.NextPhase();
+        if (this.display.getFrame().getMousePosition().x >= phase.GetEndTurnPosX() && this.display.getFrame().getMousePosition().x <= phase.GetEndTurnPosX() + phase.GetEndTurnImgWidth() && this.display.getFrame().getMousePosition().y <= phase.GetEndTurnPosY() + phase.GetEndTurnImgHeight() && this.display.getFrame().getMousePosition().y >= phase.GetEndTurnPosY()) {
+            phase.nextPhase();
             System.out.println("CLICKED END TURN");
         }
 
         draggingCard = null;
     }
-
-    public static int GetWidth(){
-        return width;
+    //----------------------------------------------------------
+    // Draws cards in the beginning of the game for each player,
+    // 3 cards for the first player and 4 for the second.
+    //----------------------------------------------------------
+    public int startOfTheGame(int draws){
+        player1.drawCard();
+        player2.drawCard();
+        draws++;
+        try {
+            Thread.sleep(500); // Draws a card and waits a little bit before drawing another one
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return draws;
     }
-
-    public static int GetHeight(){
-        return height;
+    //--------------------------------------------------------
+    // Imitation of enemy turn, draws a card at the beginning
+    // of the turn, places the first card in the hand on the board.
+    //--------------------------------------------------------
+    public void enemyTurn(){
+        player2.drawCard();
+        render();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        player2.setCardOnBoard();
+        render();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        phase.nextPhase();
+        player1.drawCard();
     }
 }
