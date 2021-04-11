@@ -180,7 +180,7 @@ public class Game implements Runnable{
         BufferedImage img;
 
         // Drags a card
-        if(mouseHolding) {
+        if(mouseHolding && display.getFrame().getMousePosition() != null) {
             draggingSlot.setCard(draggingCard);
             draggingSlot.setX(display.getFrame().getMousePosition().x + dragginCardOffsetX);
             draggingSlot.setY(display.getFrame().getMousePosition().y + dragginCardOffsetY);
