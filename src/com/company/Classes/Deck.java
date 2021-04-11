@@ -10,7 +10,6 @@ import java.util.Random;
 import java.util.Stack;
 
 public class Deck extends GameObject{
-     ArrayList <Card> cards;
     Stack<Card> deck;
     private int size;
     private BufferedImage image;
@@ -33,7 +32,12 @@ public class Deck extends GameObject{
 
     }
     public Card drawCard(){
-        return deck.pop();
+        if(getSize() != 0){
+            return deck.pop();
+        }else{
+            System.out.println("Deck is empty!");
+            return null;
+        }
     }
 
      public void shuffle() {
@@ -57,6 +61,10 @@ public class Deck extends GameObject{
     }
     public Stack getDeck(){
         return deck;
+    }
+    public int getSize(){
+        size = deck.size();
+        return size;
     }
 }
 
