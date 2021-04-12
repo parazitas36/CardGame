@@ -55,6 +55,12 @@ public class CardSlot extends GameObject{
             }
             else{
                 g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+                if(card.getID() == ID.Monster && this.getId().toString().contains("Player2_Slot")){
+                    g.setFont(newfont);
+                    g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + 16, this.getY() + 155);
+                    g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + 87, this.getY() + 155);
+                    g.setFont(prevfont);
+                }
             }
         }else if(deck != null){
             if(id.toString().contains("Player1")){
