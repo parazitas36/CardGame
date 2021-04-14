@@ -1,7 +1,5 @@
 package com.company.Classes;
 
-import com.company.Engine.Game;
-
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -37,6 +35,10 @@ public final class Phase {
         player2.setPhase(this);
         currentPlayer = p1;
         startPhaseActions();
+        phaseIconWidth = (int)(width * 0.1);
+        phaseIconHeight = (int)(height * 0.1);
+        endTurnImgWidth = (int)(width * 0.1);
+        endTurnImgHeight = (int)(height * 0.1);
     }
 
     private void LoadImages(){
@@ -51,8 +53,9 @@ public final class Phase {
             e.printStackTrace();
         }
 
-        endTurnPosX = width - (int)(1.5 * endTurnImgWidth);
-        endTurnPosY = height/2 - (int)(1.5 * endTurnImgHeight);
+        endTurnPosX = (int)(width * 0.86);
+        endTurnPosY = (int)(height * 0.35);
+        // endTurnPosY = height/2 - (int)(1.5 * endTurnImgHeight);
 
        // currentPhaseImg = phaseStartImg;
         //currentEndImg = endPhaseImg;

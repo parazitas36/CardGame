@@ -127,18 +127,18 @@ public class Player  extends GameObject{
         // draw mana in board
         Font prevFont = g.getFont();
         if(id == ID.Player1){
-            Font font = new Font("", Font.BOLD, 22);
+            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
             g.setFont(font);
-            g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.6));
+            g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.605));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.505));
-            g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.053), (int)(Height*0.62));
+            g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
             g.setFont(prevFont);
         }else{
-            Font font = new Font("", Font.BOLD, 22);
+            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.199));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.3));
-            g.drawString(String.format("%s", getManaStack()) + "/3", (int)(width * 0.053), (int)(Height*0.194));
+            g.drawString(String.format("%s", getManaStack()) + "/3", (int)(width * 0.054), (int)(Height*0.194));
             g.setFont(prevFont);
         }
     }

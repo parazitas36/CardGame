@@ -109,7 +109,7 @@ public class Game implements Runnable{
         g = buffer.getDrawGraphics();
         // Drawing
         g.drawImage(boardImg, 0, 0, width, height, null);
-        g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX() - 20, phase.GetEndTurnPosY() + 15, phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight() - 30, null);
+        g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX(), phase.GetEndTurnPosY(), phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight(), null);
 
         g.setColor(Color.WHITE);
         handler.render(g);
@@ -172,8 +172,9 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1920, 1080);
+        Game game = new Game("UbiHard Card Game", 800, 600);
         game.start();
+        // 1440x980
     }
 
     public void testImageDraw(){
