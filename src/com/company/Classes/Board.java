@@ -10,13 +10,15 @@ public class Board {
     private ArrayList<CardSlot> player2_slots;
     private Display display;
     private BufferStrategy buffer;
-    private int offsetYHand = 100;
-    private int offsetY = -100;
+    private int offsetYHand;
+    private int offsetY;
 
     public Board(Display _display){
         display = _display;
         player1_slots = new ArrayList<CardSlot>(5);
         player2_slots = new ArrayList<CardSlot>(5);
+        offsetY = (int)(display.getHeight()*(-0.1));
+        offsetYHand = (int)(display.getHeight()*(0.1));
         generateBoard();
     }
     private CardSlot generateSlot(double widthscale, double heightScale, int index, int firstId, int ii, int ij, int firstPos, ID id)
@@ -93,7 +95,7 @@ public class Board {
         for(int i = 0; i < handSize; i++){
             CardSlot slot;
             slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - handSize * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
-                    display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + (offsetY-150) - offsetYHand, ID.values()[23 + i]);
+                    display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + (offsetY-(int)(display.getHeight()*0.153)) - offsetYHand, ID.values()[23 + i]);
             slot.setWidth((int)(display.getWidth()*0.1));
             slot.setHeight((int)(display.getHeight()*0.2));
             player2_slots.add(slot);

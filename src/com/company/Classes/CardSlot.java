@@ -33,7 +33,7 @@ public class CardSlot extends GameObject{
     @Override
     public void render(Graphics g) {
         Font prevfont = g.getFont();
-        Font newfont = new Font("", Font.BOLD, 14);
+        Font newfont = new Font("", Font.BOLD, (int)((height + width) * 0.039));
         if(this.hasCard ) {
             if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
@@ -41,8 +41,8 @@ public class CardSlot extends GameObject{
             {
                 g.setFont(newfont);
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
-                g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + 16, this.getY() + 155);
-                g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + 87, this.getY() + 155);
+                g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
+                g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
                 g.setFont(prevfont);
                 if(attacking == true){
                     Color c = g.getColor();
@@ -57,8 +57,8 @@ public class CardSlot extends GameObject{
                 g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                 if(card.getID() == ID.Monster && this.getId().toString().contains("Player2_Slot")){
                     g.setFont(newfont);
-                    g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + 16, this.getY() + 155);
-                    g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + 87, this.getY() + 155);
+                    g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + (int)(this.getWidth() * 0.1111), this.getY() + (int)(this.getHeight() * 0.7908));
+                    g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
                     g.setFont(prevfont);
                 }
             }

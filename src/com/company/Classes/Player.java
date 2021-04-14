@@ -1,5 +1,7 @@
 package com.company.Classes;
 
+import com.company.Engine.Display;
+
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -14,7 +16,11 @@ public class Player  extends GameObject{
     private ArrayList<CardSlot> playerSlots;
     private int handSizeLimit, cardsInHand;
     private Phase phase;
-    public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots){
+    private Display display;
+
+
+
+    public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
         HP = 30;
         Mana = 1;
         ManaCapacity = 1;
@@ -25,6 +31,8 @@ public class Player  extends GameObject{
         playerSlots = slots;
         handSizeLimit = 7;
         cardsInHand = 0;
+        this.display = _display;
+
     }
     public ID getID(){
         return this.id;
@@ -114,21 +122,23 @@ public class Player  extends GameObject{
 
     @Override
     public void render(Graphics g) {
+        int width = display.getWidth();
+        int Height = display.getHeight();
         // draw mana in board
         Font prevFont = g.getFont();
         if(id == ID.Player1){
-            Font font = new Font("", Font.BOLD, 22);
+            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
             g.setFont(font);
-            g.drawString(String.format("%s", getMana()), 10, 590);
-            g.drawString(String.format("%s", getHP()), 7, 493);
-            g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), 76, 600);
+            g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.605));
+            g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.505));
+            g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
             g.setFont(prevFont);
         }else{
-            Font font = new Font("", Font.BOLD, 22);
+            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
             g.setFont(font);
-            g.drawString(String.format("%s", getMana()), 10, 195);
-            g.drawString(String.format("%s", getHP()), 7, 294);
-            g.drawString(String.format("%s", getManaStack()) + "/3", 77, 190);
+            g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.199));
+            g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.3));
+            g.drawString(String.format("%s", getManaStack()) + "/3", (int)(width * 0.054), (int)(Height*0.194));
             g.setFont(prevFont);
         }
     }
