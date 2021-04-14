@@ -10,13 +10,15 @@ public class Board {
     private ArrayList<CardSlot> player2_slots;
     private Display display;
     private BufferStrategy buffer;
-    private int offsetYHand = 100;
-    private int offsetY = -100;
+    private int offsetYHand;
+    private int offsetY;
 
     public Board(Display _display){
         display = _display;
         player1_slots = new ArrayList<CardSlot>(5);
         player2_slots = new ArrayList<CardSlot>(5);
+        offsetY = (int)(display.getHeight()*(-0.1));
+        offsetYHand = (int)(display.getHeight()*(0.1));
         generateBoard();
     }
     private CardSlot generateSlot(double widthscale, double heightScale, int index, int firstId, int ii, int ij, int firstPos, ID id)

@@ -85,8 +85,8 @@ public class Game implements Runnable{
         player2_slots.get(5).setDeck(opponentDeck);
         opponentDeck.shuffle();
 
-        player1 = new Player(ID.Player1, deck, player1_slots);
-        player2 = new Player(ID.Player2, opponentDeck, player2_slots);
+        player1 = new Player(ID.Player1, deck, player1_slots, display);
+        player2 = new Player(ID.Player2, opponentDeck, player2_slots, display);
         phase = new Phase(width, height, player1, player2);
         handler.addObject(player1);
         handler.addObject(player2);
@@ -172,7 +172,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1440, 980);
+        Game game = new Game("UbiHard Card Game", 1920, 1080);
         game.start();
     }
 
