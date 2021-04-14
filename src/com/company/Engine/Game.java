@@ -172,7 +172,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1920, 1080);
+        Game game = new Game("UbiHard Card Game", 800, 600);
         game.start();
     }
 

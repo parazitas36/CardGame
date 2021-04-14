@@ -6,10 +6,11 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class MouseHandler implements MouseListener {
+public class MouseHandler implements MouseListener, MouseMotionListener {
 
     private Canvas canvas;
     private Game game;
+    private CardSlot enteredSlot;
 
     ArrayList<CardSlot> cardSlots;
     CardSlot attacker;
@@ -17,11 +18,13 @@ public class MouseHandler implements MouseListener {
         canvas = canvas1;
         canvas.addMouseListener(this);
         attacker = null;
+        enteredSlot = null;
         this.cardSlots = slots1;
         for(CardSlot s : slots2){
             cardSlots.add(s);
         }
         this.game = game;
+        canvas.addMouseMotionListener(this);
     }
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -107,5 +110,27 @@ public class MouseHandler implements MouseListener {
 
     @Override
     public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        for(CardSlot c : cardSlots){
+            if(e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
+                if(c.getId().toString().contains(String.format("%s_HandSlot", ID.Player1.toString())) && enteredSlot == null){
+                    enteredSlot = c;
+                    enteredSlot.setY(enteredSlot.getY() - (int)(enteredSlot.getHeight()*0.6));
+                }
+            }
+        }
+        if(enteredSlot != null && (e.getX() < enteredSlot.getX() || e.getX() > enteredSlot.getX()+enteredSlot.getWidth() || e.getY() > enteredSlot.getY() + enteredSlot.getHeight() || e.getY() < enteredSlot.getY())){
+            enteredSlot.setY(enteredSlot.getY() + (int)(enteredSlot.getHeight()*0.6));
+            enteredSlot = null;
+        }
     }
 }
