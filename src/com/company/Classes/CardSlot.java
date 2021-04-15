@@ -37,6 +37,12 @@ public class CardSlot extends GameObject{
         if(this.hasCard ) {
             if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                if(this.getCard().getID() == ID.Monster) {
+                    g.setFont(newfont);
+                    g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
+                    g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
+                    g.setFont(prevfont);
+                }
             }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
             {
                 g.setFont(newfont);
