@@ -36,10 +36,11 @@ public class CardSlot extends GameObject{
     public void render(Graphics g) {
         Font prevfont = g.getFont();
         Font newfont = new Font("", Font.BOLD, (int)((height + width) * 0.039));
-        if(this.hasCard ) {
+        if(this.cardOnBoard() ) {
             if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
+                Card card = this.getCard();
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
-                if(this.getCard().getID() == ID.Monster) {
+                if(card.getID() == ID.Monster) {
                     g.setFont(newfont);
                     g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
                     g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
@@ -47,6 +48,7 @@ public class CardSlot extends GameObject{
                 }
             }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
             {
+                Card card = this.getCard();
                 g.setFont(newfont);
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
                 g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
@@ -59,11 +61,13 @@ public class CardSlot extends GameObject{
                     g.setColor(c);
                 }
             } else if(card.getID().toString() != ID.Monster.toString() && this.id.toString().contains("Player1_Slot")){
+                Card card = this.getCard();
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
             }
             else{
                 g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                 if(card.getID() == ID.Monster && this.getId().toString().contains("Player2_Slot")){
+                    Card card = this.getCard();
                     g.setFont(newfont);
                     g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + (int)(this.getWidth() * 0.1111), this.getY() + (int)(this.getHeight() * 0.7908));
                     g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));

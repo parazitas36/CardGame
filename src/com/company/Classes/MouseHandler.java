@@ -31,7 +31,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         //---------------------------------------
         // Cancels attack with right mouse click
         //---------------------------------------
-        if(e.getModifiers() == MouseEvent.BUTTON3_MASK && e.getClickCount() == 1){
+        if(e.getModifiers() == MouseEvent.BUTTON3_MASK){
             if(attacker != null){
                 attacker.attacking = false;
                 attacker = null;
@@ -40,7 +40,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         //---------------------------------------
 
         for(CardSlot c : cardSlots){
-            if((e.getModifiers() == MouseEvent.BUTTON1_MASK && e.getClickCount() == 1) && e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
+            if((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
                 if(c.cardOnBoard()){
                     System.out.println(c.getCard().getName());
                     //---------------------------------------
@@ -86,7 +86,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     @Override
     public void mousePressed(MouseEvent e) {
         for(CardSlot c : cardSlots){
-            if(e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
+            if((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
                 System.out.println("Pressed: " + c.getId());
                 //---------------------------------------
                 // Chooses a card which will be dragged
