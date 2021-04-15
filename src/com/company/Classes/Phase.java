@@ -55,10 +55,6 @@ public final class Phase {
 
         endTurnPosX = (int)(width * 0.86);
         endTurnPosY = (int)(height * 0.35);
-        // endTurnPosY = height/2 - (int)(1.5 * endTurnImgHeight);
-
-       // currentPhaseImg = phaseStartImg;
-        //currentEndImg = endPhaseImg;
 
         currentPhase = 1;
     }
@@ -67,7 +63,7 @@ public final class Phase {
             if(currentRound != 1){
                 attack = true;
                 currentPhaseImg = phaseAttackImg;
-            }else{ // Cannot attack during first round
+            }else{ // Cannot attack during the first round
                 end = true;
                 currentPhaseImg = phaseEndImg;
             }
@@ -81,7 +77,7 @@ public final class Phase {
             end = false;
             currentPhaseImg = phaseEnemyTurnImg;
             currentPlayer = currentPlayer == player1 ? player2 : player1;
-            startPhaseActions();
+            enemyTurnSequence();
         }else if(this.enemyTurn()){
             start = true;
             enemy = false;
@@ -91,38 +87,29 @@ public final class Phase {
             startPhaseActions();
         }
     }
+    public void enemyTurnSequence(){enemyStartPhase();}
+    public void enemyAttackPhase(){currentPlayer.attackAI();}
+    public void enemyStartPhase(){
+        startPhaseActions();
+        currentPlayer.setCardOnBoardAI(currentPlayer.pickCardAI());
+        enemyAttackPhase();
+    }
     public void startPhaseActions(){
         if(currentRound > 1){
             currentPlayer.addMana();
             currentPlayer.refillMana();
         }
         currentPlayer.drawCard();
+        for(int i = 0; i < currentPlayer.playerSlots.size(); i++){
+            CardSlot slot = currentPlayer.playerSlots.get(i);
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                slot.resetAttackedThisTurn();
+            }
+        }
     }
     public Player getOpponent(){
         return currentPlayer == player1 ? player2 : player1;
     }
-    // Leave this just in case
-//    public void NextPhase(){
-//        currentPhase++;
-//        if(currentPhase == 1){
-//            // start phase
-//            // add mana to the player
-//            currentPhaseImg = phaseStartImg;
-//            currentEndImg = endPhaseImg;
-//        }else if(currentPhase == 2){
-//            // attack phase
-//            currentPhaseImg = phaseAttackImg;
-//            currentEndImg = endPhaseImg;
-//        }else if(currentPhase == 3){
-//            // end phase
-//            currentPhaseImg = phaseEndImg;
-//            currentEndImg = endTurnImg;
-//        }else{
-//            // enemy turn
-//            currentPhaseImg = phaseEnemyTurnImg;
-//            StarEnemyTurn();
-//        }
-//    }
 
     public BufferedImage GetCurrentPhaseImage(){
         return currentPhaseImg;

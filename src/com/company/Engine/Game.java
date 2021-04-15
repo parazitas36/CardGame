@@ -94,6 +94,7 @@ public class Game implements Runnable{
         handler.addObject(draggingSlot);
         currentPlayer = player1;
         System.out.println(deck.getDeck().size());
+
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
     private void tick(){
@@ -172,7 +173,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 800, 600);
+        Game game = new Game("UbiHard Card Game", 1366, 758);
         game.start();
         // 1440x980
     }
@@ -256,13 +257,13 @@ public class Game implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        player2.setCardOnBoard();
-        render();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        //player2.setCardOnBoard();
+//        render();
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         phase.nextPhase();
         //player1.drawCard();
     }
