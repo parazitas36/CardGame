@@ -19,6 +19,17 @@ public class Buff extends Card{
         effect = eff;
         special = true;
     }
+    public int getEffectNum(){
+        return this.amount;
+    }
+    public String getEffect(){
+        return this.effect;
+    }
+//    public boolean isHP(){
+//        if(this.effect.equals("hp")){
+//
+//        }
+//    }
 
     @Override
     public void tick() {

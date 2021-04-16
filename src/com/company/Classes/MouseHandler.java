@@ -43,6 +43,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             if((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
                 if(c.cardOnBoard()){
                     System.out.println(c.getCard().getName());
+                    System.out.println(((Monster)c.getCard()).stunTime);
                     //---------------------------------------
                     // Chooses a monster which is going to attack.
                     //---------------------------------------
