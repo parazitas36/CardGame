@@ -26,6 +26,9 @@ public class Monster extends Card {
         defense += increase;
     }
 
+    public void removeStun() { stunTime--; }
+
+
     @Override
     public void render(Graphics g) {
 

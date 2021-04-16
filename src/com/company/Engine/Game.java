@@ -32,7 +32,7 @@ public class Game implements Runnable{
 
     private ArrayList<Card> cards;
     public Player currentPlayer;
-    private Phase phase;
+    public Phase phase;
 
     private boolean mouseHolding;
     private Graphics g;
@@ -96,6 +96,7 @@ public class Game implements Runnable{
         handler.addObject(draggingSlot);
         currentPlayer = player1;
         System.out.println(deck.getDeck().size());
+
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
     private void tick(){
@@ -151,7 +152,6 @@ public class Game implements Runnable{
                 e.printStackTrace();
             }
         }
-
         stop();
     }
     public synchronized void start(){
@@ -174,7 +174,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1920, 1080);
+        Game game = new Game("UbiHard Card Game", 1366, 768);
         game.start();
         // 1440x980
     }
@@ -251,7 +251,6 @@ public class Game implements Runnable{
                 this.chosenCardSlot.removeCard();
                 this.chosenCardSlot = null;
                 currentPlayer.decreaseCardsInHandCount();
-                System.out.println(((Monster)(c.getCard())).stunTime);
                 currentPlayer.decreaseMana(curse.getManaCost());
             }
         }

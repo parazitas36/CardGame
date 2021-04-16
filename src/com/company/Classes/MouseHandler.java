@@ -28,6 +28,15 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     }
     @Override
     public void mouseClicked(MouseEvent e) {
+        //-------------------------------------------------------------
+        // If it's not an attack phase, but attacker is still selected.
+        //-------------------------------------------------------------
+        if(!game.phase.attackPhase() && attacker != null){
+            attacker.attacking = false;
+            attacker = null;
+        }
+        //---------------------------------------
+
         //---------------------------------------
         // Cancels attack with right mouse click
         //---------------------------------------
@@ -47,7 +56,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                     //---------------------------------------
                     // Chooses a monster which is going to attack.
                     //---------------------------------------
-                    if(c.getId().toString().contains(String.format("%s_Slot", game.currentPlayer.getID().toString()))){
+                    if(game.phase.attackPhase() && c.getId().toString().contains(String.format("%s_Slot", game.currentPlayer.getID().toString()))){
                         if(c.getCard().getID() == ID.Monster && !c.attackedThisTurn()){
                             if(attacker == null){
                                 attacker = c;
@@ -69,10 +78,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                     //---------------------------------------
                     // Selects a monster which will be attacked.
                     //---------------------------------------
-                    else if(attacker != null && c.getCard().getID() == ID.Monster && c.getId().toString().contains(String.format("%s_Slot", ID.Player2.toString()))){
-                        if(game.currentPlayer.attack(attacker, c)){
-                            c.removeCard();
-                        }
+                    else if(game.phase.attackPhase() && attacker != null && c.getCard().getID() == ID.Monster && c.getId().toString().contains(String.format("%s_Slot", ID.Player2.toString()))){
+                        game.currentPlayer.attack(attacker, c);
                         attacker.attacking = false;
                         attacker = null;
                     }
@@ -105,7 +112,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     public void mouseReleased(MouseEvent e) {
         game.MouseReleased();
     }
-    boolean temp = false;
     @Override
     public void mouseEntered(MouseEvent e) {
     }

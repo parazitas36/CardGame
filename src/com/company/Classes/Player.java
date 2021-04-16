@@ -95,6 +95,12 @@ public class Player  extends GameObject{
             ManaCapacity++;
         }
     }
+    public void addHP(int amount){
+        HP += amount;
+    }
+    public void decreaseHP(int amount){
+        HP -= amount;
+    }
     public void refillMana(){
         Mana = ManaCapacity;
     }
@@ -104,9 +110,20 @@ public class Player  extends GameObject{
     public boolean attack(CardSlot attacker, CardSlot defender){
         Monster attMonster = (Monster)attacker.getCard();
         Monster defMonster = (Monster)defender.getCard();
-        if(attMonster.getAttack() >= defMonster.getDef()){
-            phase.getOpponent().takeDamage(attMonster.getAttack() - defMonster.getDef());
+        int damage = attMonster.getAttack() - defMonster.getDef();
+        if(damage > 0){
+            phase.getOpponent().takeDamage(damage);
             attacker.setAttackedThisTurn();
+            defender.removeCard();
+            return true;
+        }else if (damage == 0){
+            attacker.setAttackedThisTurn();
+            attacker.removeCard();
+            defender.removeCard();
+            return true;
+        }else if(damage < 0){
+            attacker.setAttackedThisTurn();
+            attacker.removeCard();
             return true;
         }else{
             return false;
@@ -119,11 +136,19 @@ public class Player  extends GameObject{
             return false;
         }
     }
+
+    public void decreaseCardsInHandCount(){
+        cardsInHand--;
+    }
+    public void decreaseMana(int decrease){
+        this.Mana -= decrease;
+    }
     //===================================
     // Use only for AI opponent
     //===================================
-    public void setCardOnBoardAI(CardSlot handSlot){
+    public boolean setCardOnBoardAI(CardSlot handSlot){
         Card card = handSlot.getCard();
+        boolean cardPlaced = false;
         if(handSlot != null) {
             for (int i = 0; i < playerBoardSlots.size(); i++) {
                 CardSlot slot = playerBoardSlots.get(i);
@@ -131,10 +156,12 @@ public class Player  extends GameObject{
                     Mana-=card.getManaCost();slot.setCard(card);
                     handSlot.removeCard();
                     cardsInHand--;
+                    cardPlaced = true;
                     break;
                 }
             }
         }
+        return cardPlaced;
     }
     public CardSlot pickCardAI(){
         CardSlot chosenCard = null;
@@ -203,8 +230,7 @@ public class Player  extends GameObject{
             }
             CardSlot monster = strongestMonsterInHandAI();
             if (monster != null) {
-                setCardOnBoardAI(monster);
-                continueLoop = true;
+                if(setCardOnBoardAI(monster)){ continueLoop = true; }
             }
         }
     }
@@ -215,7 +241,7 @@ public class Player  extends GameObject{
         CardSlot strongest = null;
         for(int i = 0; i < playerBoardSlots.size(); i++){
             CardSlot slot = playerBoardSlots.get(i);
-            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && ((Monster)slot.getCard()).stunTime == 0){
                 if(strongest == null || ((Monster)strongest.getCard()).getAttack() < ((Monster)slot.getCard()).getAttack()){
                     strongest = slot;
                 }

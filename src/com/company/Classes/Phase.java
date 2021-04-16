@@ -93,6 +93,13 @@ public final class Phase {
         startPhaseActions();
         currentPlayer.startPhaseSequenceAI();
         enemyAttackPhase();
+        for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){
+            CardSlot slot = currentPlayer.playerBoardSlots.get(i);
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && ((Monster)slot.getCard()).stunTime > 0){
+                ((Monster)slot.getCard()).removeStun();
+                System.out.println("Removed stun");
+            }
+        }
     }
     public void startPhaseActions(){
         if(currentRound > 1){
@@ -107,11 +114,9 @@ public final class Phase {
             }
         }
         currentPlayer.drawCard();
-        for(int i = 0; i < currentPlayer.playerSlots.size(); i++){
-            CardSlot slot = currentPlayer.playerSlots.get(i);
-            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
-                slot.resetAttackedThisTurn();
-            }
+        for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){
+            CardSlot slot = currentPlayer.playerBoardSlots.get(i);
+            slot.resetAttackedThisTurn();
         }
     }
     public Player getOpponent(){
