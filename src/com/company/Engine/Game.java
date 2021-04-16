@@ -80,6 +80,8 @@ public class Game implements Runnable{
         deck = new Deck(cards.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cards, backImg);
         player1_slots.get(5).setDeck(deck);
         deck.shuffle();
+        cards = new ArrayList<>();
+        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
 
         opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
         player2_slots.get(5).setDeck(opponentDeck);

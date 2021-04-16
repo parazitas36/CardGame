@@ -25,6 +25,11 @@ public class Buff extends Card{
     public String getEffect(){
         return this.effect;
     }
+//    public boolean isHP(){
+//        if(this.effect.equals("hp")){
+//
+//        }
+//    }
 
     @Override
     public void tick() {
