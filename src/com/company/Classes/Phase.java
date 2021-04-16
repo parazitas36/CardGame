@@ -91,7 +91,7 @@ public final class Phase {
     public void enemyAttackPhase(){currentPlayer.attackAI();}
     public void enemyStartPhase(){
         startPhaseActions();
-        currentPlayer.setCardOnBoardAI(currentPlayer.pickCardAI());
+        currentPlayer.startPhaseSequenceAI();
         enemyAttackPhase();
     }
     public void startPhaseActions(){
