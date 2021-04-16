@@ -266,7 +266,6 @@ public class Player  extends GameObject{
                 phase.getOpponent().takeDamage(damage);
                 attacker.setAttackedThisTurn();
                 defender.removeCard();
-                attacker.removeCard();
             }else if(damage == 0){
                 int attackerPower = ((Monster)attacker.getCard()).getAttack() + ((Monster)attacker.getCard()).getDef();
                 int defenderPower = ((Monster)defender.getCard()).getAttack() + ((Monster)defender.getCard()).getDef();
