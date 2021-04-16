@@ -172,7 +172,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 800, 600);
+        Game game = new Game("UbiHard Card Game", 1366, 768);
         game.start();
         // 1440x980
     }
@@ -200,6 +200,41 @@ public class Game implements Runnable{
             System.out.println("Selected card: " + card);
         }
     }
+    public void buffLogic(CardSlot c){
+        if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff)
+        {
+            Buff buff = ((Buff)(draggingCard));
+            if(buff.getEffect().equals("atk")){
+                ((Monster)(c.getCard())).IncreaseAtk(buff.getEffectNum());
+                this.chosenCardSlot.removeCard();
+                this.chosenCardSlot = null;
+            }else if(buff.getEffect().equals("def")){
+                ((Monster)(c.getCard())).IncreaseDef(buff.getEffectNum());
+                this.chosenCardSlot.removeCard();
+                this.chosenCardSlot = null;
+            }else  if(buff.getEffect().equals("hp")){
+                phase.getCurrentPlayer().addHP(buff.getEffectNum());
+                this.chosenCardSlot.removeCard();
+                this.chosenCardSlot = null;
+            }
+        }
+    }
+    public void curseLogic(CardSlot c){
+        Curse curse = ((Curse)(draggingCard));
+        if(curse.getEffect().equals("hp")){
+            System.out.println(phase.getCurrentPlayer().getID().toString());
+            System.out.println(phase.getOpponent().getHP());
+            phase.getOpponent().decreaseHP(curse.getEffectNum());
+            this.chosenCardSlot.removeCard();
+            this.chosenCardSlot = null;
+        }else if(curse.getEffect().equals("destroy")){
+            if(c.getId().toString().contains(phase.getOpponent().getID().toString())){
+                c.removeCard();
+                this.chosenCardSlot.removeCard();
+                this.chosenCardSlot = null;
+            }
+        }
+    }
 
     // Places card on the board
     public void MouseReleased(){
@@ -207,7 +242,11 @@ public class Game implements Runnable{
 
         for(CardSlot c : player1_slots){
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.getID().toString())) && !c.cardOnBoard()){
+                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff) {
+                    buffLogic(c);
+                }else if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse){
+                    curseLogic(c);
+                }else if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.getID().toString())) && !c.cardOnBoard()){
                     //c.setCard(draggingCard);
                     if(currentPlayer.placeCard(c, draggingCard)) {
                         this.chosenCardSlot.removeCard();

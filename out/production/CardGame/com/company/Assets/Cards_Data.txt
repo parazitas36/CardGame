@@ -12,7 +12,7 @@ M;Monster 11;4;src/com/company/Images/Card_Monster_11.png;6;4
 M;Monster 12;5;src/com/company/Images/Card_Monster_12.png;4;6
 M;Monster 13;3;src/com/company/Images/Card_Monster_13.png;5;5
 M;Super;7;src/com/company/Images/Card_Monster_SUPER.png;8;8
-C;Bleed;1;src/com/company/Images/Card_Curse_HP-.png;hp;-
+C;Bleed;1;src/com/company/Images/Card_Curse_HP-.png;hp;2
 C;Destroy;1;src/com/company/Images/Card_Curses.png;destroy
 C;Stun;1;src/com/company/Images/Card_Curses_Stun.png;stun
 B;Att+1;1;src/com/company/Images/Card_Buff_Att_1.png;atk;1

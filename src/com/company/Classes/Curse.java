@@ -17,4 +17,10 @@ public class Curse extends Card{
         special = false;
         amount = _amount;
     }
+    public int getEffectNum(){
+        return this.amount;
+    }
+    public String getEffect(){
+        return this.effect;
+    }
 }

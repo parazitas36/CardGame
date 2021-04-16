@@ -3,7 +3,6 @@ package com.company.Utils;
 import com.company.Classes.*;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -75,10 +74,10 @@ public class CardReader {
                 //--------------------------------------------
                 case "C":
                     String eff = values[4];
-                    if(!eff.equals("atk") && !eff.equals("def")){
+                    if(!eff.equals("atk") && !eff.equals("def") && !eff.equals("hp")){
                         Card curse = new Curse(name, manaCost, ID.Curse, img, eff);
                         cards.add(curse);
-                    }else{
+                    } else{
                         int amount = Integer.parseInt(values[5]);
                         Card curse = new Curse(name, manaCost, ID.Curse, img, eff, amount);
                         cards.add(curse);

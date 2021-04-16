@@ -14,6 +14,12 @@ public class Monster extends Card {
     public void tick() {
 
     }
+    public void IncreaseAtk(int increase){
+        attack += increase;
+    }
+    public void IncreaseDef(int increase){
+        defense += increase;
+    }
 
     @Override
     public void render(Graphics g) {

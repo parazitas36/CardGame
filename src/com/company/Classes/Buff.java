@@ -19,6 +19,12 @@ public class Buff extends Card{
         effect = eff;
         special = true;
     }
+    public int getEffectNum(){
+        return this.amount;
+    }
+    public String getEffect(){
+        return this.effect;
+    }
 
     @Override
     public void tick() {

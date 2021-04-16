@@ -80,6 +80,12 @@ public class Player  extends GameObject{
             ManaCapacity++;
         }
     }
+    public void addHP(int amount){
+        HP += amount;
+    }
+    public void decreaseHP(int amount){
+        HP -= amount;
+    }
     public void refillMana(){
         Mana = ManaCapacity;
     }
