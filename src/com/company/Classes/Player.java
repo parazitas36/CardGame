@@ -107,6 +107,12 @@ public class Player  extends GameObject{
             return false;
         }
     }
+    public void decreaseCardsInHandCount(){
+        cardsInHand--;
+    }
+    public void decreaseMana(int decrease){
+        this.Mana -= decrease;
+    }
     //--------------------------
     //Use only for AI opponent
     //--------------------------
@@ -188,7 +194,7 @@ public class Player  extends GameObject{
         if(attacker != null && defender != null){
             System.out.println("ATK: " + attacker.getCard().toString());
             System.out.println("DEF: " + defender.getCard().toString());
-            if(((Monster)attacker.getCard()).getAttack() >= ((Monster)defender.getCard()).getDef()) {
+            if(((Monster)attacker.getCard()).getAttack() >= ((Monster)defender.getCard()).getDef() && ((Monster) attacker.getCard()).stunTime == 0) {
                 phase.getOpponent().takeDamage( ((Monster)attacker.getCard()).getAttack() - ((Monster)defender.getCard()).getDef() );
                 attacker.setAttackedThisTurn();
                 defender.removeCard();

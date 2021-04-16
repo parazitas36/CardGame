@@ -174,7 +174,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1366, 768);
+        Game game = new Game("UbiHard Card Game", 1920, 1080);
         game.start();
         // 1440x980
     }
@@ -210,14 +210,20 @@ public class Game implements Runnable{
                 ((Monster)(c.getCard())).IncreaseAtk(buff.getEffectNum());
                 this.chosenCardSlot.removeCard();
                 this.chosenCardSlot = null;
+                currentPlayer.decreaseCardsInHandCount();
+                currentPlayer.decreaseMana(buff.getManaCost());
             }else if(buff.getEffect().equals("def")){
                 ((Monster)(c.getCard())).IncreaseDef(buff.getEffectNum());
                 this.chosenCardSlot.removeCard();
                 this.chosenCardSlot = null;
+                currentPlayer.decreaseCardsInHandCount();
+                currentPlayer.decreaseMana(buff.getManaCost());
             }else  if(buff.getEffect().equals("hp")){
                 phase.getCurrentPlayer().addHP(buff.getEffectNum());
                 this.chosenCardSlot.removeCard();
                 this.chosenCardSlot = null;
+                currentPlayer.decreaseCardsInHandCount();
+                currentPlayer.decreaseMana(buff.getManaCost());
             }
         }
     }
@@ -229,11 +235,24 @@ public class Game implements Runnable{
             phase.getOpponent().decreaseHP(curse.getEffectNum());
             this.chosenCardSlot.removeCard();
             this.chosenCardSlot = null;
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(curse.getManaCost());
         }else if(curse.getEffect().equals("destroy")){
             if(c.getId().toString().contains(phase.getOpponent().getID().toString())){
                 c.removeCard();
                 this.chosenCardSlot.removeCard();
                 this.chosenCardSlot = null;
+                currentPlayer.decreaseCardsInHandCount();
+                currentPlayer.decreaseMana(curse.getManaCost());
+            }
+        }else if(curse.getEffect().equals("stun")){
+            if(c.getId().toString().contains(phase.getOpponent().getID().toString())){
+                ((Monster)(c.getCard())).addStun();
+                this.chosenCardSlot.removeCard();
+                this.chosenCardSlot = null;
+                currentPlayer.decreaseCardsInHandCount();
+                System.out.println(((Monster)(c.getCard())).stunTime);
+                currentPlayer.decreaseMana(curse.getManaCost());
             }
         }
     }
