@@ -297,13 +297,13 @@ public class Game implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        player2.setCardOnBoard();
-        render();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        //player2.setCardOnBoard();
+//        render();
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         phase.nextPhase();
         //player1.drawCard();
     }
