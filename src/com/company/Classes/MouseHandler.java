@@ -65,6 +65,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                                 attacker.attacking = false;
                                 attacker = c;
                                 attacker.attacking = true;
+                                game.setAttacking(c.getCard().getID());
+                                // TODO HERE
                             }
                         }else{
                             if(attacker != null) {

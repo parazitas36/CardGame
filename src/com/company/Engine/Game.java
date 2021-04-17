@@ -39,6 +39,8 @@ public class Game implements Runnable{
     private BufferStrategy buffer;
     private Handler handler;
 
+    private double deltaTime;
+
     Board board;
     Deck deck;
     Deck opponentDeck;
@@ -99,7 +101,38 @@ public class Game implements Runnable{
 
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
+    public double animTimer = 0;
+    public boolean inAnimation = true;
+    public ID animationCardID;
+    double animX, animY;
+
+    public void setAttacking(ID id){
+        inAnimation = true;
+        animationCardID = id;
+        animTimer = 0;
+    }
+
     private void tick(){
+        if(inAnimation){
+            animTimer += 1;
+            if(animTimer < 100){
+                animY -= (1 - animTimer / 100);
+            }else if(animTimer < 200){
+                animY += 1;
+            }else{
+                inAnimation = false;
+                animY = 0;
+            }
+            int intID;
+            if(animationCardID == ID.Player1_Slot1) intID = 6;
+            else{
+                intID = 6;
+            }
+            board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animX);
+            board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animY);
+        }
+
+
         handler.tick();
         currentPlayer = phase.getCurrentPlayer();
     }
