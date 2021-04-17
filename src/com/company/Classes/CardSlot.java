@@ -36,6 +36,7 @@ public class CardSlot extends GameObject{
     public void render(Graphics g) {
         Font prevfont = g.getFont();
         Font newfont = new Font("", Font.BOLD, (int)((height + width) * 0.039));
+
         if(this.cardOnBoard() ) {
             Card card = this.getCard();
             if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
