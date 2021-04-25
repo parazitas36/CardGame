@@ -124,12 +124,13 @@ public class Game implements Runnable{
                 animY = 0;
             }
             int intID;
-            if(animationCardID == ID.Player1_Slot1) intID = 6;
+            if(animationCardID == ID.Player1_Slot1) intID = 20;
             else{
-                intID = 6;
+                intID = 20;
+                System.out.println("ANIM: " + board.getPlayer1_slots().get(intID));
             }
-            board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animX);
-            board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animY);
+            board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animX);
+            board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animY);
         }
 
 
