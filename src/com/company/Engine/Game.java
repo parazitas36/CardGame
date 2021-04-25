@@ -116,11 +116,13 @@ public class Game implements Runnable{
     private void tick(){
         if(inAnimation){
             animTimer += 1;
+            // TODO move to animationHandler
+            // swap animation direction if enemy
             if(animTimer < 50){
-                animY -= (1 - (animTimer / 50)) * 4f;
+                animY -= (1 - (animTimer / 50)) * 7f;
                 animX += targetX * (animTimer/100);
             }else if(animTimer < 100){
-                animY += (1 - ((animTimer - 50) / 50)) * 4f;
+                animY += (1 - ((animTimer - 50) / 50)) * 7f;
                 animX -= targetX * ((animTimer-50)/100);
             }else{
                 inAnimation = false;
