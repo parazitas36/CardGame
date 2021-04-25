@@ -45,10 +45,21 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 attacker.attacking = false;
                 attacker = null;
             }
+            for(int ia = 0; ia < 26; ia++){
+                if(cardSlots.get(ia) != null && cardSlots.get(ia).getCard() != null && cardSlots.get(ia).getCard().getID() != null) {
+                    System.out.println("NOT NULL " + ia);
+                    //game.setAttacking(cardSlots.get(ia).getCard().getID(), 0);
+                }
+            }
+            game.setAttacking(cardSlots.get(6).getCard().getID(), 6);
+
+
         }
         //---------------------------------------
 
+        int index = 0;
         for(CardSlot c : cardSlots){
+            index++;
             if((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
                 if(c.cardOnBoard()){
                     System.out.println(c.getCard().getName());
@@ -65,7 +76,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                                 attacker.attacking = false;
                                 attacker = c;
                                 attacker.attacking = true;
-                                game.setAttacking(c.getCard().getID());
+                                game.setAttacking(ID.Monster_1, index-1);
                                 // TODO HERE
                             }
                         }else{
