@@ -32,7 +32,7 @@ public class Game implements Runnable{
 
     private ArrayList<Card> cards;
     public Player currentPlayer;
-    private Phase phase;
+    public Phase phase;
 
     private boolean mouseHolding;
     private Graphics g;
@@ -80,6 +80,8 @@ public class Game implements Runnable{
         deck = new Deck(cards.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cards, backImg);
         player1_slots.get(5).setDeck(deck);
         deck.shuffle();
+        cards = new ArrayList<>();
+        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
 
         opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
         player2_slots.get(5).setDeck(opponentDeck);
@@ -94,6 +96,7 @@ public class Game implements Runnable{
         handler.addObject(draggingSlot);
         currentPlayer = player1;
         System.out.println(deck.getDeck().size());
+
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
     private void tick(){
@@ -149,7 +152,6 @@ public class Game implements Runnable{
                 e.printStackTrace();
             }
         }
-
         stop();
     }
     public synchronized void start(){
@@ -172,7 +174,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 800, 600);
+        Game game = new Game("UbiHard Card Game", 1366, 768);
         game.start();
         // 1440x980
     }
@@ -207,16 +209,43 @@ public class Game implements Runnable{
 
         for(CardSlot c : player1_slots){
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.getID().toString())) && !c.cardOnBoard()){
-                    //c.setCard(draggingCard);
-                    if(currentPlayer.placeCard(c, draggingCard)) {
-                        this.chosenCardSlot.removeCard();
-                        this.chosenCardSlot = null;
-                    }else{
-                        this.chosenCardSlot.setCard(draggingCard);
+                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
+                    if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
+                        chosenCardSlot.removeCard();
+                        chosenCardSlot = null;
+                    }
+                    //Curse logika
+                }else if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse){
+                    if(((Curse)(draggingCard)).curseLogic(c, phase.getCurrentPlayer(), phase.getOpponent())){
+                        chosenCardSlot.removeCard();
+                        chosenCardSlot = null;
+                    }
+                    //Buff logika
+                }else if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.getID().toString())) && !c.cardOnBoard()){
+                    if(draggingCard.getID() != ID.Buff && draggingCard.getID() != ID.Curse){
+                        //c.setCard(draggingCard);
+                        if(currentPlayer.placeCard(c, draggingCard)) {
+                            this.chosenCardSlot.removeCard();
+                            this.chosenCardSlot = null;
+                        }else{
+                            this.chosenCardSlot.setCard(draggingCard);
+                        }
                     }
                 }
-            }else if(draggingCard != null && this.chosenCardSlot != null){
+                //Curse hp logikia
+            }else if(draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
+                Curse curse = ((Curse)(draggingCard));
+                if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
+                    curse.hpCurseLogic(c, phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
+                }
+                //Buff hp logika
+            }else if(draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
+                Buff buff = ((Buff)(draggingCard));
+                if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
+                    buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot);
+                }
+            }
+            else if(draggingCard != null && this.chosenCardSlot != null){
                 this.chosenCardSlot.setCard(draggingCard);
             }
         }
@@ -256,13 +285,13 @@ public class Game implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        player2.setCardOnBoard();
-        render();
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        //player2.setCardOnBoard();
+//        render();
+//        try {
+//            Thread.sleep(500);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         phase.nextPhase();
         //player1.drawCard();
     }

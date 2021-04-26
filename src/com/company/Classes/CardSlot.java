@@ -9,7 +9,8 @@ public class CardSlot extends GameObject{
     private int width;
     private int height;
     private boolean hasCard = false;
-    public boolean attacking;
+    public boolean attacking; // flag to check if monster is in attacking position (marks this monster with a red rectangle)
+    private boolean attackedThisTurn; // flag to check if monster attacked this turn already
     public CardSlot(Card _card, int x, int y, ID slotID){
         super();
         setX(x);
@@ -18,6 +19,7 @@ public class CardSlot extends GameObject{
         id = slotID;
         hasCard = card == null ? false : true;
         attacking = false;
+        attackedThisTurn = false;
     }
     public CardSlot(Deck _deck, int x, int y, ID slotID){
         super();
@@ -34,9 +36,16 @@ public class CardSlot extends GameObject{
     public void render(Graphics g) {
         Font prevfont = g.getFont();
         Font newfont = new Font("", Font.BOLD, (int)((height + width) * 0.039));
-        if(this.hasCard ) {
+        if(this.cardOnBoard() ) {
+            Card card = this.getCard();
             if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
                 g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                if(card.getID() == ID.Monster) {
+                    g.setFont(newfont);
+                    g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
+                    g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
+                    g.setFont(prevfont);
+                }
             }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
             {
                 g.setFont(newfont);
@@ -105,4 +114,7 @@ public class CardSlot extends GameObject{
     public Deck getDeck(){
         return this.deck;
     }
+    public void setAttackedThisTurn(){ attackedThisTurn = true; }
+    public void resetAttackedThisTurn() { attackedThisTurn = false; }
+    public boolean attackedThisTurn() { return attackedThisTurn; }
 }
