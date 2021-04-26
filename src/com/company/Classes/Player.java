@@ -194,7 +194,7 @@ public class Player  extends GameObject{
         if(attacker != null && defender != null){
             System.out.println("ATK: " + attacker.getCard().toString());
             System.out.println("DEF: " + defender.getCard().toString());
-            if(((Monster)attacker.getCard()).getAttack() >= ((Monster)defender.getCard()).getDef() && ((Monster) attacker.getCard()).stunTime == 0) {
+            if(((Monster)attacker.getCard()).getAttack() >= ((Monster)defender.getCard()).getDef() && ((Monster) attacker.getCard()).getStunTime() == 0) {
                 phase.getOpponent().takeDamage( ((Monster)attacker.getCard()).getAttack() - ((Monster)defender.getCard()).getDef() );
                 attacker.setAttackedThisTurn();
                 defender.removeCard();
