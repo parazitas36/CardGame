@@ -59,6 +59,7 @@ public final class Phase {
         currentPhase = 1;
     }
     public void nextPhase(){
+        System.out.println(currentPhase);
         if(this.startPhase()){
             if(currentRound != 1){
                 attack = true;

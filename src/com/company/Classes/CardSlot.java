@@ -11,6 +11,7 @@ public class CardSlot extends GameObject{
     private boolean hasCard = false;
     public boolean attacking; // flag to check if monster is in attacking position (marks this monster with a red rectangle)
     private boolean attackedThisTurn; // flag to check if monster attacked this turn already
+    private double animationOffsetX, animationOffsetY;
     public CardSlot(Card _card, int x, int y, ID slotID){
         super();
         setX(x);
@@ -36,10 +37,11 @@ public class CardSlot extends GameObject{
     public void render(Graphics g) {
         Font prevfont = g.getFont();
         Font newfont = new Font("", Font.BOLD, (int)((height + width) * 0.039));
+
         if(this.cardOnBoard() ) {
             Card card = this.getCard();
             if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
-                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
                 if(card.getID() == ID.Monster) {
                     g.setFont(newfont);
                     g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
@@ -49,7 +51,7 @@ public class CardSlot extends GameObject{
             }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
             {
                 g.setFont(newfont);
-                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
                 g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
                 g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
                 g.setFont(prevfont);
@@ -60,10 +62,10 @@ public class CardSlot extends GameObject{
                     g.setColor(c);
                 }
             } else if(card.getID().toString() != ID.Monster.toString() && this.id.toString().contains("Player1_Slot")){
-                g.drawImage(card.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
             }
             else{
-                g.drawImage(card.getImage(), this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+                g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                 if(card.getID() == ID.Monster && this.getId().toString().contains("Player2_Slot")){
                     g.setFont(newfont);
                     g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + (int)(this.getWidth() * 0.1111), this.getY() + (int)(this.getHeight() * 0.7908));
@@ -73,9 +75,9 @@ public class CardSlot extends GameObject{
             }
         }else if(deck != null){
             if(id.toString().contains("Player1")){
-                g.drawImage(deck.getImage(),this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                g.drawImage(deck.getImage(),(int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
             }else{
-                g.drawImage(deck.getImage(),this.getX(), this.getY() + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+                g.drawImage(deck.getImage(),(int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
             }
         }
     }
@@ -117,4 +119,7 @@ public class CardSlot extends GameObject{
     public void setAttackedThisTurn(){ attackedThisTurn = true; }
     public void resetAttackedThisTurn() { attackedThisTurn = false; }
     public boolean attackedThisTurn() { return attackedThisTurn; }
+    public void SetAnimationOffsetX(double value) {animationOffsetX = value;}
+    public void SetAnimationOffsetY(double value) {animationOffsetY = value;}
+
 }
