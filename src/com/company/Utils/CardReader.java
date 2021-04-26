@@ -12,11 +12,8 @@ import java.util.Collections;
 import java.util.Scanner;
 
 public class CardReader {
-
-
     public static ArrayList<Card> Read(String path) {
         ArrayList<Card> cards = new ArrayList<>();
-
         Scanner scan = null;
         try {
             scan = new Scanner(new File(path));

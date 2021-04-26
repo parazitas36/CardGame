@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class Monster extends Card {
     private int attack,defense;
-    private int stunTime;
+    public int stunTime;
     public Monster(String name, int manaCost,  ID id,  int atk, int def, BufferedImage img) {
         super(name, manaCost,id, img);
         attack = atk;
@@ -20,7 +20,6 @@ public class Monster extends Card {
         attack += increase;
     }
     public void addStun(){ stunTime++; }
-    public void removeStun(){ stunTime = 0; }
     public int getStunTime(){return stunTime; }
     public void IncreaseDef(int increase){
         defense += increase;

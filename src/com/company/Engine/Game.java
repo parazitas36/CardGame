@@ -32,7 +32,7 @@ public class Game implements Runnable{
 
     private ArrayList<Card> cards;
     public Player currentPlayer;
-    private Phase phase;
+    public Phase phase;
 
     private boolean mouseHolding;
     private Graphics g;
@@ -152,7 +152,6 @@ public class Game implements Runnable{
                 e.printStackTrace();
             }
         }
-
         stop();
     }
     public synchronized void start(){
@@ -175,7 +174,7 @@ public class Game implements Runnable{
         }
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1920, 1080);
+        Game game = new Game("UbiHard Card Game", 1366, 768);
         game.start();
         // 1440x980
     }
