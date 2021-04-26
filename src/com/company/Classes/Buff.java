@@ -19,7 +19,41 @@ public class Buff extends Card{
         effect = eff;
         special = true;
     }
+    public int getEffectNum(){
+        return this.amount;
+    }
+    public String getEffect(){
+        return this.effect;
+    }
+//    public boolean isHP(){
+//        if(this.effect.equals("hp")){
+//
+//        }
+//    }
 
+    public Boolean buffLogic(CardSlot c, Player currentPlayer){
+        if(effect.equals("atk") && getManaCost() <= currentPlayer.getMana()){
+            ((Monster)(c.getCard())).IncreaseAtk(this.amount);
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(getManaCost());
+            return  true;
+        }else if(effect.equals("def") && getManaCost() <= currentPlayer.getMana()){
+            ((Monster)(c.getCard())).IncreaseDef(getEffectNum());
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(getManaCost());
+            return  true;
+        }
+        return false;
+    }
+    public void hpBuffLogic(CardSlot c, Player currentPlayer, CardSlot chosenCardSlot){
+        if(getManaCost() <= currentPlayer.getMana()){
+            currentPlayer.addHP(amount);
+            chosenCardSlot.removeCard();
+            chosenCardSlot = null;
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(getManaCost());
+        }
+    }
     @Override
     public void tick() {
 

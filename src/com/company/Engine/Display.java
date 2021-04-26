@@ -1,11 +1,7 @@
 package com.company.Engine;
 
-import com.company.Utils.DragCard;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Dimension2D;
-import java.awt.geom.Rectangle2D;
 
 public class Display {
     private JFrame frame;
