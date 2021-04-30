@@ -24,6 +24,7 @@ public class Curse extends Card{
         return this.effect;
     }
     public boolean curseLogic(CardSlot c, Player currentPlayer, Player opponent){
+        System.out.println("Current: " + currentPlayer.getID() + " opp" + opponent.getID());
         if(getEffect().equals("destroy")){
             if(c.getId().toString().contains(opponent.getID().toString())){
                 c.removeCard();

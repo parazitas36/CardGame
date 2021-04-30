@@ -19,6 +19,7 @@ public class Player  extends GameObject{
     private int handSizeLimit, cardsInHand;
     private Phase phase;
     private Display display;
+    public Player opponent;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
         HP = 30;
         if(_id == ID.Player2){ // Just for testing reasons
@@ -37,6 +38,7 @@ public class Player  extends GameObject{
         this.display = _display;
 
     }
+    public void setOpponent(Player opp){ this.opponent = opp;}
     public ID getID(){
         return this.id;
     }
@@ -321,14 +323,14 @@ public class Player  extends GameObject{
         // draw mana in board
         Font prevFont = g.getFont();
         if(id == ID.Player1){
-            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
+            Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.605));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.505));
             g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
             g.setFont(prevFont);
         }else{
-            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
+            Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.199));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.3));
