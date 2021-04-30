@@ -243,7 +243,7 @@ public class Player  extends GameObject{
         CardSlot strongest = null;
         for(int i = 0; i < playerBoardSlots.size(); i++){
             CardSlot slot = playerBoardSlots.get(i);
-            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && ((Monster)slot.getCard()).stunTime == 0){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && ((Monster)slot.getCard()).stunTime == 0 && !slot.attackedThisTurn()){
                 if(strongest == null || ((Monster)strongest.getCard()).getAttack() < ((Monster)slot.getCard()).getAttack()){
                     strongest = slot;
                 }
@@ -280,6 +280,36 @@ public class Player  extends GameObject{
             return null;
         }
     }
+
+    /*
+        Finds the second strongest opponent monster on the board which could be defeated by the strongest AI monster.
+     */
+    private CardSlot secondStrongestOpponentPossibleToDefeatAI(){
+        if(strongestAttackerAI() != null) { // If there are no AI monsters on the board.
+            Monster strongestAttacker = (Monster)strongestAttackerAI().getCard();
+            Player opponent = phase.getOpponent();
+            CardSlot strongestOpp = strongestOpponentPossibleToDefeatAI();
+            CardSlot secondStrongest = null;
+            Monster secondStrongestMonster = null;
+            for (int i = 0; i < opponent.playerBoardSlots.size(); i++) {
+                CardSlot slot = opponent.playerBoardSlots.get(i);
+                if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                    Monster slotMonster = ((Monster)slot.getCard());
+                    // If the strongest opponent monster is null or it's power(atk+def) is less than the monster's power on the board slot ->"slot",
+                    // then the strongest opponent monster is on the board slot -> "slot".
+                    if(slot.getId() != strongestOpp.getId() && ( secondStrongest == null || (secondStrongestMonster.getAttack() + secondStrongestMonster.getDef()) <
+                            (slotMonster.getAttack() + slotMonster.getDef()) ) && strongestAttacker.getAttack() >= slotMonster.getDef() ){
+                        secondStrongest = slot;
+                        secondStrongestMonster = (Monster)secondStrongest.getCard();
+                    }
+                }
+            }
+            return secondStrongest;
+        }else{
+            return null;
+        }
+    }
+
     //--------------------------------
     // AI's attack logic.
     //--------------------------------
@@ -302,6 +332,17 @@ public class Player  extends GameObject{
                     attacker.setAttackedThisTurn();
                     defender.removeCard();
                     attacker.removeCard();
+                }else{
+                    attacker.setAttackedThisTurn();
+                    attackAI();
+//                    defender = secondStrongestOpponentPossibleToDefeatAI();
+//                    if(defender != null){
+//                        damage = ((Monster)attacker.getCard()).getAttack() - ((Monster)defender.getCard()).getDef();
+//                        if(damage > 0){
+//                            attacker.setAttackedThisTurn();
+//                            defender.removeCard();
+//                        }
+//                    }
                 }
             }
         }
