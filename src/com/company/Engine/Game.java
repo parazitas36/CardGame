@@ -39,6 +39,8 @@ public class Game implements Runnable{
     private BufferStrategy buffer;
     private Handler handler;
 
+    private double deltaTime;
+
     Board board;
     Deck deck;
     Deck opponentDeck;
@@ -99,7 +101,48 @@ public class Game implements Runnable{
 
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
+    public double animTimer = 0;
+    public boolean inAnimation = false;
+    public ID animationCardID;
+    double animX, animY;
+    public int intID;
+    public void setAttacking(int index){
+        inAnimation = true;
+//        animationCardID = id;
+        intID = index;
+        animTimer = 0;
+    }
+    public int targetX = 0, targetY = 200;
     private void tick(){
+        if(inAnimation){
+            animTimer += 1;
+            // TODO move to animationHandler
+            // swap animation direction if enemy
+            if(animTimer < 50){
+                animY -= (1 - (animTimer / 50)) * 7f;
+                animX += targetX * (animTimer/100);
+            }else if(animTimer < 100){
+                animY += (1 - ((animTimer - 50) / 50)) * 7f;
+                animX -= targetX * ((animTimer-50)/100);
+            }else{
+                inAnimation = false;
+                animY = 0;
+            }
+
+            if(!phase.enemyTurn()){
+                System.out.println("ANIM1: ");
+                board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animX);
+                board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animY);
+            }
+            else{
+                System.out.println("ANIM2: ");
+                board.getPlayer2_slots().get(intID).SetAnimationOffsetX(animX);
+                board.getPlayer2_slots().get(intID).SetAnimationOffsetY(animY);
+            }
+
+        }
+
+
         handler.tick();
         currentPlayer = phase.getCurrentPlayer();
     }
@@ -237,12 +280,14 @@ public class Game implements Runnable{
                 Curse curse = ((Curse)(draggingCard));
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
                     curse.hpCurseLogic(c, phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
+                    break;
                 }
                 //Buff hp logika
             }else if(draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
                 Buff buff = ((Buff)(draggingCard));
                 if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
                     buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot);
+                    break;
                 }
             }
             else if(draggingCard != null && this.chosenCardSlot != null){
