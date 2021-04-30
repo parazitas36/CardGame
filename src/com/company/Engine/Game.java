@@ -106,8 +106,9 @@ public class Game implements Runnable{
     public ID animationCardID;
     double animX, animY;
     public int intID;
-    public void setAttacking( int index){
+    public void setAttacking(int index){
         inAnimation = true;
+//        animationCardID = id;
         intID = index;
         animTimer = 0;
     }
@@ -279,12 +280,14 @@ public class Game implements Runnable{
                 Curse curse = ((Curse)(draggingCard));
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
                     curse.hpCurseLogic(c, phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
+                    break;
                 }
                 //Buff hp logika
             }else if(draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
                 Buff buff = ((Buff)(draggingCard));
                 if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
                     buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot);
+                    break;
                 }
             }
             else if(draggingCard != null && this.chosenCardSlot != null){
