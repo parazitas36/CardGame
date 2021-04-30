@@ -121,7 +121,7 @@ public final class Phase {
         }
     }
     public Player getOpponent(){
-        return currentPlayer == player1 ? player2 : player1;
+        return currentPlayer.opponent;
     }
 
     public BufferedImage GetCurrentPhaseImage(){

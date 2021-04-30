@@ -19,6 +19,7 @@ public class Player  extends GameObject{
     private int handSizeLimit, cardsInHand;
     private Phase phase;
     private Display display;
+    public Player opponent;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
         HP = 30;
         if(_id == ID.Player2){ // Just for testing reasons
@@ -37,6 +38,7 @@ public class Player  extends GameObject{
         this.display = _display;
 
     }
+    public void setOpponent(Player opp){ this.opponent = opp;}
     public ID getID(){
         return this.id;
     }
