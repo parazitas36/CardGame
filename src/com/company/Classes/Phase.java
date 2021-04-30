@@ -123,6 +123,13 @@ public final class Phase {
     public Player getOpponent(){
         return currentPlayer.opponent;
     }
+    public boolean weHaveAWinner(){
+        if(currentPlayer.getHP() <= 0 || currentPlayer.opponent.getHP() <= 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     public BufferedImage GetCurrentPhaseImage(){
         return currentPhaseImg;

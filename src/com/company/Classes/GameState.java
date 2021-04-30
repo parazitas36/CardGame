@@ -11,7 +11,7 @@ public class GameState {
     public int imgW, imgH, imgYButtonOffSet, imgX, imgYOffSet;
     public GameState(int width, int height){
         isMenu = true;
-        isGame = isLoading = startGame = isOptions = false;
+        someoneWon = isGame = isLoading = startGame = isOptions = false;
         w=width;
         h=height;
         imgW = (int)(w*0.2); // width of the button
@@ -32,7 +32,7 @@ public class GameState {
         }
     }
 
-    public boolean isMenu, isOptions, isGame, startGame, isLoading, overStartButton, overOptionsButton, overExitButton;
+    public boolean isMenu, isOptions, isGame, startGame, isLoading, overStartButton, overOptionsButton, overExitButton, someoneWon;
 
     public void render(Graphics g){
         g.drawImage(menuBackgroundImg, 0, 0, w, h, null);

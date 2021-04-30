@@ -55,6 +55,9 @@ public class CardSlot extends GameObject{
                 g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
                 g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
                 g.setFont(prevfont);
+                if(((Monster) card).stunTime > 0){
+                    g.drawImage(((Monster) card).stunnedImg, this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                }
                 if(attacking == true){
                     Color c = g.getColor();
                     g.setColor(Color.RED);
@@ -71,6 +74,9 @@ public class CardSlot extends GameObject{
                     g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + (int)(this.getWidth() * 0.1111), this.getY() + (int)(this.getHeight() * 0.7908));
                     g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
                     g.setFont(prevfont);
+                    if(((Monster) card).stunTime > 0){
+                        g.drawImage(((Monster) card).stunnedImg, this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                    }
                 }
             }
         }else if(deck != null){

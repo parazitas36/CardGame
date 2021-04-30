@@ -33,6 +33,7 @@ public class Game implements Runnable{
     private ArrayList<CardSlot> player2_slots;
     private Player player1;
     private Player player2;
+    private Player winner;
 
     private CardSlot draggingSlot;
     private Card draggingCard;
@@ -169,6 +170,15 @@ public class Game implements Runnable{
         if(gameState.isGame) {
             handler.tick();
             currentPlayer = phase.getCurrentPlayer();
+            if(phase.weHaveAWinner()){
+                gameState.isGame = false;
+                gameState.isMenu = true;
+                if(currentPlayer.getHP() <= 0){
+                    System.out.println(currentPlayer.opponent.getID().toString() + " won!");
+                }else if(currentPlayer.opponent.getHP() <= 0) {
+                    System.out.println(currentPlayer.getID().toString() + " won!");
+                }
+            }
         }
     }
     public void render(){

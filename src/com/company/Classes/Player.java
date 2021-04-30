@@ -21,9 +21,9 @@ public class Player  extends GameObject{
     private Display display;
     public Player opponent;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
-        HP = 30;
+        HP = 10;
         if(_id == ID.Player2){ // Just for testing reasons
-            HP = 11;
+            HP = 5;
         }
         Mana = 1;
         ManaCapacity = 1;
