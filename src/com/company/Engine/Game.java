@@ -106,9 +106,8 @@ public class Game implements Runnable{
     public ID animationCardID;
     double animX, animY;
     public int intID;
-    public void setAttacking(ID id, int index){
+    public void setAttacking( int index){
         inAnimation = true;
-        animationCardID = id;
         intID = index;
         animTimer = 0;
     }
