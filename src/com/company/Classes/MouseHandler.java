@@ -28,6 +28,17 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     }
     @Override
     public void mouseClicked(MouseEvent e) {
+        if(game.gameState.isMenu){
+
+            if (game.display.getFrame().getMousePosition() != null && this.game.display.getFrame().getMousePosition().x >= 0 && this.game.display.getFrame().getMousePosition().x <= 1000 && this.game.display.getFrame().getMousePosition().y <= 1000 && this.game.display.getFrame().getMousePosition().y >= 0) {
+                // gameState.isMenu = false;
+                System.out.println("EXITING GAME");
+                game.running = false;
+                //System.out.println("STARTING GAME");
+            }
+
+            return;
+        }
         //-------------------------------------------------------------
         // If it's not an attack phase, but attacker is still selected.
         //-------------------------------------------------------------
@@ -102,10 +113,15 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 }
             }
         }
+
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if(game.gameState.isMenu){
+
+            return;
+        }
         for(CardSlot c : cardSlots){
             if((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
                 System.out.println("Pressed: " + c.getId());
@@ -123,6 +139,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
+        if(game.gameState.isMenu){
+
+            return;
+        }
         game.MouseReleased();
     }
     @Override
@@ -141,6 +161,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        if(game.gameState.isMenu){
+
+            return;
+        }
+
         for(CardSlot c : cardSlots){
             if(e.getX() >= c.getX() && e.getX() <= c.getX()+c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()){
                 //--------------------------------------------------------

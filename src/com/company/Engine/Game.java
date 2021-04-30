@@ -12,14 +12,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Game implements Runnable{
-    private Display display;
+    public Display display;
     private String title;
     private int width;
     private int height;
-    private BufferedImage boardImg;
+    private BufferedImage boardImg,
+                          menuBackgroundImg,
+                          menuButton_StartGame,
+                          menuButton_Options,
+                          menuButton_Exit;
 
     private Thread thread;
-    private boolean running;
+    public boolean running;
 
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
@@ -39,6 +43,8 @@ public class Game implements Runnable{
     private BufferStrategy buffer;
     private Handler handler;
 
+    public GameState gameState;
+
     private double deltaTime;
 
     Board board;
@@ -50,6 +56,8 @@ public class Game implements Runnable{
         title = _title;
         width = _width;
         height = _height;
+        gameState = new GameState();
+
     }
     private void init(){
         display = new Display(title, width, height);
@@ -60,6 +68,11 @@ public class Game implements Runnable{
         try{
             backImg = ImageIO.read(new File("src/com/company/Images/back.png"));
             boardImg = ImageIO.read(new File("src/com/company/Images/Board.png"));
+            menuBackgroundImg = ImageIO.read(new File("src/com/company/Images/MenuBackgroundImg.png"));
+            menuButton_StartGame = ImageIO.read(new File("src/com/company/Images/MenuButton_Start.png"));
+            menuButton_Options = ImageIO.read(new File("src/com/company/Images/MenuButton_Options.png"));
+            menuButton_Exit = ImageIO.read(new File("src/com/company/Images/MenuButton_Exit.png"));
+
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -101,6 +114,7 @@ public class Game implements Runnable{
 
         new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
     }
+
     public double animTimer = 0;
     public boolean inAnimation = false;
     public ID animationCardID;
@@ -154,12 +168,20 @@ public class Game implements Runnable{
         }
         g = buffer.getDrawGraphics();
         // Drawing
-        g.drawImage(boardImg, 0, 0, width, height, null);
-        g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX(), phase.GetEndTurnPosY(), phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight(), null);
+        if(gameState.isMenu){
+            g.drawImage(menuBackgroundImg, 0, 0, width, height, null);
+            g.drawImage(menuButton_StartGame, width/2 - 100, height/2 - 200, 200, 100, null);
+            g.drawImage(menuButton_Options, width/2 - 100, height/2 + width/10 - 200, 200, 100, null);
+            g.drawImage(menuButton_Exit, width/2 - 100, height/2 + 2*(width/10)- 200, 200, 100, null);
 
-        g.setColor(Color.WHITE);
-        handler.render(g);
-        testImageDraw();
+        }else{
+            g.drawImage(boardImg, 0, 0, width, height, null);
+            g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX(), phase.GetEndTurnPosY(), phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight(), null);
+
+            g.setColor(Color.WHITE);
+            handler.render(g);
+            DrawDraggingCard();
+        }
         //-------------------------------
         buffer.show();
         g.dispose();
@@ -212,6 +234,7 @@ public class Game implements Runnable{
         running = false;
         try{
             thread.join();
+            //display.getFrame().dispose(); does nothing
         } catch (InterruptedException e){
             e.printStackTrace();
         }
@@ -222,7 +245,7 @@ public class Game implements Runnable{
         // 1440x980
     }
 
-    public void testImageDraw(){
+    public void DrawDraggingCard(){
         BufferedImage img;
 
         // Drags a card
@@ -248,6 +271,8 @@ public class Game implements Runnable{
 
     // Places card on the board
     public void MouseReleased(){
+
+
         mouseHolding = false;
 
         for(CardSlot c : player1_slots){
