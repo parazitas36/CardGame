@@ -323,14 +323,14 @@ public class Player  extends GameObject{
         // draw mana in board
         Font prevFont = g.getFont();
         if(id == ID.Player1){
-            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
+            Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.605));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.505));
             g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
             g.setFont(prevFont);
         }else{
-            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
+            Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.199));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.3));

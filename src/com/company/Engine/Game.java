@@ -175,8 +175,8 @@ public class Game implements Runnable{
         g = buffer.getDrawGraphics();
         // Drawing
         if(gameState.isMenu){
-            g.drawImage(menuBackgroundImg, 0, 0, width, height, null);
-           gameState.render(g);
+            //g.drawImage(menuBackgroundImg, 0, 0, width, height, null);
+            gameState.render(g);
         }else if(gameState.isLoading){
             g.drawImage(display.loadingIMG, 0, 0, width, height, null);
         }

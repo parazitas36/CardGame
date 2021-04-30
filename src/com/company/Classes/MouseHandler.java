@@ -30,7 +30,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 System.out.println("Start");
                 game.gameState.isMenu = false;
                 game.gameState.isLoading = true;
-                game.render();
                 game.startGame();
                 game.gameState.isLoading = false;
                 game.gameState.isGame = true;
@@ -76,7 +75,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                         //---------------------------------------
                         // Chooses a monster which is going to attack.
                         //---------------------------------------
-                        if (game.phase.attackPhase() && c.getId().toString().contains(String.format("%s_Slot", game.currentPlayer.getID().toString()))) {
+                        if (game.phase.attackPhase()) {
                             if (c.getCard().getID() == ID.Monster && !c.attackedThisTurn()) {
                                 if (attacker == null) {
                                     attacker = c;
@@ -173,7 +172,21 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     @Override
     public void mouseMoved(MouseEvent e) {
         if(game.gameState.isMenu){
-
+            if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + game.gameState.imgH && e.getY() >= game.gameState.imgYOffSet){
+                game.gameState.overStartButton = true;
+            }else{
+                game.gameState.overStartButton = false;
+            }
+            if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 2*game.gameState.imgH + game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + game.gameState.imgH + game.gameState.imgYButtonOffSet){
+                game.gameState.overOptionsButton = true;
+            }else{
+                game.gameState.overOptionsButton = false;
+            }
+            if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 3*game.gameState.imgH + 2*game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + 2*game.gameState.imgH + 2*game.gameState.imgYButtonOffSet){
+                game.gameState.overExitButton = true;
+            }else{
+                game.gameState.overExitButton = false;
+            }
             return;
         }
         if(game.gameState.isGame) {
