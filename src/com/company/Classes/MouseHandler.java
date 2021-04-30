@@ -51,7 +51,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                     //game.setAttacking(cardSlots.get(ia).getCard().getID(), 0);
                 }
             }
-            game.setAttacking(cardSlots.get(6).getCard().getID(), 6);
+            game.setAttacking(6);
 
 
         }
@@ -76,7 +76,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                                 attacker.attacking = false;
                                 attacker = c;
                                 attacker.attacking = true;
-                                game.setAttacking(ID.Monster_1, index-1);
+                                game.setAttacking(index-1);
                                 // TODO HERE
                             }
                         }else{
