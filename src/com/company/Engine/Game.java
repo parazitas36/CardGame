@@ -245,59 +245,6 @@ public class Game implements Runnable{
             System.out.println("Selected card: " + card);
         }
     }
-    public void buffLogic(CardSlot c){
-        if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff)
-        {
-            Buff buff = ((Buff)(draggingCard));
-            if(buff.getEffect().equals("atk")){
-                ((Monster)(c.getCard())).IncreaseAtk(buff.getEffectNum());
-                this.chosenCardSlot.removeCard();
-                this.chosenCardSlot = null;
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(buff.getManaCost());
-            }else if(buff.getEffect().equals("def")){
-                ((Monster)(c.getCard())).IncreaseDef(buff.getEffectNum());
-                this.chosenCardSlot.removeCard();
-                this.chosenCardSlot = null;
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(buff.getManaCost());
-            }else  if(buff.getEffect().equals("hp")){
-                phase.getCurrentPlayer().addHP(buff.getEffectNum());
-                this.chosenCardSlot.removeCard();
-                this.chosenCardSlot = null;
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(buff.getManaCost());
-            }
-        }
-    }
-    public void curseLogic(CardSlot c){
-        Curse curse = ((Curse)(draggingCard));
-        if(curse.getEffect().equals("hp")){
-            System.out.println(phase.getCurrentPlayer().getID().toString());
-            System.out.println(phase.getOpponent().getHP());
-            phase.getOpponent().decreaseHP(curse.getEffectNum());
-            this.chosenCardSlot.removeCard();
-            this.chosenCardSlot = null;
-            currentPlayer.decreaseCardsInHandCount();
-            currentPlayer.decreaseMana(curse.getManaCost());
-        }else if(curse.getEffect().equals("destroy")){
-            if(c.getId().toString().contains(phase.getOpponent().getID().toString())){
-                c.removeCard();
-                this.chosenCardSlot.removeCard();
-                this.chosenCardSlot = null;
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(curse.getManaCost());
-            }
-        }else if(curse.getEffect().equals("stun")){
-            if(c.getId().toString().contains(phase.getOpponent().getID().toString())){
-                ((Monster)(c.getCard())).addStun();
-                this.chosenCardSlot.removeCard();
-                this.chosenCardSlot = null;
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(curse.getManaCost());
-            }
-        }
-    }
 
     // Places card on the board
     public void MouseReleased(){
@@ -305,20 +252,43 @@ public class Game implements Runnable{
 
         for(CardSlot c : player1_slots){
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff) {
-                    buffLogic(c);
+                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
+                    if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
+                        chosenCardSlot.removeCard();
+                        chosenCardSlot = null;
+                    }
+                    //Curse logika
                 }else if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse){
-                    curseLogic(c);
+                    if(((Curse)(draggingCard)).curseLogic(c, phase.getCurrentPlayer(), phase.getOpponent())){
+                        chosenCardSlot.removeCard();
+                        chosenCardSlot = null;
+                    }
+                    //Buff logika
                 }else if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.getID().toString())) && !c.cardOnBoard()){
-                    //c.setCard(draggingCard);
-                    if(currentPlayer.placeCard(c, draggingCard)) {
-                        this.chosenCardSlot.removeCard();
-                        this.chosenCardSlot = null;
-                    }else{
-                        this.chosenCardSlot.setCard(draggingCard);
+                    if(draggingCard.getID() != ID.Buff && draggingCard.getID() != ID.Curse){
+                        //c.setCard(draggingCard);
+                        if(currentPlayer.placeCard(c, draggingCard)) {
+                            this.chosenCardSlot.removeCard();
+                            this.chosenCardSlot = null;
+                        }else{
+                            this.chosenCardSlot.setCard(draggingCard);
+                        }
                     }
                 }
-            }else if(draggingCard != null && this.chosenCardSlot != null){
+                //Curse hp logikia
+            }else if(draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
+                Curse curse = ((Curse)(draggingCard));
+                if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
+                    curse.hpCurseLogic(c, phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
+                }
+                //Buff hp logika
+            }else if(draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
+                Buff buff = ((Buff)(draggingCard));
+                if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
+                    buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot);
+                }
+            }
+            else if(draggingCard != null && this.chosenCardSlot != null){
                 this.chosenCardSlot.setCard(draggingCard);
             }
         }

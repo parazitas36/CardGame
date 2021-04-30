@@ -19,9 +19,8 @@ public class Monster extends Card {
     public void IncreaseAtk(int increase){
         attack += increase;
     }
-    public void addStun(){
-        stunTime++;
-    }
+    public void addStun(){ stunTime++; }
+    public int getStunTime(){return stunTime; }
     public void IncreaseDef(int increase){
         defense += increase;
     }
