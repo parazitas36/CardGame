@@ -332,11 +332,20 @@ public class Game implements Runnable{
             }
         }
         for(CardSlot c : currentPlayer.opponent.playerBoardSlots){
+            int x = c.getX(); int y = c.getY();
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()) {
                 if (draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
                     if (((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
+                        drawffect(x, y, destroy);
+                        TimeBefore = 0;
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
+
                     }
                 }
             }
