@@ -4,6 +4,7 @@ import com.company.Classes.*;
 import com.company.Utils.CardReader;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -17,6 +18,8 @@ public class Game implements Runnable{
     private int width;
     private int height;
     private BufferedImage boardImg;
+    private Image destroy;
+    long TimeBefore = 0;
 
     private Thread thread;
     private boolean running;
@@ -58,6 +61,8 @@ public class Game implements Runnable{
 
         BufferedImage backImg = null;
         try{
+//            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
             backImg = ImageIO.read(new File("src/com/company/Images/back.png"));
             boardImg = ImageIO.read(new File("src/com/company/Images/Board.png"));
         }catch (IOException e){
@@ -245,6 +250,14 @@ public class Game implements Runnable{
             System.out.println("Selected card: " + card);
         }
     }
+    public void drawffect(int x, int y, Image image){
+        if(TimeBefore < 500){
+            TimeBefore = System.nanoTime();
+        }
+        while((System.nanoTime() - TimeBefore)/1000000000 <  1){
+            g.drawImage(image, x, y, 130, 160, null);
+        }
+    }
 
     // Places card on the board
     public void MouseReleased(){
@@ -252,16 +265,26 @@ public class Game implements Runnable{
 
         for(CardSlot c : player1_slots){
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
+                int x = c.getX();
+                int y = c.getY();
+                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff && c.getId().toString().contains(currentPlayer.getID().toString())){
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
                     }
                     //Curse logika
                 }else if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse){
+
                     if(((Curse)(draggingCard)).curseLogic(c, phase.getCurrentPlayer(), phase.getOpponent())){
+                        drawffect(x, y, destroy);
+                        TimeBefore = 0;
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                     //Buff logika
                 }else if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.getID().toString())) && !c.cardOnBoard()){

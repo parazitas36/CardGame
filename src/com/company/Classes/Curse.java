@@ -30,6 +30,7 @@ public class Curse extends Card{
                 currentPlayer.decreaseCardsInHandCount();
                 currentPlayer.decreaseMana(getManaCost());
                 return  true;
+
             }
         }else if(getEffect().equals("stun")){
             if(c.getId().toString().contains(opponent.getID().toString())){
