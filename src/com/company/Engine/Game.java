@@ -166,6 +166,9 @@ public class Game implements Runnable{
         if(gameState.isGame) {
             handler.tick();
             currentPlayer = phase.getCurrentPlayer();
+            phase.updateTime();
+            phase.checkTime();
+            System.out.println(phase.elapsedTime);
             if(phase.weHaveAWinner()){
                 gameState.isGame = false;
                 gameState.celebrationWindow = true;
@@ -176,7 +179,6 @@ public class Game implements Runnable{
                     System.out.println(currentPlayer.getID().toString() + " won!");
                     winner = currentPlayer;
                 }
-                render();
             }
         }
     }
@@ -201,6 +203,12 @@ public class Game implements Runnable{
             g.setColor(Color.WHITE);
             handler.render(g);
             DrawDraggingCard();
+            Font prev = g.getFont();
+            Font font = new Font(Font.SANS_SERIF, 3, (int)(height * 0.025));
+            g.setFont(font);
+            String timer = "Time left: " + (35 - phase.elapsedTime);
+            g.drawString(timer, (int)(width * 0.01), (int)(height * 0.41));
+            g.setFont(prev);
         }else if(gameState.celebrationWindow){
             g.setColor(Color.black);
             g.fillRect(0, 0 , display.getWidth(), display.getHeight());

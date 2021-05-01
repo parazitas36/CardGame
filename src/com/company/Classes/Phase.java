@@ -18,6 +18,8 @@ public final class Phase {
     private Player player1;
     private Player player2;
     private Player currentPlayer;
+    public long startTime;
+    public long elapsedTime;
     private BufferedImage phaseStartImg, phaseAttackImg, phaseEndImg, phaseEnemyTurnImg, currentPhaseImg, endTurnImg, endPhaseImg, currentEndImg;
     public Phase(int w, int h, Player p1, Player p2){
         width = w;
@@ -119,6 +121,7 @@ public final class Phase {
             CardSlot slot = currentPlayer.playerBoardSlots.get(i);
             slot.resetAttackedThisTurn();
         }
+        startTime = System.nanoTime();
     }
     public Player getOpponent(){
         return currentPlayer.opponent;
@@ -130,7 +133,16 @@ public final class Phase {
             return false;
         }
     }
-
+    public void updateTime(){
+        elapsedTime = (System.nanoTime() - startTime)/1000000000;
+    }
+    public void checkTime(){
+        if(elapsedTime >= 35){
+            while(!this.enemyTurn()){
+                nextPhase();
+            }
+        }
+    }
     public BufferedImage GetCurrentPhaseImage(){
         return currentPhaseImg;
     }
