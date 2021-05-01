@@ -44,6 +44,13 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 game.exit();
             }return;
         }
+        if(game.gameState.celebrationWindow){
+            if(e.getX()>=(int)(game.display.getWidth()*0.5-game.display.getWidth()*0.1) && e.getX() <= (int)(game.display.getWidth()*0.5-game.display.getWidth()*0.1)+(int)(game.display.getWidth()*0.2) &&
+                    e.getY() >= (int)(game.display.getHeight()*0.5)+(int)(game.display.getHeight()*0.1) && e.getY() <= (int)(game.display.getHeight()*0.5)+(int)(game.display.getHeight()*0.1) + (int)(game.display.getHeight() * 0.1)){
+                game.gameState.celebrationWindow = false;
+                game.gameState.isMenu = true;
+            }
+        }
         if(game.gameState.isGame) {
             //-------------------------------------------------------------
             // If it's not an attack phase, but attacker is still selected.

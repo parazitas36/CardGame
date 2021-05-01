@@ -18,10 +18,7 @@ public class Game implements Runnable{
     private int width;
     private int height;
     private BufferedImage boardImg,
-                          menuBackgroundImg,
-                          menuButton_StartGame,
-                          menuButton_Options,
-                          menuButton_Exit,
+                            backToMenu,
                             backImg;
     private Image destroy;
     long TimeBefore = 0;
@@ -66,8 +63,7 @@ public class Game implements Runnable{
     }
     private void init(){
         display = new Display(title, width, height);
-        board = new Board(display);
-        handler = new Handler();
+
 
         backImg = null;
         try{
@@ -75,8 +71,7 @@ public class Game implements Runnable{
             destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
             backImg = ImageIO.read(new File("src/com/company/Images/back.png"));
             boardImg = ImageIO.read(new File("src/com/company/Images/Board.png"));
-            menuBackgroundImg = ImageIO.read(new File("src/com/company/Images/MenuBackgroundImg.png"));
-
+            backToMenu = ImageIO.read(new File("src/com/company/Images/backtomenu.png"));
         }catch (IOException e){
             e.printStackTrace();
         }
@@ -85,7 +80,8 @@ public class Game implements Runnable{
         new MouseHandler(display.getCanvas(), this);
     }
     public void startGame(){
-
+        board = new Board(display);
+        handler = new Handler();
         draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot);
         draggingSlot.setWidth((int)(display.getWidth()*0.1));
         draggingSlot.setHeight((int)(display.getHeight()*0.2));
@@ -172,12 +168,15 @@ public class Game implements Runnable{
             currentPlayer = phase.getCurrentPlayer();
             if(phase.weHaveAWinner()){
                 gameState.isGame = false;
-                gameState.isMenu = true;
+                gameState.celebrationWindow = true;
                 if(currentPlayer.getHP() <= 0){
                     System.out.println(currentPlayer.opponent.getID().toString() + " won!");
+                    winner = currentPlayer.opponent;
                 }else if(currentPlayer.opponent.getHP() <= 0) {
                     System.out.println(currentPlayer.getID().toString() + " won!");
+                    winner = currentPlayer;
                 }
+                render();
             }
         }
     }
@@ -202,6 +201,18 @@ public class Game implements Runnable{
             g.setColor(Color.WHITE);
             handler.render(g);
             DrawDraggingCard();
+        }else if(gameState.celebrationWindow){
+            g.setColor(Color.black);
+            g.fillRect(0, 0 , display.getWidth(), display.getHeight());
+            g.setColor(Color.WHITE);
+            Font prevFont = g.getFont();
+            Font newFont = new Font(Font.SANS_SERIF, 3, 30);
+            g.setFont(newFont);
+            String winnerTitle = winner.getID().toString() + " won!";
+            g.drawImage(backToMenu, (int)(width * 0.5 - width * 0.1), (int)(height * 0.5) + (int)(height * 0.1), (int)(width * 0.2), (int)(height * 0.1), null);
+            g.drawString(winnerTitle, (int) (display.getWidth()*0.5 - winnerTitle.length() * 0.25 * 30), height/2);
+            g.setFont(prevFont);
+
         }
         //-------------------------------
         buffer.show();
@@ -232,6 +243,7 @@ public class Game implements Runnable{
                         enemyTurn();
                     }
                 }
+                if(gameState.isMenu){ draws = 0; }
                 delta--;
             }
             try {
@@ -326,7 +338,7 @@ public class Game implements Runnable{
             }else if(draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
                 Curse curse = ((Curse)(draggingCard));
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
-                    curse.hpCurseLogic(c, phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
+                    curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
                     break;
                 }
                 //Buff hp logika

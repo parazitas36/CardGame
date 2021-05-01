@@ -23,7 +23,7 @@ public class Player  extends GameObject{
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
         HP = 10;
         if(_id == ID.Player2){ // Just for testing reasons
-            HP = 5;
+            HP = 2;
         }
         Mana = 1;
         ManaCapacity = 1;
