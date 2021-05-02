@@ -217,6 +217,20 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 enteredSlot = null;
             }
             //---------------------------------------------------------------------------------------
+            CardSlot deck = game.currentPlayer.deckSlot;
+            if(e.getX() >= deck.getX() && e.getX() <= deck.getX() + deck.getWidth() && e.getY() <= deck.getY() + deck.getHeight() && e.getY() >= deck.getY()){
+                deck.showCardsCount = true;
+                System.out.println(deck.getDeck().getSize());
+            }else{
+                deck.showCardsCount = false;
+            }
+            CardSlot oppDeck = game.currentPlayer.opponent.deckSlot;
+            if(e.getX() >= oppDeck.getX() && e.getX() <= oppDeck.getX() + oppDeck.getWidth() && e.getY() <= oppDeck.getY() + oppDeck.getHeight() && e.getY() >= oppDeck.getY()){
+                oppDeck.showCardsCount = true;
+                System.out.println(oppDeck.getDeck().getSize());
+            }else{
+                oppDeck.showCardsCount = false;
+            }
         }
     }
 }

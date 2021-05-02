@@ -16,6 +16,7 @@ public class Player  extends GameObject{
     public ArrayList<CardSlot> playerSlots;
     public ArrayList<CardSlot> playerHandSlots;
     public ArrayList<CardSlot> playerBoardSlots;
+    public CardSlot deckSlot;
     private int handSizeLimit, cardsInHand;
     private Phase phase;
     private Display display;
@@ -68,6 +69,8 @@ public class Player  extends GameObject{
                 playerHandSlots.add(slot);
             }else if(slot.getId().toString().contains(String.format("%s_Slot", this.id))){
                 playerBoardSlots.add(slot);
+            }else if(slot.getId().toString().contains(String.format("%s_Deck", this.id))){
+                deckSlot = slot;
             }
         }
     }

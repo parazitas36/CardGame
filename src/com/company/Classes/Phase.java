@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public final class Phase {
 
-    public static int currentPhase = 1;
     private int currentRound;
     private static int phaseIconWidth = 50, phaseIconHeight = 50;
     private static int endTurnImgWidth = 100, endTurnImgHeight = 100;
@@ -58,10 +57,8 @@ public final class Phase {
         endTurnPosX = (int)(width * 0.86);
         endTurnPosY = (int)(height * 0.35);
 
-        currentPhase = 1;
     }
     public void nextPhase(){
-        System.out.println(currentPhase);
         if(this.startPhase()){
             if(currentRound != 1){
                 attack = true;
