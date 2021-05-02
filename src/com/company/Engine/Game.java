@@ -206,9 +206,12 @@ public class Game implements Runnable{
             Font prev = g.getFont();
             Font font = new Font(Font.SANS_SERIF, 3, (int)(height * 0.025));
             g.setFont(font);
-            String timer = "Time left: " + (35 - phase.elapsedTime);
+            int roundTime = 35 - (int)phase.elapsedTime;
+            String timer = "Time left: " + roundTime;
+            if(roundTime <= 5){ g.setColor(Color.RED); }
             g.drawString(timer, (int)(width * 0.01), (int)(height * 0.41));
             g.setFont(prev);
+            g.setColor(Color.WHITE);
         }else if(gameState.celebrationWindow){
             g.setColor(Color.black);
             g.fillRect(0, 0 , display.getWidth(), display.getHeight());
@@ -246,6 +249,7 @@ public class Game implements Runnable{
                 if(gameState.isGame) {
                     if (phase.startPhase() && phase.getCurrentRound() == 1 && draws < 4) {
                         draws = startOfTheGame(draws);
+                        phase.startTime = System.nanoTime();
                     }
                     if (phase.enemyTurn()) {
                         enemyTurn();
