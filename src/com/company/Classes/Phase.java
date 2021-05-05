@@ -7,7 +7,6 @@ import java.io.IOException;
 
 public final class Phase {
 
-    public static int currentPhase = 1;
     private int currentRound;
     private static int phaseIconWidth = 50, phaseIconHeight = 50;
     private static int endTurnImgWidth = 100, endTurnImgHeight = 100;
@@ -18,6 +17,8 @@ public final class Phase {
     private Player player1;
     private Player player2;
     private Player currentPlayer;
+    public long startTime;
+    public long elapsedTime;
     private BufferedImage phaseStartImg, phaseAttackImg, phaseEndImg, phaseEnemyTurnImg, currentPhaseImg, endTurnImg, endPhaseImg, currentEndImg;
     public Phase(int w, int h, Player p1, Player p2){
         width = w;
@@ -56,10 +57,8 @@ public final class Phase {
         endTurnPosX = (int)(width * 0.86);
         endTurnPosY = (int)(height * 0.35);
 
-        currentPhase = 1;
     }
     public void nextPhase(){
-        System.out.println(currentPhase);
         if(this.startPhase()){
             if(currentRound != 1){
                 attack = true;
@@ -119,11 +118,28 @@ public final class Phase {
             CardSlot slot = currentPlayer.playerBoardSlots.get(i);
             slot.resetAttackedThisTurn();
         }
+        startTime = System.nanoTime();
     }
     public Player getOpponent(){
-        return currentPlayer == player1 ? player2 : player1;
+        return currentPlayer.opponent;
     }
-
+    public boolean weHaveAWinner(){
+        if(currentPlayer.getHP() <= 0 || currentPlayer.opponent.getHP() <= 0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public void updateTime(){
+        elapsedTime = (System.nanoTime() - startTime)/1000000000;
+    }
+    public void checkTime(){
+        if(elapsedTime >= 35){
+            while(!this.enemyTurn()){
+                nextPhase();
+            }
+        }
+    }
     public BufferedImage GetCurrentPhaseImage(){
         return currentPhaseImg;
     }

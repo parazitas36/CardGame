@@ -20,7 +20,12 @@ public class CardReader {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-
+        BufferedImage stunnedImg = null;
+        try{
+            stunnedImg = ImageIO.read(new File("src/com/company/Images/stunnedoverlay.png"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         while(scan.hasNextLine()) {
             //--------------------------------------------
             // Reads the data every card has
@@ -50,6 +55,7 @@ public class CardReader {
                     int atk = Integer.parseInt(values[4]);
                     int def = Integer.parseInt(values[5]);
                     Card monster = new Monster(name, manaCost, ID.Monster, atk, def, img);
+                    ((Monster)monster).setStunnedImg(stunnedImg);
                     cards.add(monster);
                     break;
                 //--------------------------------------------

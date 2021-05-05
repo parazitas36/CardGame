@@ -16,13 +16,15 @@ public class Player  extends GameObject{
     public ArrayList<CardSlot> playerSlots;
     public ArrayList<CardSlot> playerHandSlots;
     public ArrayList<CardSlot> playerBoardSlots;
+    public CardSlot deckSlot;
     private int handSizeLimit, cardsInHand;
     private Phase phase;
     private Display display;
+    public Player opponent;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
-        HP = 30;
+        HP = 10;
         if(_id == ID.Player2){ // Just for testing reasons
-            HP = 11;
+            HP = 2;
         }
         Mana = 1;
         ManaCapacity = 1;
@@ -37,6 +39,7 @@ public class Player  extends GameObject{
         this.display = _display;
 
     }
+    public void setOpponent(Player opp){ this.opponent = opp;}
     public ID getID(){
         return this.id;
     }
@@ -66,6 +69,8 @@ public class Player  extends GameObject{
                 playerHandSlots.add(slot);
             }else if(slot.getId().toString().contains(String.format("%s_Slot", this.id))){
                 playerBoardSlots.add(slot);
+            }else if(slot.getId().toString().contains(String.format("%s_Deck", this.id))){
+                deckSlot = slot;
             }
         }
     }
@@ -241,7 +246,7 @@ public class Player  extends GameObject{
         CardSlot strongest = null;
         for(int i = 0; i < playerBoardSlots.size(); i++){
             CardSlot slot = playerBoardSlots.get(i);
-            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && ((Monster)slot.getCard()).stunTime == 0){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && ((Monster)slot.getCard()).stunTime == 0 && !slot.attackedThisTurn()){
                 if(strongest == null || ((Monster)strongest.getCard()).getAttack() < ((Monster)slot.getCard()).getAttack()){
                     strongest = slot;
                 }
@@ -278,6 +283,36 @@ public class Player  extends GameObject{
             return null;
         }
     }
+
+    /*
+        Finds the second strongest opponent monster on the board which could be defeated by the strongest AI monster.
+     */
+    private CardSlot secondStrongestOpponentPossibleToDefeatAI(){
+        if(strongestAttackerAI() != null) { // If there are no AI monsters on the board.
+            Monster strongestAttacker = (Monster)strongestAttackerAI().getCard();
+            Player opponent = phase.getOpponent();
+            CardSlot strongestOpp = strongestOpponentPossibleToDefeatAI();
+            CardSlot secondStrongest = null;
+            Monster secondStrongestMonster = null;
+            for (int i = 0; i < opponent.playerBoardSlots.size(); i++) {
+                CardSlot slot = opponent.playerBoardSlots.get(i);
+                if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                    Monster slotMonster = ((Monster)slot.getCard());
+                    // If the strongest opponent monster is null or it's power(atk+def) is less than the monster's power on the board slot ->"slot",
+                    // then the strongest opponent monster is on the board slot -> "slot".
+                    if(slot.getId() != strongestOpp.getId() && ( secondStrongest == null || (secondStrongestMonster.getAttack() + secondStrongestMonster.getDef()) <
+                            (slotMonster.getAttack() + slotMonster.getDef()) ) && strongestAttacker.getAttack() >= slotMonster.getDef() ){
+                        secondStrongest = slot;
+                        secondStrongestMonster = (Monster)secondStrongest.getCard();
+                    }
+                }
+            }
+            return secondStrongest;
+        }else{
+            return null;
+        }
+    }
+
     //--------------------------------
     // AI's attack logic.
     //--------------------------------
@@ -300,6 +335,17 @@ public class Player  extends GameObject{
                     attacker.setAttackedThisTurn();
                     defender.removeCard();
                     attacker.removeCard();
+                }else{
+                    attacker.setAttackedThisTurn();
+                    attackAI();
+//                    defender = secondStrongestOpponentPossibleToDefeatAI();
+//                    if(defender != null){
+//                        damage = ((Monster)attacker.getCard()).getAttack() - ((Monster)defender.getCard()).getDef();
+//                        if(damage > 0){
+//                            attacker.setAttackedThisTurn();
+//                            defender.removeCard();
+//                        }
+//                    }
                 }
             }
         }
@@ -321,14 +367,14 @@ public class Player  extends GameObject{
         // draw mana in board
         Font prevFont = g.getFont();
         if(id == ID.Player1){
-            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
+            Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.605));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.505));
             g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
             g.setFont(prevFont);
         }else{
-            Font font = new Font("", Font.BOLD, (int)((Height + width) * 0.00933));
+            Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.199));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.3));
