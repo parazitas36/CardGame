@@ -381,7 +381,7 @@ public class Game implements Runnable{
             }else if(draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
                 Curse curse = ((Curse)(draggingCard));
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
-                    drawffect(x, y, bleedimg, 1, "-hp");
+                    drawffect(x, y, bleedimg, 2, "-hp");
                     threadSleep(500);
                     TimeBefore = 0;
                     curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
