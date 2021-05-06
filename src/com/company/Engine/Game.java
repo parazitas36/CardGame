@@ -131,7 +131,6 @@ public class Game implements Runnable{
 
         handler.addObject(draggingSlot);
         currentPlayer = player1;
-        System.out.println(deck.getDeck().size());
         gameState.startGame = false;
     }
     public double animTimer = 0;
@@ -180,7 +179,6 @@ public class Game implements Runnable{
             currentPlayer = phase.getCurrentPlayer();
             phase.updateTime();
             phase.checkTime();
-            System.out.println(phase.elapsedTime);
             if(phase.weHaveAWinner()){
                 gameState.isGame = false;
                 gameState.celebrationWindow = true;
