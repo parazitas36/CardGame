@@ -206,7 +206,17 @@ public class Game implements Runnable{
             g.setFont(font);
             int roundTime = 35 - (int)phase.elapsedTime;
             String timer = "Time left: " + roundTime;
-            if(roundTime <= 5){ g.setColor(Color.RED); }
+            Color color;
+            if(roundTime <= 23 && roundTime >= 15){
+                color = new Color(255, 224, 0);
+            }else if (roundTime < 15 && roundTime >= 8){
+                color = new Color(255, 159, 51);
+            }else if (roundTime < 8){
+                color = new Color(255, 0, 0);
+            }else{
+                color = new Color(255, 255, 255);
+            }
+            g.setColor(color);
             g.drawString(timer, (int)(width * 0.01), (int)(height * 0.41));
             g.setFont(prev);
             g.setColor(Color.WHITE);
@@ -417,14 +427,6 @@ public class Game implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        //player2.setCardOnBoard();
-//        render();
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         phase.nextPhase();
-        //player1.drawCard();
     }
 }
