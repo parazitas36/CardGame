@@ -25,20 +25,22 @@ public class Curse extends Card{
     }
     public boolean curseLogic(CardSlot c, Player currentPlayer, Player opponent){
         System.out.println("Current: " + currentPlayer.getID() + " opp" + opponent.getID());
-        if(getEffect().equals("destroy")){
-            if(c.getId().toString().contains(opponent.getID().toString())){
-                c.removeCard();
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(getManaCost());
-                return  true;
+        if(currentPlayer.getMana() >= c.getCard().getManaCost()) {
+            if (getEffect().equals("destroy")) {
+                if (c.getId().toString().contains(opponent.getID().toString())) {
+                    c.removeCard();
+                    currentPlayer.decreaseCardsInHandCount();
+                    currentPlayer.decreaseMana(getManaCost());
+                    return true;
 
-            }
-        }else if(getEffect().equals("stun")){
-            if(c.getId().toString().contains(opponent.getID().toString())){
-                ((Monster)(c.getCard())).addStun();
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(getManaCost());
-                return  true;
+                }
+            }else if (getEffect().equals("stun")) {
+                if (c.getId().toString().contains(opponent.getID().toString())) {
+                    ((Monster) (c.getCard())).addStun();
+                    currentPlayer.decreaseCardsInHandCount();
+                    currentPlayer.decreaseMana(getManaCost());
+                    return true;
+                }
             }
         }
         return  false;
