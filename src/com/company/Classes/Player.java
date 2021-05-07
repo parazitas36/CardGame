@@ -270,7 +270,7 @@ public class Player  extends GameObject{
     private CardSlot strongestDefenderInHandAI(){
         CardSlot defender = null;
         Monster bestDefender = null;
-        for(CardSlot slot : this.playerBoardSlots){
+        for(CardSlot slot : this.playerHandSlots){
             if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && enoughManaForCard(slot.getCard())){
                 Monster monster = (Monster)slot.getCard();
                 if(defender == null){
