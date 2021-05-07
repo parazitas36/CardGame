@@ -24,6 +24,13 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
     }
     @Override
     public void mouseClicked(MouseEvent e) {
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        //===================================
+        // MENU
+        //===================================
         if(game.gameState.isMenu){
             // Clicked on Start button
             if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + game.gameState.imgH && e.getY() >= game.gameState.imgYOffSet){
@@ -44,6 +51,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 game.exit();
             }return;
         }
+        //===================================
+
+        //===================================
+        // End Game Window
+        //===================================
         if(game.gameState.celebrationWindow){
             if(e.getX()>=(int)(game.display.getWidth()*0.5-game.display.getWidth()*0.1) && e.getX() <= (int)(game.display.getWidth()*0.5-game.display.getWidth()*0.1)+(int)(game.display.getWidth()*0.2) &&
                     e.getY() >= (int)(game.display.getHeight()*0.5)+(int)(game.display.getHeight()*0.1) && e.getY() <= (int)(game.display.getHeight()*0.5)+(int)(game.display.getHeight()*0.1) + (int)(game.display.getHeight() * 0.1)){
@@ -51,6 +63,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 game.gameState.isMenu = true;
             }
         }
+        //===================================
+
+        //===================================
+        // Game
+        //===================================
         if(game.gameState.isGame) {
             //-------------------------------------------------------------
             // If it's not an attack phase, but attacker is still selected.
@@ -72,16 +89,27 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             }
             //---------------------------------------
 
+            //---------------------------------------
+            // Chooses a card which will be dragged
+            //---------------------------------------
+            for (CardSlot c : game.currentPlayer.playerHandSlots) {
+                if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
+                    if (c.getId() != ID.Player1_Deck) {
+                        if (c.getCard() != null)
+                            game.SlotClicked(c.getCard(), c);
+                    }
+                }
+            }
+            //---------------------------------------
+
+            //---------------------------------------
+            // Chooses a monster which is going to attack.
+            //---------------------------------------
             int index = 0;
             for (CardSlot c : game.currentPlayer.playerBoardSlots) {
                 index++;
                 if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
                     if (c.cardOnBoard()) {
-                        System.out.println(c.getCard().getName());
-                        System.out.println(((Monster) c.getCard()).getStunTime());
-                        //---------------------------------------
-                        // Chooses a monster which is going to attack.
-                        //---------------------------------------
                         if (game.phase.attackPhase()) {
                             if (c.getCard().getID() == ID.Monster && !c.attackedThisTurn() && ((Monster) c.getCard()).stunTime == 0) {
                                 if (attacker == null) {
@@ -101,55 +129,31 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                                 }
                             }
                         }
-                        //---------------------------------------
-                    } else {
-                        System.out.println("Click: " + c.getId());
                     }
                 }
             }
+            //---------------------------------------
+
+            //---------------------------------------
+            // Selects a monster which will be attacked.
+            //---------------------------------------
             for(CardSlot c : game.currentPlayer.opponent.playerBoardSlots){
                 if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
                     if (c.cardOnBoard()) {
                         System.out.println(c.getCard().getName());
                         System.out.println(((Monster) c.getCard()).getStunTime());
-                        //---------------------------------------
-                        // Selects a monster which will be attacked.
-                        //---------------------------------------
-                         if (game.phase.attackPhase() && attacker != null && c.getCard().getID() == ID.Monster) {
+
+                        if (game.phase.attackPhase() && attacker != null && c.getCard().getID() == ID.Monster) {
                             game.currentPlayer.attack(attacker, c);
                             attacker.attacking = false;
                             attacker = null;
                         }
-                        //---------------------------------------
-                    } else {
-                        System.out.println("Click: " + c.getId());
                     }
                 }
             }
+            //---------------------------------------
         }
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-        if(game.gameState.isMenu){
-
-            return;
-        }
-        if(game.gameState.isGame) {
-            for (CardSlot c : game.currentPlayer.playerHandSlots) {
-                if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
-                    System.out.println("Pressed: " + c.getId());
-                    //---------------------------------------
-                    // Chooses a card which will be dragged
-                    //---------------------------------------
-                    if (c.getId() != ID.Player1_Deck) {
-                        if (c.getCard() != null)
-                            game.SlotClicked(c.getCard(), c);
-                    }
-                    //---------------------------------------
-                }
-            }
-        }
+        //===================================
     }
 
     @Override

@@ -211,6 +211,19 @@ public class Player  extends GameObject{
         }
         return stun;
     }
+    private CardSlot HPCurseAI(){
+        CardSlot hp_curse = null;
+        for(CardSlot slot : this.playerHandSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Curse){
+                Curse curse = (Curse)slot.getCard();
+                if(curse.getEffect().equals("hp") && enoughManaForCard(curse)){
+                    hp_curse = slot;
+                    return hp_curse;
+                }
+            }
+        }
+        return hp_curse;
+    }
     private CardSlot strongestMonsterInHandAI(){
         CardSlot strongest = null;
         for(int i = 0; i < playerHandSlots.size(); i++){
@@ -413,6 +426,7 @@ public class Player  extends GameObject{
             }
             else{
                 CardSlot defBuff = bestDefBuffAI();
+                CardSlot atkBuff = bestAttBuffAI();
                 if(defBuff != null){
                     CardSlot bestAttacker = strongestAttackerOnBoardAI();
                     if(bestAttacker != null){
@@ -421,16 +435,19 @@ public class Player  extends GameObject{
                             defBuff.removeCard();
                         }
                     }
-                }else{
-                    CardSlot atkBuff = bestAttBuffAI();
-                    if(atkBuff != null){
-                        CardSlot bestDefender = strongestDefenderOnBoardAI();
-                        if(bestDefender != null){
-                            if( ((Buff)atkBuff.getCard()).buffLogic(bestDefender, this) ){
-                                continueLoop = true;
-                                atkBuff.removeCard();
-                            }
+                }else if(atkBuff != null){
+                    CardSlot bestDefender = strongestDefenderOnBoardAI();
+                    if(bestDefender != null){
+                        if( ((Buff)atkBuff.getCard()).buffLogic(bestDefender, this) ){
+                            continueLoop = true;
+                            atkBuff.removeCard();
                         }
+                    }
+                }else{
+                    CardSlot hp_curse = HPCurseAI();
+                    if(hp_curse != null){
+                        ((Curse)hp_curse.getCard()).hpCurseLogic(this, this.opponent, hp_curse);
+                        continueLoop = true;
                     }
                 }
 
