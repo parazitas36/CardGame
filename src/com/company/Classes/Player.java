@@ -21,6 +21,7 @@ public class Player  extends GameObject{
     private Phase phase;
     private Display display;
     public Player opponent;
+    private boolean possibleToDefeat;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
         HP = 10;
         if(_id == ID.Player2){ // Just for testing reasons
@@ -37,7 +38,7 @@ public class Player  extends GameObject{
         handSizeLimit = 7;
         cardsInHand = 0;
         this.display = _display;
-
+        possibleToDefeat = false;
     }
     public void setOpponent(Player opp){ this.opponent = opp;}
     public ID getID(){
@@ -158,7 +159,8 @@ public class Player  extends GameObject{
             for (int i = 0; i < playerBoardSlots.size(); i++) {
                 CardSlot slot = playerBoardSlots.get(i);
                 if (!slot.cardOnBoard()) { // If its AI board slot which doesn't have a card, card is placed on this slot
-                    Mana-=card.getManaCost();slot.setCard(card);
+                    Mana-=card.getManaCost();
+                    slot.setCard(card);
                     handSlot.removeCard();
                     cardsInHand--;
                     cardPlaced = true;
@@ -167,19 +169,6 @@ public class Player  extends GameObject{
             }
         }
         return cardPlaced;
-    }
-    public CardSlot pickCardAI(){
-        CardSlot chosenCard = null;
-        for(int i = 0; i < playerSlots.size(); i++){
-            CardSlot slot = playerSlots.get(i);
-            if(slot.getId().toString().contains(String.format("%s_HandSlot", this.id)) && slot.cardOnBoard()){
-                chosenCard = enoughManaForCard(slot.getCard()) ? slot : null;
-                if(chosenCard != null){
-                    break;
-                }
-            }
-        }
-        return chosenCard;
     }
 
     private CardSlot AIHealingCard(){
@@ -195,6 +184,32 @@ public class Player  extends GameObject{
             }
         }
         return HP_Card;
+    }
+    private CardSlot AIDestroyCurse(){
+        CardSlot destroy = null;
+        for(CardSlot slot : this.playerHandSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Curse){
+                Curse curse = (Curse)slot.getCard();
+                if(curse.getEffect().equals("destroy") && enoughManaForCard(curse)){
+                    destroy = slot;
+                    return destroy;
+                }
+            }
+        }
+        return destroy;
+    }
+    private CardSlot AIStunCurse(){
+        CardSlot stun = null;
+        for(CardSlot slot : this.playerHandSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Curse){
+                Curse curse = (Curse)slot.getCard();
+                if(curse.getEffect().equals("stun") && enoughManaForCard(curse)){
+                    stun = slot;
+                    return stun;
+                }
+            }
+        }
+        return stun;
     }
     private CardSlot strongestMonsterInHandAI(){
         CardSlot strongest = null;
@@ -219,30 +234,216 @@ public class Player  extends GameObject{
         }
         return strongest;
     }
-    public void startPhaseSequenceAI(){
-        boolean continueLoop = true;
-        while(this.Mana > 0 && continueLoop) {
-            continueLoop = false;
-            if (AILowHP()) {
-                CardSlot heal = AIHealingCard();
-                if (heal != null && enoughManaForCard(heal.getCard())) {
-                    Mana -= heal.getCard().getManaCost();
-                    HP += 3;
-                    heal.removeCard();
-                    cardsInHand--;
-                    continueLoop = true;
-                }
-            }
-            CardSlot monster = strongestMonsterInHandAI();
-            if (monster != null) {
-                if(setCardOnBoardAI(monster)){ continueLoop = true; }
+    private boolean AIHasMonsterOnTheBoard(){
+        for(CardSlot slot : this.playerBoardSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                return true;
             }
         }
+        return false;
     }
+    private boolean opponentHasMonsterOnTheBoard(){
+        for(CardSlot slot : this.opponent.playerBoardSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                return true;
+            }
+        }
+        return false;
+    }
+    private CardSlot strongestOppMonsterOnBoard(){
+        CardSlot strongest = null;
+        Monster monsterStrongest = null;
+        for(CardSlot slot : this.opponent.playerBoardSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                Monster monster = (Monster)slot.getCard();
+                if(strongest == null){
+                    strongest = slot;
+                    monsterStrongest = (Monster)strongest.getCard();
+                }else if(monster.getAttack() + monster.getDef() > monsterStrongest.getAttack() + monster.getDef()){
+                    strongest = slot;
+                    monsterStrongest = monster;
+                }
+            }
+        }
+        return strongest;
+    }
+    private CardSlot strongestDefenderInHandAI(){
+        CardSlot defender = null;
+        Monster bestDefender = null;
+        for(CardSlot slot : this.playerBoardSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && enoughManaForCard(slot.getCard())){
+                Monster monster = (Monster)slot.getCard();
+                if(defender == null){
+                    defender = slot;
+                    bestDefender = monster;
+                }else if(monster.getDef() > bestDefender.getDef()){
+                    defender = slot;
+                    bestDefender = monster;
+                }
+            }
+        }
+        return defender;
+    }
+    private CardSlot bestAttBuffAI(){
+        CardSlot buff = null;
+        for(CardSlot slot : playerHandSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Buff && enoughManaForCard(slot.getCard())){
+                Buff buffCard = (Buff)slot.getCard();
+                if(buffCard.getEffect().equals("atk")){
+                    if(buff == null){
+                        buff = slot;
+                    }else{
+                        if(((Buff)buff.getCard()).getEffectNum() < buffCard.getEffectNum()){
+                            buff = slot;
+                        }
+                    }
+                }
+            }
+        }
+        return buff;
+    }
+    private CardSlot bestDefBuffAI(){
+        CardSlot buff = null;
+        for(CardSlot slot : playerHandSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Buff && enoughManaForCard(slot.getCard())){
+                Buff buffCard = (Buff)slot.getCard();
+                if(buffCard.getEffect().equals("def")){
+                    if(buff == null){
+                        buff = slot;
+                    }else{
+                        if(((Buff)buff.getCard()).getEffectNum() < buffCard.getEffectNum()){
+                            buff = slot;
+                        }
+                    }
+                }
+            }
+        }
+        return buff;
+    }
+    public void startPhaseSequenceAI(){
+        possibleToDefeat = false; // Marks if it's possible to defeat the strongest opponent monster.
+        boolean cursed = false; // We need to know if the strongest opponent monster was cursed.
+        boolean cannotKillMonsterInHand = false;
+        CardSlot strongestOppMonster = strongestOppMonsterOnBoard(); // The strongest monster on the opponent board side.
+        CardSlot monsterInHand = strongestMonsterInHandAI();
+
+        // Checks if AI is low hp, if true, looks for healing card then heals itself.
+        if (AILowHP()) {
+            CardSlot heal = AIHealingCard();
+            if(heal != null && enoughManaForCard(heal.getCard())){
+                Mana -= heal.getCard().getManaCost();
+                HP += 3;
+                heal.removeCard();
+                cardsInHand--;
+            }
+        }
+
+        // Updates possibleToDefeat.
+        if(opponentHasMonsterOnTheBoard()) {
+            Monster oppM = (Monster)strongestOppMonster.getCard();
+            CardSlot strongestMonsterOnBoard = null; // The strongest AI's monster on the board.
+
+            if(!possibleToDefeat){
+                if(AIHasMonsterOnTheBoard()){
+                    strongestMonsterOnBoard = strongestAttackerOnBoardAI();
+                    if(strongestMonsterOnBoard != null) {
+                        Monster onBoardM = (Monster) strongestMonsterOnBoard.getCard();
+                        if (oppM.getDef() <= onBoardM.getAttack()) {
+                            boolean worthToAttack; // If def==atk then it means, that both monsters die, so we need to check if it's worth.
+                            if (oppM.getDef() < onBoardM.getAttack()) {
+                                worthToAttack = true;
+                            } else { // If opponent monster has more power then it's worth.
+                                worthToAttack =
+                                        oppM.getDef() + oppM.getAttack() > onBoardM.getAttack() + onBoardM.getDef() ? true : false;
+                            }
+                            possibleToDefeat = worthToAttack;
+                        }
+                    }
+                }
+                if(!possibleToDefeat && monsterInHand != null){
+                    Monster inHandM = (Monster)monsterInHand.getCard();
+                    if(oppM.getAttack() < inHandM.getDef()){
+                        cannotKillMonsterInHand = true;
+                    }
+                    if(oppM.getDef() <= inHandM.getAttack()){
+                        boolean worthToAttack; // Same as above.
+                        if(oppM.getDef() < inHandM.getAttack()){ worthToAttack = true; }
+                        else {
+                            worthToAttack =
+                                    oppM.getDef() + oppM.getAttack() > inHandM.getAttack() + inHandM.getDef() ? true : false;
+                        }
+                        possibleToDefeat = worthToAttack;
+                    }
+                }
+            }
+        }else{
+            cannotKillMonsterInHand = true;
+        }
+
+        // If it's not possible to defeat the strongest opponent monster then AI tries to destroy or stun him.
+        if(!possibleToDefeat){
+            CardSlot destroy = null;
+            CardSlot stun = null;
+            if( (destroy = AIDestroyCurse()) != null){
+                Curse curseCard = (Curse)destroy.getCard();
+                if(strongestOppMonster != null) {
+                    curseCard.curseLogic(strongestOppMonster, this, this.opponent);
+                    destroy.removeCard();
+                    cursed = true;
+                }
+            }else if( (stun = AIStunCurse()) != null){
+                Curse curseCard = (Curse)stun.getCard();
+                if(strongestOppMonster != null) {
+                    curseCard.curseLogic(strongestOppMonster, this, this.opponent);
+                    stun.removeCard();
+                    cursed = true;
+                }
+            }
+        }
+
+        boolean continueLoop = true; // Need this one to prevent infinite loop when player has mana but can't do anything.
+        while(this.Mana > 0 && continueLoop) {
+            continueLoop = false;
+
+            monsterInHand = strongestMonsterInHandAI();
+            CardSlot defender = strongestDefenderInHandAI();
+            if(monsterInHand != null && (cannotKillMonsterInHand || possibleToDefeat || cursed) && setCardOnBoardAI(monsterInHand)){
+                continueLoop = true;
+            }else if(defender != null && setCardOnBoardAI(defender)){
+                continueLoop = true;
+            }
+            else{
+                CardSlot defBuff = bestDefBuffAI();
+                if(defBuff != null){
+                    CardSlot bestAttacker = strongestAttackerOnBoardAI();
+                    if(bestAttacker != null){
+                        if(((Buff)defBuff.getCard()).buffLogic(bestAttacker, this)) {
+                            continueLoop = true;
+                            defBuff.removeCard();
+                        }
+                    }
+                }else{
+                    CardSlot atkBuff = bestAttBuffAI();
+                    if(atkBuff != null){
+                        CardSlot bestDefender = strongestDefenderOnBoardAI();
+                        if(bestDefender != null){
+                            if( ((Buff)atkBuff.getCard()).buffLogic(bestDefender, this) ){
+                                continueLoop = true;
+                                atkBuff.removeCard();
+                            }
+                        }
+                    }
+                }
+
+            }
+
+        }
+    }
+
     /*
         Finds the strongest AI monster(with the highest attack) on the board who is going to attack.
      */
-    private CardSlot strongestAttackerAI(){
+    private CardSlot strongestAttackerOnBoardAI(){
         CardSlot strongest = null;
         for(int i = 0; i < playerBoardSlots.size(); i++){
             CardSlot slot = playerBoardSlots.get(i);
@@ -254,12 +455,24 @@ public class Player  extends GameObject{
         }
         return strongest;
     }
+    private CardSlot strongestDefenderOnBoardAI(){
+        CardSlot strongest = null;
+        for(int i = 0; i < playerBoardSlots.size(); i++){
+            CardSlot slot = playerBoardSlots.get(i);
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && ((Monster)slot.getCard()).stunTime == 0 && !slot.attackedThisTurn()){
+                if(strongest == null || ((Monster)strongest.getCard()).getDef() < ((Monster)slot.getCard()).getDef()){
+                    strongest = slot;
+                }
+            }
+        }
+        return strongest;
+    }
     /*
         Finds the strongest opponent monster on the board which could be defeated by the strongest AI monster.
      */
     private CardSlot strongestOpponentPossibleToDefeatAI(){
-        if(strongestAttackerAI() != null) { // If there are no AI monsters on the board.
-            Monster strongestAttacker = (Monster)strongestAttackerAI().getCard();
+        if(strongestAttackerOnBoardAI() != null) { // If there are no AI monsters on the board.
+            Monster strongestAttacker = (Monster) strongestAttackerOnBoardAI().getCard();
             Player opponent = phase.getOpponent();
             CardSlot strongestOpp = null;
             for (int i = 0; i < opponent.playerBoardSlots.size(); i++) {
@@ -288,8 +501,8 @@ public class Player  extends GameObject{
         Finds the second strongest opponent monster on the board which could be defeated by the strongest AI monster.
      */
     private CardSlot secondStrongestOpponentPossibleToDefeatAI(){
-        if(strongestAttackerAI() != null) { // If there are no AI monsters on the board.
-            Monster strongestAttacker = (Monster)strongestAttackerAI().getCard();
+        if(strongestAttackerOnBoardAI() != null) { // If there are no AI monsters on the board.
+            Monster strongestAttacker = (Monster) strongestAttackerOnBoardAI().getCard();
             Player opponent = phase.getOpponent();
             CardSlot strongestOpp = strongestOpponentPossibleToDefeatAI();
             CardSlot secondStrongest = null;
@@ -317,7 +530,7 @@ public class Player  extends GameObject{
     // AI's attack logic.
     //--------------------------------
     public void attackAI(){
-        CardSlot attacker = strongestAttackerAI();
+        CardSlot attacker = strongestAttackerOnBoardAI();
         CardSlot defender = strongestOpponentPossibleToDefeatAI();
         if(attacker != null && defender != null){
             System.out.println("ATK: " + attacker.getCard().toString());

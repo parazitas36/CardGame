@@ -73,6 +73,11 @@ public final class Phase {
             attack = false;
             currentPhaseImg = phaseEndImg;
         }else if(this.endPhase()){
+            for(CardSlot c : currentPlayer.playerBoardSlots){
+                if(c.cardOnBoard() && c.getCard().getID() == ID.Monster && ((Monster)c.getCard()).stunTime > 0){
+                    ((Monster)c.getCard()).removeStun();
+                }
+            }
             enemy = true;
             end = false;
             currentPhaseImg = phaseEnemyTurnImg;
@@ -105,13 +110,7 @@ public final class Phase {
         if(currentRound > 1){
             currentPlayer.addMana();
             currentPlayer.refillMana();
-            for(CardSlot c : currentPlayer.playerSlots){
-                if(currentPlayer.getID() == ID.Player2){
-                    if(c.getId() == ID.Monster && ((Monster)c.getCard()).stunTime == 1){
-                        ((Monster)c.getCard()).stunTime = 0;
-                    }
-                }
-            }
+
         }
         currentPlayer.drawCard();
         for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){

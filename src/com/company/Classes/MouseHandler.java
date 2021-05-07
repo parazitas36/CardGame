@@ -83,7 +83,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                         // Chooses a monster which is going to attack.
                         //---------------------------------------
                         if (game.phase.attackPhase()) {
-                            if (c.getCard().getID() == ID.Monster && !c.attackedThisTurn()) {
+                            if (c.getCard().getID() == ID.Monster && !c.attackedThisTurn() && ((Monster) c.getCard()).stunTime == 0) {
                                 if (attacker == null) {
                                     attacker = c;
                                     attacker.attacking = true;
