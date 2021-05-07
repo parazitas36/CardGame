@@ -405,9 +405,8 @@ public class Player  extends GameObject{
         while(this.Mana > 0 && continueLoop) {
             continueLoop = false;
 
-            monsterInHand = strongestMonsterInHandAI();
             CardSlot defender = strongestDefenderInHandAI();
-            if(monsterInHand != null && (cannotKillMonsterInHand || possibleToDefeat || cursed) && setCardOnBoardAI(monsterInHand)){
+            if(monsterInHand != null && monsterInHand.cardOnBoard() && enoughManaForCard(monsterInHand.getCard()) && (cannotKillMonsterInHand || possibleToDefeat || cursed) && setCardOnBoardAI(monsterInHand)){
                 continueLoop = true;
             }else if(defender != null && setCardOnBoardAI(defender)){
                 continueLoop = true;
