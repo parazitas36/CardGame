@@ -7,16 +7,20 @@ public class Monster extends Card {
     private int attack,defense;
     public int stunTime;
     public BufferedImage stunnedImg;
+    private boolean wasAttacked;
     public Monster(String name, int manaCost,  ID id,  int atk, int def, BufferedImage img) {
         super(name, manaCost,id, img);
         attack = atk;
         defense = def;
         stunTime = 0;
+        wasAttacked = false;
     }
     @Override
     public void tick() {
 
     }
+    public boolean getWasAttacked() { return wasAttacked; }
+    public void setWasAttacked(boolean attacked) { wasAttacked = attacked; }
     public void IncreaseAtk(int increase){
         attack += increase;
     }

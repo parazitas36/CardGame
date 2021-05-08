@@ -23,10 +23,10 @@ public class Player  extends GameObject{
     public Player opponent;
     private boolean possibleToDefeat;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
-        HP = 10;
-        if(_id == ID.Player2){ // Just for testing reasons
-            HP = 2;
-        }
+        HP = 20;
+//        if(_id == ID.Player2){ // Just for testing reasons
+//            HP = 2;
+//        }
         Mana = 1;
         ManaCapacity = 1;
         ManaStack = 0;
@@ -224,6 +224,15 @@ public class Player  extends GameObject{
         }
         return hp_curse;
     }
+    private int numberOfMonsters(Player player){
+        int count = 0;
+        for(CardSlot slot : player.playerBoardSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                count++;
+            }
+        }
+        return count;
+    }
     private CardSlot strongestMonsterInHandAI(){
         CardSlot strongest = null;
         for(int i = 0; i < playerHandSlots.size(); i++){
@@ -267,7 +276,7 @@ public class Player  extends GameObject{
         CardSlot strongest = null;
         Monster monsterStrongest = null;
         for(CardSlot slot : this.opponent.playerBoardSlots){
-            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && !((Monster)(slot.getCard())).getWasAttacked()){
                 Monster monster = (Monster)slot.getCard();
                 if(strongest == null){
                     strongest = slot;
@@ -333,6 +342,14 @@ public class Player  extends GameObject{
         }
         return buff;
     }
+    /*
+        Start phase logic how AI selects cards.
+        1. Checks if he is low on hp. If true tries to find heal card and heal himself.
+        2. Checks if opponent has monster on the board which cannot be killed with any monster on the board
+           or in the hand(<- has enough mana for it) then it tries to curse him with stun or destroy.
+        3. Places the strongest monster in the hand if it cannot be killed during next turn based by current situation
+           otherwise places monster with the highest defense (to sustain damage to prevent direct damage to HP).
+     */
     public void startPhaseSequenceAI(){
         possibleToDefeat = false; // Marks if it's possible to defeat the strongest opponent monster.
         boolean cursed = false; // We need to know if the strongest opponent monster was cursed.
@@ -352,11 +369,11 @@ public class Player  extends GameObject{
         }
 
         // Updates possibleToDefeat.
-        if(opponentHasMonsterOnTheBoard()) {
+        if(opponentHasMonsterOnTheBoard()) { // <- It's only worth to check if opponent has at least one monster on the board.
             Monster oppM = (Monster)strongestOppMonster.getCard();
             CardSlot strongestMonsterOnBoard = null; // The strongest AI's monster on the board.
-
             if(!possibleToDefeat){
+                // Checks if AI's monster on the board can kill the strongest opponent monster.
                 if(AIHasMonsterOnTheBoard()){
                     strongestMonsterOnBoard = strongestAttackerOnBoardAI();
                     if(strongestMonsterOnBoard != null) {
@@ -373,6 +390,8 @@ public class Player  extends GameObject{
                         }
                     }
                 }
+                // Checks if the strongest monster in the hand(has enough mana for it) can kill the strongest opponent monster
+                // or it cannot be killed by the strongest opponent monster.
                 if(!possibleToDefeat && monsterInHand != null){
                     Monster inHandM = (Monster)monsterInHand.getCard();
                     if(oppM.getAttack() < inHandM.getDef()){
@@ -414,16 +433,24 @@ public class Player  extends GameObject{
             }
         }
 
-        boolean continueLoop = true; // Need this one to prevent infinite loop when player has mana but can't do anything.
+        boolean continueLoop = true; // Need this one to prevent infinite loop when AI has mana but can't do anything,
+        // it marks if at least one action was made the last time in the loop.
+
+
+        // Loop which tries to spend as much mana as possible.
         while(this.Mana > 0 && continueLoop) {
             continueLoop = false;
 
+            // Places the strongest monster in the hand if it won't be killed, otherwise tries to place the strongest defender
+            // in the hand or if there is no monsters in the hand which could be placed when tries to use buffs/curses.
             CardSlot defender = strongestDefenderInHandAI();
+            // (if) -> Strongest monster in the hand. (else if) -> Monster with the highest defense.
             if(monsterInHand != null && monsterInHand.cardOnBoard() && enoughManaForCard(monsterInHand.getCard()) && (cannotKillMonsterInHand || possibleToDefeat || cursed) && setCardOnBoardAI(monsterInHand)){
                 continueLoop = true;
             }else if(defender != null && setCardOnBoardAI(defender)){
                 continueLoop = true;
             }
+            // Buffs and Curses
             else{
                 CardSlot defBuff = bestDefBuffAI();
                 CardSlot atkBuff = bestAttBuffAI();
@@ -450,14 +477,12 @@ public class Player  extends GameObject{
                         continueLoop = true;
                     }
                 }
-
             }
-
         }
     }
-
     /*
-        Finds the strongest AI monster(with the highest attack) on the board who is going to attack.
+        Finds the strongest AI monster(with the highest attack) on the board who is going to attack
+        or will be "buffed" with defense buff.
      */
     private CardSlot strongestAttackerOnBoardAI(){
         CardSlot strongest = null;
@@ -471,6 +496,10 @@ public class Player  extends GameObject{
         }
         return strongest;
     }
+    /*
+        Finds a monster with the highest Defense on AI's board.
+        (Using this to "buff" this monster with attack buff).
+     */
     private CardSlot strongestDefenderOnBoardAI(){
         CardSlot strongest = null;
         for(int i = 0; i < playerBoardSlots.size(); i++){
@@ -483,98 +512,57 @@ public class Player  extends GameObject{
         }
         return strongest;
     }
-    /*
-        Finds the strongest opponent monster on the board which could be defeated by the strongest AI monster.
-     */
-    private CardSlot strongestOpponentPossibleToDefeatAI(){
-        if(strongestAttackerOnBoardAI() != null) { // If there are no AI monsters on the board.
-            Monster strongestAttacker = (Monster) strongestAttackerOnBoardAI().getCard();
-            Player opponent = phase.getOpponent();
-            CardSlot strongestOpp = null;
-            for (int i = 0; i < opponent.playerBoardSlots.size(); i++) {
-                CardSlot slot = opponent.playerBoardSlots.get(i);
-                if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
-                    Monster strongestOppMonster = null;
-                    if(strongestOpp != null){
-                        strongestOppMonster = ((Monster)strongestOpp.getCard());
-                    }
-                    Monster slotMonster = ((Monster)slot.getCard());
-                    // If the strongest opponent monster is null or it's power(atk+def) is less than the monster's power on the board slot ->"slot",
-                    // then the strongest opponent monster is on the board slot -> "slot".
-                    if( ( strongestOpp == null || (strongestOppMonster.getAttack() + strongestOppMonster.getDef()) <
-                                    (slotMonster.getAttack() + slotMonster.getDef()) ) && strongestAttacker.getAttack() >= slotMonster.getDef() ){
-                        strongestOpp = slot;
-                    }
-                }
-            }
-            return strongestOpp;
-        }else{
-            return null;
-        }
-    }
 
-    /*
-        Finds the second strongest opponent monster on the board which could be defeated by the strongest AI monster.
-     */
-    private CardSlot secondStrongestOpponentPossibleToDefeatAI(){
-        if(strongestAttackerOnBoardAI() != null) { // If there are no AI monsters on the board.
-            Monster strongestAttacker = (Monster) strongestAttackerOnBoardAI().getCard();
-            Player opponent = phase.getOpponent();
-            CardSlot strongestOpp = strongestOpponentPossibleToDefeatAI();
-            CardSlot secondStrongest = null;
-            Monster secondStrongestMonster = null;
-            for (int i = 0; i < opponent.playerBoardSlots.size(); i++) {
-                CardSlot slot = opponent.playerBoardSlots.get(i);
-                if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
-                    Monster slotMonster = ((Monster)slot.getCard());
-                    // If the strongest opponent monster is null or it's power(atk+def) is less than the monster's power on the board slot ->"slot",
-                    // then the strongest opponent monster is on the board slot -> "slot".
-                    if(slot.getId() != strongestOpp.getId() && ( secondStrongest == null || (secondStrongestMonster.getAttack() + secondStrongestMonster.getDef()) <
-                            (slotMonster.getAttack() + slotMonster.getDef()) ) && strongestAttacker.getAttack() >= slotMonster.getDef() ){
-                        secondStrongest = slot;
-                        secondStrongestMonster = (Monster)secondStrongest.getCard();
-                    }
-                }
-            }
-            return secondStrongest;
-        }else{
-            return null;
-        }
-    }
-
-    //--------------------------------
-    // AI's attack logic.
-    //--------------------------------
+    //================================
+    // AI's attack phase sequence logic.
+    //================================
     public void attackAI(){
-        CardSlot attacker = strongestAttackerOnBoardAI();
-        CardSlot defender = strongestOpponentPossibleToDefeatAI();
-        if(attacker != null && defender != null){
-            System.out.println("ATK: " + attacker.getCard().toString());
-            System.out.println("DEF: " + defender.getCard().toString());
-            int damage = ((Monster)attacker.getCard()).getAttack() - ((Monster)defender.getCard()).getDef();
-            if(damage > 0) {
-                phase.getOpponent().takeDamage(damage);
-                attacker.setAttackedThisTurn();
-                defender.removeCard();
-            }else if(damage == 0){
-                int attackerPower = ((Monster)attacker.getCard()).getAttack() + ((Monster)attacker.getCard()).getDef();
-                int defenderPower = ((Monster)defender.getCard()).getAttack() + ((Monster)defender.getCard()).getDef();
-                boolean worthToAttack = defenderPower > attackerPower ? true : false;
-                if(worthToAttack) {
-                    attacker.setAttackedThisTurn();
-                    defender.removeCard();
-                    attacker.removeCard();
-                }else{
-                    attacker.setAttackedThisTurn();
-                    attackAI();
-//                    defender = secondStrongestOpponentPossibleToDefeatAI();
-//                    if(defender != null){
-//                        damage = ((Monster)attacker.getCard()).getAttack() - ((Monster)defender.getCard()).getDef();
-//                        if(damage > 0){
-//                            attacker.setAttackedThisTurn();
-//                            defender.removeCard();
-//                        }
-//                    }
+        /*
+            If AI and Opponent have monsters on the board, this method goes through all opponent monsters and returns the strongest
+            one which wasn't attacked this turn (check -> "strongestOppMonsterOnBoard" method) if the strongest AI monster can kill him
+            or it's worth to attack him even if both of them will die then AI attacks opponent monster. If AI can't kill the strongest
+            opponent monster or it's not worth to attack him, that monster is marked as "attacked" (look Monster class -> wasAttacked).
+            After that while loop tries to find another strongest opponent monster which wasn't attacked.
+         */
+        if(AIHasMonsterOnTheBoard()){
+            if(opponentHasMonsterOnTheBoard()){
+                CardSlot strongestOppMonster;
+                while((strongestOppMonster = strongestOppMonsterOnBoard()) != null){
+                    CardSlot strongestAIMonster = strongestAttackerOnBoardAI();
+                    if(strongestAIMonster != null){
+                        Monster oppMonster = (Monster)strongestOppMonster.getCard();
+                        Monster AIMonster = (Monster)strongestAIMonster.getCard();
+                        int damage = AIMonster.getAttack() - oppMonster.getDef();
+                        if(damage > 0){ // If AI monster can kill opponent monster without dying.
+                            opponent.takeDamage(damage);
+                            strongestAIMonster.setAttackedThisTurn();
+                            strongestOppMonster.removeCard();
+                        }else if(damage == 0){ // If both monsters will die we need to check if it's worth to sacrifice AI's monster.
+                            boolean worthToAttack =
+                                    (oppMonster.getAttack() + oppMonster.getDef() > AIMonster.getAttack() + AIMonster.getDef()) ? true : false;
+                            // It's worth to sacrifice AI's monster if opponent monster has more total power or AI has more or equal
+                            // number of monsters as opponent.
+                            if(worthToAttack || (numberOfMonsters(this) >= numberOfMonsters(this.opponent))){
+                                strongestAIMonster.removeCard();
+                                strongestOppMonster.removeCard();
+                            }else{ // If it's not worth it, mark an opponent monster as "attacked".
+                                oppMonster.setWasAttacked(true);
+                            }
+                        }else{ // If AI cannot kill an opponent monster mark him as "attacked".
+                            oppMonster.setWasAttacked(true);
+                        }
+                    }else{ // If AI has no monsters that can attack this turn then mark opponent monsters as "attacked".
+                        ((Monster)strongestOppMonster.getCard()).setWasAttacked(true);
+                    }
+                }
+            }
+            // If opponent has no monsters on the board then AI does damage to opponent (HP).
+            if(!opponentHasMonsterOnTheBoard()){
+                CardSlot strongestAIAttacker;
+                while((strongestAIAttacker = strongestAttackerOnBoardAI()) != null) {
+                    Monster monster = (Monster) strongestAIAttacker.getCard();
+                    opponent.takeDamage(monster.getAttack());
+                    strongestAIAttacker.setAttackedThisTurn();
                 }
             }
         }
