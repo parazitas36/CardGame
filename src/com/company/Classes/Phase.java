@@ -116,6 +116,9 @@ public final class Phase {
         for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){
             CardSlot slot = currentPlayer.playerBoardSlots.get(i);
             slot.resetAttackedThisTurn();
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                ((Monster)slot.getCard()).setWasAttacked(false);
+            }
         }
         startTime = System.nanoTime();
     }
