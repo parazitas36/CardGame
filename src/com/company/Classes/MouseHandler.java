@@ -115,17 +115,30 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                                 if (attacker == null) {
                                     attacker = c;
                                     attacker.attacking = true;
+                                    selectedIndex = index;
+                                    selectedOffsetX = c.getX();
+
+                                    System.out.println("111111111111111");
+
                                 } else {
                                     attacker.attacking = false;
                                     attacker = c;
                                     attacker.attacking = true;
-                                    game.setAttacking(index - 1);
+                                    System.out.println("22222222222222");
+                                    selectedIndex = index;
+                                    selectedOffsetX = c.getX();
                                     // TODO HERE
                                 }
                             } else {
+
                                 if (attacker != null) {
+                                    System.out.println("333333333333333");
+                                    selectedIndex = index;
+                                    selectedOffsetX = c.getX();
+
                                     attacker.attacking = false;
                                     attacker = null;
+
                                 }
                             }
                         }
@@ -144,9 +157,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                         System.out.println(((Monster) c.getCard()).getStunTime());
 
                         if (game.phase.attackPhase() && attacker != null && c.getCard().getID() == ID.Monster) {
+
+                            System.out.println("444444444444444444");
+                             //game.setAttacking(selectedIndex - 1);
+                             //game.targetX = c.getX() - selectedOffsetX;
                             game.currentPlayer.attack(attacker, c);
                             attacker.attacking = false;
                             attacker = null;
+
                         }
                     }
                 }
@@ -155,7 +173,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         }
         //===================================
     }
-
+    public int selectedIndex, selectedOffsetX;
     @Override
     public void mouseReleased(MouseEvent e) {
         if(game.gameState.isMenu){

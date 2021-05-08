@@ -1,6 +1,7 @@
 package com.company.Classes;
 
 import com.company.Engine.Display;
+import com.company.Engine.Game;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,10 +23,11 @@ public class Player  extends GameObject{
     private Display display;
     public Player opponent;
     private boolean possibleToDefeat;
-    public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
+    private Game game;
+    public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game){
         HP = 10;
         if(_id == ID.Player2){ // Just for testing reasons
-            HP = 2;
+            HP = 20;
         }
         Mana = 1;
         ManaCapacity = 1;
@@ -39,6 +41,7 @@ public class Player  extends GameObject{
         cardsInHand = 0;
         this.display = _display;
         possibleToDefeat = false;
+        game = _game;
     }
     public void setOpponent(Player opp){ this.opponent = opp;}
     public ID getID(){
@@ -118,18 +121,54 @@ public class Player  extends GameObject{
         Monster defMonster = (Monster)defender.getCard();
         int damage = attMonster.getAttack() - defMonster.getDef();
         if(damage > 0){
-            phase.getOpponent().takeDamage(damage);
-            attacker.setAttackedThisTurn();
-            defender.removeCard();
+
+            System.out.println("555555555555555");
+            game.setAttacking(attacker.getIndex(), false);
+            game.targetX = defender.getX() - attacker.getX();
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            phase.getOpponent().takeDamage(damage);
+                            attacker.setAttackedThisTurn();
+                            defender.removeCard();
+                        }
+                    },
+                    500
+            );
             return true;
         }else if (damage == 0){
-            attacker.setAttackedThisTurn();
-            attacker.removeCard();
-            defender.removeCard();
+            System.out.println("66666666666666666666");
+            game.setAttacking(attacker.getIndex(), false);
+            game.targetX = defender.getX() - attacker.getX();
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            attacker.setAttackedThisTurn();
+                            attacker.removeCard();
+                            defender.removeCard();
+                        }
+                    },
+                    500
+            );
+
             return true;
         }else if(damage < 0){
-            attacker.setAttackedThisTurn();
-            attacker.removeCard();
+            System.out.println("77777777777777777");
+            game.setAttacking(attacker.getIndex(), false);
+            game.targetX = defender.getX() - attacker.getX();
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            attacker.setAttackedThisTurn();
+                            attacker.removeCard();
+                        }
+                    },
+                    500
+            );
+
             return true;
         }else{
             return false;
@@ -553,17 +592,40 @@ public class Player  extends GameObject{
             System.out.println("DEF: " + defender.getCard().toString());
             int damage = ((Monster)attacker.getCard()).getAttack() - ((Monster)defender.getCard()).getDef();
             if(damage > 0) {
-                phase.getOpponent().takeDamage(damage);
-                attacker.setAttackedThisTurn();
-                defender.removeCard();
+                // TODO DD
+                game.setAttacking(attacker.getIndex(), true);
+                game.targetX = defender.getX() - attacker.getX();
+                new java.util.Timer().schedule(
+                        new java.util.TimerTask() {
+                            @Override
+                            public void run() {
+                                phase.getOpponent().takeDamage(damage);
+                                attacker.setAttackedThisTurn();
+                                defender.removeCard();
+                            }
+                        },
+                        500
+                );
+
             }else if(damage == 0){
                 int attackerPower = ((Monster)attacker.getCard()).getAttack() + ((Monster)attacker.getCard()).getDef();
                 int defenderPower = ((Monster)defender.getCard()).getAttack() + ((Monster)defender.getCard()).getDef();
                 boolean worthToAttack = defenderPower > attackerPower ? true : false;
                 if(worthToAttack) {
-                    attacker.setAttackedThisTurn();
-                    defender.removeCard();
-                    attacker.removeCard();
+                    game.setAttacking(attacker.getIndex(), true);
+                    game.targetX = defender.getX() - attacker.getX();
+                    new java.util.Timer().schedule(
+                            new java.util.TimerTask() {
+                                @Override
+                                public void run() {
+                                    attacker.setAttackedThisTurn();
+                                    defender.removeCard();
+                                    attacker.removeCard();
+                                }
+                            },
+                            500
+                    );
+
                 }else{
                     attacker.setAttackedThisTurn();
                     attackAI();

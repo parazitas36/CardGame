@@ -94,7 +94,7 @@ public class Game implements Runnable{
     public void startGame(){
         board = new Board(display);
         handler = new Handler();
-        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot);
+        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0);
         draggingSlot.setWidth((int)(display.getWidth()*0.1));
         draggingSlot.setHeight((int)(display.getHeight()*0.2));
 
@@ -119,8 +119,8 @@ public class Game implements Runnable{
         player2_slots.get(5).setDeck(opponentDeck);
         opponentDeck.shuffle();
 
-        player1 = new Player(ID.Player1, deck, player1_slots, display);
-        player2 = new Player(ID.Player2, opponentDeck, player2_slots, display);
+        player1 = new Player(ID.Player1, deck, player1_slots, display, this);
+        player2 = new Player(ID.Player2, opponentDeck, player2_slots, display, this);
 
         player1.setOpponent(player2);
         player2.setOpponent(player1);
@@ -138,39 +138,54 @@ public class Game implements Runnable{
     public ID animationCardID;
     double animX, animY;
     public int intID;
-    public void setAttacking(int index){
+    private boolean isEnemyAttacking;
+    public void setAttacking(int index, boolean _isEnemyAttacking){
         inAnimation = true;
 //        animationCardID = id;
         intID = index;
         animTimer = 0;
+        isEnemyAttacking = _isEnemyAttacking;
     }
     public int targetX = 0, targetY = 200;
     private void tick(){
-        if(inAnimation){
+        if(inAnimation && !isEnemyAttacking){
             animTimer += 1;
             // TODO move to animationHandler
             // swap animation direction if enemy
-            if(animTimer < 50){
-                animY -= (1 - (animTimer / 50)) * 7f;
-                animX += targetX * (animTimer/100);
-            }else if(animTimer < 100){
-                animY += (1 - ((animTimer - 50) / 50)) * 7f;
-                animX -= targetX * ((animTimer-50)/100);
+            if(animTimer < 17){
+                animY -= (1 - (animTimer / 50)) * 5f;
+                animX += targetX * (animTimer/(17*17/2));
+            }else if(animTimer < 34){
+                animY += (1 - ((animTimer - 50) / 50)) * 3f;
+                animX -= targetX * ((animTimer-17)/(17*17/2));
             }else{
                 inAnimation = false;
                 animY = 0;
             }
 
-            if(!phase.enemyTurn()){
-                System.out.println("ANIM1: ");
-                board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animX);
-                board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animY);
+            System.out.println("ANIM1: ");
+            board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animX);
+            board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animY);
+        }else if(inAnimation && isEnemyAttacking){
+            animTimer += 1;
+            // TODO move to animationHandler
+            // swap animation direction if enemy
+            if(animTimer < 17){
+                animY += (1 - (animTimer / 50)) * 5f;
+                animX += targetX * (animTimer/(17*17/2));
+            }else if(animTimer < 34){
+                animY -= (1 - ((animTimer - 50) / 50)) * 3f;
+                animX -= targetX * ((animTimer-17)/(17*17/2));
+            }else{
+                inAnimation = false;
+                animY = 0;
             }
-            else{
-                System.out.println("ANIM2: ");
-                board.getPlayer2_slots().get(intID).SetAnimationOffsetX(animX);
-                board.getPlayer2_slots().get(intID).SetAnimationOffsetY(animY);
-            }
+
+
+            System.out.println("ANIM2: ");
+            board.getPlayer2_slots().get(intID).SetAnimationOffsetX(animX);
+            board.getPlayer2_slots().get(intID).SetAnimationOffsetY(animY);
+
 
         }
 
