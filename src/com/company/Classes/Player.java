@@ -99,7 +99,7 @@ public class Player  extends GameObject{
         HP += amount;
     }
     public void decreaseHP(int amount){
-        HP -= amount;
+        HP = HP - amount;
     }
     public void refillMana(){
         Mana = ManaCapacity;

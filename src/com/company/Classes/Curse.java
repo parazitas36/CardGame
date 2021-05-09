@@ -43,6 +43,7 @@ public class Curse extends Card{
     }
     public void hpCurseLogic(CardSlot c, Player currentPlayer, Player opponent, CardSlot chosenCardSlot){
         if(getManaCost() <= currentPlayer.getMana()){
+            System.out.println("Ieina");
             opponent.decreaseHP(amount);
             chosenCardSlot.removeCard();
             chosenCardSlot = null;
