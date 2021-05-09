@@ -324,7 +324,7 @@ public class Game implements Runnable{
         System.exit(0);
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1366, 768);
+        Game game = new Game("UbiHard Card Game", 1920, 1080);
         game.start();
         // 1440x980
     }
