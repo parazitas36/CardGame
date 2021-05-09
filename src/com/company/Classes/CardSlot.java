@@ -6,6 +6,7 @@ public class CardSlot extends GameObject{
     private Card card;
     private Deck deck;
     private ID id;
+    private int index;
     private int width;
     private int height;
     public boolean showCardsCount;
@@ -13,7 +14,7 @@ public class CardSlot extends GameObject{
     public boolean attacking; // flag to check if monster is in attacking position (marks this monster with a red rectangle)
     private boolean attackedThisTurn; // flag to check if monster attacked this turn already
     private double animationOffsetX, animationOffsetY;
-    public CardSlot(Card _card, int x, int y, ID slotID){
+    public CardSlot(Card _card, int x, int y, ID slotID, int _index){
         super();
         setX(x);
         setY(y);
@@ -22,14 +23,16 @@ public class CardSlot extends GameObject{
         hasCard = card == null ? false : true;
         attacking = false;
         attackedThisTurn = false;
+        index = _index;
     }
-    public CardSlot(Deck _deck, int x, int y, ID slotID){
+    public CardSlot(Deck _deck, int x, int y, ID slotID, int _index){
         super();
         deck = _deck;
         setX(x);
         setY(y);
         id = slotID;
         showCardsCount = false;
+        index = _index;
     }
     @Override
     public void tick() {
@@ -134,6 +137,9 @@ public class CardSlot extends GameObject{
     }
     public Deck getDeck(){
         return this.deck;
+    }
+    public int getIndex(){
+        return index;
     }
     public void setAttackedThisTurn(){ attackedThisTurn = true; }
     public void resetAttackedThisTurn() { attackedThisTurn = false; }

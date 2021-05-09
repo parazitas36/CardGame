@@ -1,6 +1,7 @@
 package com.company.Classes;
 
 import com.company.Engine.Display;
+import com.company.Engine.Game;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,11 +23,10 @@ public class Player  extends GameObject{
     private Display display;
     public Player opponent;
     private boolean possibleToDefeat;
-    public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display){
+    private Game game;
+    public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game){
         HP = 20;
-//        if(_id == ID.Player2){ // Just for testing reasons
-//            HP = 2;
-//        }
+
         Mana = 1;
         ManaCapacity = 1;
         ManaStack = 0;
@@ -39,6 +39,7 @@ public class Player  extends GameObject{
         cardsInHand = 0;
         this.display = _display;
         possibleToDefeat = false;
+        game = _game;
     }
     public void setOpponent(Player opp){ this.opponent = opp;}
     public ID getID(){
@@ -118,18 +119,54 @@ public class Player  extends GameObject{
         Monster defMonster = (Monster)defender.getCard();
         int damage = attMonster.getAttack() - defMonster.getDef();
         if(damage > 0){
-            phase.getOpponent().takeDamage(damage);
-            attacker.setAttackedThisTurn();
-            defender.removeCard();
+
+            System.out.println("555555555555555");
+            game.setAttacking(attacker.getIndex(), false);
+            game.targetX = defender.getX() - attacker.getX();
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            phase.getOpponent().takeDamage(damage);
+                            attacker.setAttackedThisTurn();
+                            defender.removeCard();
+                        }
+                    },
+                    500
+            );
             return true;
         }else if (damage == 0){
-            attacker.setAttackedThisTurn();
-            attacker.removeCard();
-            defender.removeCard();
+            System.out.println("66666666666666666666");
+            game.setAttacking(attacker.getIndex(), false);
+            game.targetX = defender.getX() - attacker.getX();
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            attacker.setAttackedThisTurn();
+                            attacker.removeCard();
+                            defender.removeCard();
+                        }
+                    },
+                    500
+            );
+
             return true;
         }else if(damage < 0){
-            attacker.setAttackedThisTurn();
-            attacker.removeCard();
+            System.out.println("77777777777777777");
+            game.setAttacking(attacker.getIndex(), false);
+            game.targetX = defender.getX() - attacker.getX();
+            new java.util.Timer().schedule(
+                    new java.util.TimerTask() {
+                        @Override
+                        public void run() {
+                            attacker.setAttackedThisTurn();
+                            attacker.removeCard();
+                        }
+                    },
+                    500
+            );
+
             return true;
         }else{
             return false;
@@ -369,9 +406,10 @@ public class Player  extends GameObject{
         }
 
         // Updates possibleToDefeat.
-        if(opponentHasMonsterOnTheBoard()) { // <- It's only worth to check if opponent has at least one monster on the board.
+        if(opponentHasMonsterOnTheBoard()) {
             Monster oppM = (Monster)strongestOppMonster.getCard();
             CardSlot strongestMonsterOnBoard = null; // The strongest AI's monster on the board.
+
             if(!possibleToDefeat){
                 // Checks if AI's monster on the board can kill the strongest opponent monster.
                 if(AIHasMonsterOnTheBoard()){
@@ -477,9 +515,12 @@ public class Player  extends GameObject{
                         continueLoop = true;
                     }
                 }
+
             }
+
         }
     }
+
     /*
         Finds the strongest AI monster(with the highest attack) on the board who is going to attack
         or will be "buffed" with defense buff.
@@ -511,6 +552,35 @@ public class Player  extends GameObject{
             }
         }
         return strongest;
+    }
+    /*
+        Finds the strongest opponent monster on the board which could be defeated by the strongest AI monster.
+     */
+    private CardSlot strongestOpponentPossibleToDefeatAI(){
+        if(strongestAttackerOnBoardAI() != null) { // If there are no AI monsters on the board.
+            Monster strongestAttacker = (Monster) strongestAttackerOnBoardAI().getCard();
+            Player opponent = phase.getOpponent();
+            CardSlot strongestOpp = null;
+            for (int i = 0; i < opponent.playerBoardSlots.size(); i++) {
+                CardSlot slot = opponent.playerBoardSlots.get(i);
+                if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                    Monster strongestOppMonster = null;
+                    if(strongestOpp != null){
+                        strongestOppMonster = ((Monster)strongestOpp.getCard());
+                    }
+                    Monster slotMonster = ((Monster)slot.getCard());
+                    // If the strongest opponent monster is null or it's power(atk+def) is less than the monster's power on the board slot ->"slot",
+                    // then the strongest opponent monster is on the board slot -> "slot".
+                    if( ( strongestOpp == null || (strongestOppMonster.getAttack() + strongestOppMonster.getDef()) <
+                                    (slotMonster.getAttack() + slotMonster.getDef()) ) && strongestAttacker.getAttack() >= slotMonster.getDef() ){
+                        strongestOpp = slot;
+                    }
+                }
+            }
+            return strongestOpp;
+        }else{
+            return null;
+        }
     }
 
     //================================
