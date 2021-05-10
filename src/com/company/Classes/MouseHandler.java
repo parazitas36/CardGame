@@ -69,6 +69,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         // Game
         //===================================
         if(game.gameState.isGame) {
+            // Phase button
+            if(e.getX() >= game.phase.GetEndTurnPosX() && e.getX() <= game.phase.GetEndTurnPosX() +  game.phase.GetEndTurnImgWidth() && e.getY() <= game.phase.GetEndTurnPosY() + game.phase.GetEndTurnImgHeight() && e.getY() >= game.phase.GetEndTurnPosY()){
+               game.phase.nextPhase();
+            }
             //-------------------------------------------------------------
             // If it's not an attack phase, but attacker is still selected.
             //-------------------------------------------------------------

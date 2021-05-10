@@ -324,7 +324,7 @@ public class Game implements Runnable{
         System.exit(0);
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1920, 1080);
+        Game game = new Game("UbiHard Card Game", 1366, 768);
         game.start();
         // 1440x980
     }
@@ -451,10 +451,6 @@ public class Game implements Runnable{
                 }
 
             }
-        }
-        if (display.getFrame().getMousePosition() != null && this.display.getFrame().getMousePosition().x >= phase.GetEndTurnPosX() && this.display.getFrame().getMousePosition().x <= phase.GetEndTurnPosX() + phase.GetEndTurnImgWidth() && this.display.getFrame().getMousePosition().y <= phase.GetEndTurnPosY() + phase.GetEndTurnImgHeight() && this.display.getFrame().getMousePosition().y >= phase.GetEndTurnPosY()) {
-            phase.nextPhase();
-            System.out.println("CLICKED END TURN");
         }
 
         if(draggingCard != null && this.chosenCardSlot != null){

@@ -37,9 +37,9 @@ public final class Phase {
         currentPlayer = p1;
         startPhaseActions();
         phaseIconWidth = (int)(width * 0.1);
-        phaseIconHeight = (int)(height * 0.1);
+        phaseIconHeight = (int)(height * 0.05);
         endTurnImgWidth = (int)(width * 0.1);
-        endTurnImgHeight = (int)(height * 0.1);
+        endTurnImgHeight = (int)(height * 0.05);
     }
 
     private void LoadImages(){
@@ -54,9 +54,12 @@ public final class Phase {
             e.printStackTrace();
         }
 
-        endTurnPosX = (int)(width * 0.86);
-        endTurnPosY = (int)(height * 0.35);
-
+        endTurnPosX = (int)(width * 0.87);
+        endTurnPosY = (int)(height * 0.375);
+        endTurnImgHeight = endTurnImg.getHeight();
+        endTurnImgWidth = endTurnImg.getWidth();
+        phaseIconWidth = phaseEndImg.getWidth();
+        phaseIconHeight = phaseEndImg.getHeight();
     }
     public void nextPhase(){
         if(this.startPhase()){
