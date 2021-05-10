@@ -1,16 +1,16 @@
 M;Monster 1;1;src/com/company/Images/Card_Monster_1.png;1;1
-M;Monster 2;3;src/com/company/Images/Card_Monster_2.png;2;1
-M;Monster 3;4;src/com/company/Images/Card_Monster_3.png;1;2
-M;Monster 4;4;src/com/company/Images/Card_Monster_4.png;2;2
-M;Monster 5;7;src/com/company/Images/Card_Monster_5.png;2;3
-M;Monster 6;5;src/com/company/Images/Card_Monster_6.png;3;2
+M;Monster 2;1;src/com/company/Images/Card_Monster_2.png;2;1
+M;Monster 3;1;src/com/company/Images/Card_Monster_3.png;1;2
+M;Monster 4;2;src/com/company/Images/Card_Monster_4.png;2;2
+M;Monster 5;2;src/com/company/Images/Card_Monster_5.png;2;3
+M;Monster 6;2;src/com/company/Images/Card_Monster_6.png;3;2
 M;Monster 7;3;src/com/company/Images/Card_Monster_7.png;4;2
-M;Monster 8;4;src/com/company/Images/Card_Monster_8.png;3;4
-M;Monster 9;6;src/com/company/Images/Card_Monster_9.png;5;2
-M;Monster 10;2;src/com/company/Images/Card_Monster_10.png;2;5
-M;Monster 11;4;src/com/company/Images/Card_Monster_11.png;6;4
+M;Monster 8;3;src/com/company/Images/Card_Monster_8.png;3;4
+M;Monster 9;4;src/com/company/Images/Card_Monster_9.png;5;2
+M;Monster 10;4;src/com/company/Images/Card_Monster_10.png;2;5
+M;Monster 11;5;src/com/company/Images/Card_Monster_11.png;6;4
 M;Monster 12;5;src/com/company/Images/Card_Monster_12.png;4;6
-M;Monster 13;3;src/com/company/Images/Card_Monster_13.png;5;5
+M;Monster 13;5;src/com/company/Images/Card_Monster_13.png;5;5
 M;Super;7;src/com/company/Images/Card_Monster_SUPER.png;8;8
 C;Bleed;1;src/com/company/Images/Card_Curse_HP-.png;hp;2
 C;Destroy;1;src/com/company/Images/Card_Curses.png;destroy

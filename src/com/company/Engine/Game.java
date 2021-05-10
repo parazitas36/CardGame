@@ -75,7 +75,7 @@ public class Game implements Runnable{
         try{
 //            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
             destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-            stun = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            stun = new ImageIcon("src/com/company/Images/stun.gif").getImage();
             buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
             curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
             boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
@@ -386,7 +386,6 @@ public class Game implements Runnable{
                 if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){ // Buff
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
                         drawffect(x, y, buffimg, 1, "Buff");
-                        threadSleep(500);
                         TimeBefore = 0;
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
@@ -439,8 +438,13 @@ public class Game implements Runnable{
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()) {
                 if (draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
                     if (((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
-                        drawffect(x, y, destroy, 1, "Curse");
-                        TimeBefore = 0;
+                        if(((Curse) (draggingCard)).getEffect().equals("stun")){
+                            drawffect(x, y, stun, 1, "Curse");
+                            TimeBefore = 0;
+                        }else{
+                            drawffect(x, y, destroy, 1, "Curse");
+                            TimeBefore = 0;
+                        }
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
                     }
