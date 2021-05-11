@@ -4,6 +4,8 @@ import com.company.Classes.*;
 import com.company.Utils.CardReader;
 
 import javax.imageio.ImageIO;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
@@ -28,6 +30,24 @@ public class Game implements Runnable{
     private Image bleedimg;
     private Image boosthpimg;
 
+    public MusicPlayer musicPlayer;
+    public AudioInputStream menuMusic;
+    public AudioInputStream inGameMusic;
+    public AudioInputStream winnerMusic;
+    public AudioInputStream loserMusic;
+    public AudioInputStream sound_drawEffect;
+    public AudioInputStream sound_attackEffect;
+    public AudioInputStream sound_destroyEffect;
+    public AudioInputStream sound_placedEffect;
+    public Clip menuMusicClip;
+    public Clip inGameMusicClip;
+    public Clip winnerMusicClip;
+    public Clip loserMusicClip;
+    public Clip sound_drawEffectClip;
+    public Clip sound_attackEffectClip;
+    public Clip sound_destroyEffectClip;
+    public Clip sound_placedEffectClip;
+
     long TimeBefore = 0;
 
     private Thread thread;
@@ -46,6 +66,8 @@ public class Game implements Runnable{
     private ArrayList<Card> cards;
     public Player currentPlayer;
     public Phase phase;
+
+    private boolean clean;
 
     private boolean mouseHolding;
     private Graphics g;
@@ -66,7 +88,21 @@ public class Game implements Runnable{
         width = _width;
         height = _height;
         gameState = new GameState(_width, _height);
+        clean = false;
 
+        musicPlayer = new MusicPlayer();
+        menuMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/MenuMusic.wav");
+        inGameMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/InGameMusic.wav");
+        sound_attackEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/AttackSound.wav");
+        sound_destroyEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/DestroyCardSound.wav");
+        sound_placedEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/PutACardForPlayer.wav");
+        sound_drawEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/Shuffle.wav");
+        sound_drawEffectClip = null;
+        sound_attackEffectClip = null;
+        sound_destroyEffectClip = null;
+        sound_placedEffectClip = null;
+        menuMusicClip = musicPlayer.playMusic(menuMusic);
+        menuMusicClip.start();
     }
     private void init(){
         display = new Display(title, width, height);
@@ -76,7 +112,7 @@ public class Game implements Runnable{
         try{
 //            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
             destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-            stun = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            stun = new ImageIcon("src/com/company/Images/stun.gif").getImage();
             buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
             curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
             boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
@@ -93,6 +129,7 @@ public class Game implements Runnable{
         new MouseHandler(display.getCanvas(), this);
     }
     public void startGame(){
+        clean = false;
         board = new Board(display);
         handler = new Handler();
         draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0);
@@ -205,6 +242,31 @@ public class Game implements Runnable{
                     System.out.println(currentPlayer.getID().toString() + " won!");
                     winner = currentPlayer;
                 }
+            }
+        }else if(gameState.celebrationWindow){
+            if(!clean) {
+                player1 = null;
+                player2 = null;
+                if (cards != null) {
+                    cards.clear();
+                }
+                cards = null;
+                board = null;
+                draggingSlot = null;
+                draggingCard = null;
+                handler = null;
+                if (player1_slots != null) {
+                    player1_slots.clear();
+                }
+                player1_slots = null;
+                if (player2_slots != null) {
+                    player2_slots.clear();
+                }
+                player2_slots = null;
+                opponentDeck = null;
+                phase = null;
+                Runtime.getRuntime().gc();
+                clean = true;
             }
         }
     }
@@ -328,13 +390,6 @@ public class Game implements Runnable{
         Game game = new Game("UbiHard Card Game", 1366, 768);
         game.start();
         // 1440x980
-
-        String filepath = "PugaciovaIrReperis(sutrumpinta).wav";
-        String filepath2 = "C:\\Users\\marcio\\Desktop\\CardGame1\\src\\com\\company\\Assets\\Muzika";
-        MusicPlayer musicPlayer = new MusicPlayer();
-        musicPlayer.playMusic(filepath);
-        MusicPlayer musicPlayer1 = new MusicPlayer();
-        musicPlayer1.playMusic(filepath2);
     }
 
     public void DrawDraggingCard(){
@@ -394,7 +449,6 @@ public class Game implements Runnable{
                 if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){ // Buff
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
                         drawffect(x, y, buffimg, 1, "Buff");
-                        threadSleep(500);
                         TimeBefore = 0;
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
@@ -447,8 +501,13 @@ public class Game implements Runnable{
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()) {
                 if (draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
                     if (((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
-                        drawffect(x, y, destroy, 1, "Curse");
-                        TimeBefore = 0;
+                        if(((Curse) (draggingCard)).getEffect().equals("stun")){
+                            drawffect(x, y, stun, 1, "Curse");
+                            TimeBefore = 0;
+                        }else{
+                            drawffect(x, y, destroy, 1, "Curse");
+                            TimeBefore = 0;
+                        }
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
                     }

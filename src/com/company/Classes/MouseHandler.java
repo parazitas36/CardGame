@@ -34,6 +34,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         if(game.gameState.isMenu){
             // Clicked on Start button
             if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + game.gameState.imgH && e.getY() >= game.gameState.imgYOffSet){
+                if(game.menuMusicClip != null){
+                    game.menuMusicClip.stop();
+                    game.menuMusicClip.setFramePosition(0);
+                }
                 System.out.println("Start");
                 game.gameState.isMenu = false;
                 game.gameState.isLoading = true;
@@ -71,7 +75,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         if(game.gameState.isGame) {
             // Phase button
             if(e.getX() >= game.phase.GetEndTurnPosX() && e.getX() <= game.phase.GetEndTurnPosX() +  game.phase.GetEndTurnImgWidth() && e.getY() <= game.phase.GetEndTurnPosY() + game.phase.GetEndTurnImgHeight() && e.getY() >= game.phase.GetEndTurnPosY()){
-               game.phase.nextPhase();
+                game.phase.nextPhase();
             }
             //-------------------------------------------------------------
             // If it's not an attack phase, but attacker is still selected.
@@ -163,9 +167,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                         if (game.phase.attackPhase() && attacker != null && c.getCard().getID() == ID.Monster) {
 
                             System.out.println("444444444444444444");
-                             //game.setAttacking(selectedIndex - 1);
-                             //game.targetX = c.getX() - selectedOffsetX;
+                            //game.setAttacking(selectedIndex - 1);
+                            //game.targetX = c.getX() - selectedOffsetX;
                             game.currentPlayer.attack(attacker, c);
+                            game.musicPlayer.playSound(game.sound_attackEffect);
                             attacker.attacking = false;
                             attacker = null;
 

@@ -82,6 +82,12 @@ public class Player  extends GameObject{
             CardSlot slot = playerHandSlots.get(i);
             if(!slot.cardOnBoard() && handSizeLimit > cardsInHand){
                 slot.setCard(card);
+                if(game.sound_drawEffectClip == null) {
+                    game.sound_drawEffectClip = game.musicPlayer.playSound(game.sound_drawEffect);
+                    game.musicPlayer.repeatSound(game.sound_drawEffectClip);
+                }else{
+                    game.musicPlayer.repeatSound(game.sound_drawEffectClip);
+                }
                 cardsInHand++;
                 break;
             }
@@ -90,6 +96,12 @@ public class Player  extends GameObject{
     public boolean placeCard(CardSlot slot, Card card){
         if(enoughManaForCard(card)) {
             slot.setCard(card);
+            if(game.sound_placedEffectClip == null) {
+                game.sound_placedEffectClip = game.musicPlayer.playSound(game.sound_placedEffect);
+                game.musicPlayer.repeatSound(game.sound_placedEffectClip);
+            }else{
+                game.musicPlayer.repeatSound(game.sound_placedEffectClip);
+            }
             cardsInHand--;
             Mana = Mana - card.getManaCost();
             return true;
@@ -130,6 +142,7 @@ public class Player  extends GameObject{
                             phase.getOpponent().takeDamage(damage);
                             attacker.setAttackedThisTurn();
                             defender.removeCard();
+                            game.musicPlayer.playSound(game.sound_destroyEffect);
                         }
                     },
                     500
@@ -146,6 +159,7 @@ public class Player  extends GameObject{
                             attacker.setAttackedThisTurn();
                             attacker.removeCard();
                             defender.removeCard();
+                            game.musicPlayer.playSound(game.sound_destroyEffect);
                         }
                     },
                     500
@@ -162,6 +176,7 @@ public class Player  extends GameObject{
                         public void run() {
                             attacker.setAttackedThisTurn();
                             attacker.removeCard();
+                            game.musicPlayer.playSound(game.sound_destroyEffect);
                         }
                     },
                     500
@@ -572,7 +587,7 @@ public class Player  extends GameObject{
                     // If the strongest opponent monster is null or it's power(atk+def) is less than the monster's power on the board slot ->"slot",
                     // then the strongest opponent monster is on the board slot -> "slot".
                     if( ( strongestOpp == null || (strongestOppMonster.getAttack() + strongestOppMonster.getDef()) <
-                                    (slotMonster.getAttack() + slotMonster.getDef()) ) && strongestAttacker.getAttack() >= slotMonster.getDef() ){
+                            (slotMonster.getAttack() + slotMonster.getDef()) ) && strongestAttacker.getAttack() >= slotMonster.getDef() ){
                         strongestOpp = slot;
                     }
                 }
