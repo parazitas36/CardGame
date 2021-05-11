@@ -323,7 +323,7 @@ public class Player  extends GameObject{
         }
         return false;
     }
-    private boolean opponentHasMonsterOnTheBoard(){
+    public boolean opponentHasMonsterOnTheBoard(){
         for(CardSlot slot : this.opponent.playerBoardSlots){
             if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
                 return true;

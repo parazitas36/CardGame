@@ -45,14 +45,16 @@ public class Buff extends Card{
         }
         return false;
     }
-    public void hpBuffLogic(CardSlot c, Player currentPlayer, CardSlot chosenCardSlot){
+    public boolean hpBuffLogic(CardSlot c, Player currentPlayer, CardSlot chosenCardSlot){
         if(getManaCost() <= currentPlayer.getMana() + currentPlayer.getManaStack()){
             currentPlayer.addHP(amount);
             chosenCardSlot.removeCard();
             chosenCardSlot = null;
             currentPlayer.decreaseCardsInHandCount();
             currentPlayer.decreaseMana(getManaCost());
+            return true;
         }
+        return false;
     }
     @Override
     public void tick() {
