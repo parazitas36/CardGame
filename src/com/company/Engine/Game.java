@@ -93,6 +93,8 @@ public class Game implements Runnable{
         musicPlayer = new MusicPlayer();
         menuMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/MenuMusic.wav");
         inGameMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/InGameMusic.wav");
+        winnerMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/WinnerMusic.wav");
+        loserMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/LosingMusic.wav");
         sound_attackEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/AttackSound.wav");
         sound_destroyEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/DestroyCardSound.wav");
         sound_placedEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/PutACardForPlayer.wav");
@@ -101,6 +103,7 @@ public class Game implements Runnable{
         sound_attackEffectClip = null;
         sound_destroyEffectClip = null;
         sound_placedEffectClip = null;
+        winnerMusicClip = null;
         menuMusicClip = musicPlayer.playMusic(menuMusic);
         menuMusicClip.start();
     }
@@ -153,6 +156,13 @@ public class Game implements Runnable{
         cards = new ArrayList<>();
         cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
 
+        if(inGameMusicClip == null){
+            System.out.println("dd");
+            inGameMusicClip = musicPlayer.playSound(inGameMusic);
+        }
+        if(!inGameMusicClip.isRunning()){
+            musicPlayer.repeatMusic(inGameMusicClip);
+        }
         opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
         player2_slots.get(5).setDeck(opponentDeck);
         opponentDeck.shuffle();
@@ -202,8 +212,10 @@ public class Game implements Runnable{
             }
 
             System.out.println("ANIM1: ");
-            board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animX);
-            board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animY);
+            if(phase != null && !phase.weHaveAWinner()) {
+                board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animX);
+                board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animY);
+            }
         }else if(inAnimation && isEnemyAttacking){
             animTimer += 1;
             // TODO move to animationHandler
@@ -228,6 +240,12 @@ public class Game implements Runnable{
         }
 
         if(gameState.isGame) {
+            if(winnerMusicClip != null && winnerMusicClip.isRunning()) {
+                winnerMusicClip.stop();
+            }
+            if(loserMusicClip != null && loserMusicClip.isRunning()){
+                loserMusicClip.stop();
+            }
             handler.tick();
             currentPlayer = phase.getCurrentPlayer();
 //            phase.updateTime();
@@ -244,6 +262,21 @@ public class Game implements Runnable{
                 }
             }
         }else if(gameState.celebrationWindow){
+            if(inGameMusicClip != null){
+               inGameMusicClip.stop();
+            }
+            if(winner == player1 && winnerMusicClip == null){
+                winnerMusicClip = musicPlayer.playSound(winnerMusic);
+                musicPlayer.repeatSound(winnerMusicClip);
+            }else if(winner == player1 && !winnerMusicClip.isRunning()){
+                musicPlayer.repeatSound(winnerMusicClip);
+            }
+            if(winner == player2 && loserMusicClip == null){
+                loserMusicClip = musicPlayer.playSound(loserMusic);
+                musicPlayer.repeatSound(loserMusicClip);
+            }else if(winner == player2 && !loserMusicClip.isRunning()){
+                musicPlayer.repeatSound(loserMusicClip);
+            }
             if(!clean) {
                 player1 = null;
                 player2 = null;

@@ -31,7 +31,9 @@ public class Player  extends GameObject{
         ManaCapacity = 1;
         ManaStack = 0;
         ManaStackCapacity = 3;
-        id = _id;
+        id = _id;if(id == ID.Player2){
+            HP = 3;
+        }
         deck = _deck;
         playerSlots = slots;
         filterSlots();
@@ -142,7 +144,12 @@ public class Player  extends GameObject{
                             phase.getOpponent().takeDamage(damage);
                             attacker.setAttackedThisTurn();
                             defender.removeCard();
-                            game.musicPlayer.playSound(game.sound_destroyEffect);
+                            if(game.sound_destroyEffectClip == null) {
+                                game.sound_destroyEffectClip = game.musicPlayer.playSound(game.sound_destroyEffect);
+                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            }else{
+                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            }
                         }
                     },
                     500
@@ -158,8 +165,13 @@ public class Player  extends GameObject{
                         public void run() {
                             attacker.setAttackedThisTurn();
                             attacker.removeCard();
+                            if(game.sound_destroyEffectClip == null) {
+                                game.sound_destroyEffectClip = game.musicPlayer.playSound(game.sound_destroyEffect);
+                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            }else{
+                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            }
                             defender.removeCard();
-                            game.musicPlayer.playSound(game.sound_destroyEffect);
                         }
                     },
                     500
@@ -176,7 +188,12 @@ public class Player  extends GameObject{
                         public void run() {
                             attacker.setAttackedThisTurn();
                             attacker.removeCard();
-                            game.musicPlayer.playSound(game.sound_destroyEffect);
+                            if(game.sound_destroyEffectClip == null) {
+                                game.sound_destroyEffectClip = game.musicPlayer.playSound(game.sound_destroyEffect);
+                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            }else{
+                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            }
                         }
                     },
                     500

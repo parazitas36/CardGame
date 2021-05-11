@@ -48,7 +48,14 @@ public class MusicPlayer {
         }
         return clip;
     }
-
+    public void repeatMusic(Clip clip) {
+        if (clip.isRunning()) {
+            clip.stop();
+        }
+        clip.setFramePosition(0);
+        clip.start();
+        clip.loop(Clip.LOOP_CONTINUOUSLY);
+    }
     public void repeatSound(Clip clip) {
         if (clip.isRunning()) {
             clip.stop();
