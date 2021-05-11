@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+
 public class Game implements Runnable{
     public Display display;
     private String title;
@@ -327,6 +328,13 @@ public class Game implements Runnable{
         Game game = new Game("UbiHard Card Game", 1366, 768);
         game.start();
         // 1440x980
+
+        String filepath = "PugaciovaIrReperis(sutrumpinta).wav";
+        String filepath2 = "C:\\Users\\marcio\\Desktop\\CardGame1\\src\\com\\company\\Assets\\Muzika";
+        MusicPlayer musicPlayer = new MusicPlayer();
+        musicPlayer.playMusic(filepath);
+        MusicPlayer musicPlayer1 = new MusicPlayer();
+        musicPlayer1.playMusic(filepath2);
     }
 
     public void DrawDraggingCard(){
