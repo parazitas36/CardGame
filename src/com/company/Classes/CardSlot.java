@@ -83,8 +83,9 @@ public class CardSlot extends GameObject{
                 g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                 if(card.getID() == ID.Monster && this.getId().toString().contains("Player2_Slot")){
                     g.setFont(newfont);
-                    g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), this.getX() + (int)(this.getWidth() * 0.1111), this.getY() + (int)(this.getHeight() * 0.7908));
-                    g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
+                    g.drawString(String.format("%s", ((Monster)card).getAttack()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.74));
+                    g.drawString(String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.52));
+                    g.drawString(String.format("%s", ((Monster)card).getManaCost()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.96));
                     g.setFont(prevfont);
                     if(((Monster) card).stunTime > 0){
                         g.drawImage(((Monster) card).stunnedImg, this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);

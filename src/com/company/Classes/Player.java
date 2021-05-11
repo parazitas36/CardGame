@@ -26,7 +26,7 @@ public class Player  extends GameObject{
     private Game game;
     private boolean supper;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game){
-        HP = 20;
+        HP = 30;
 
         Mana = 1;
         ManaCapacity = 1;
@@ -218,7 +218,7 @@ public class Player  extends GameObject{
             for (int i = 0; i < playerBoardSlots.size(); i++) {
                 CardSlot slot = playerBoardSlots.get(i);
                 if (!slot.cardOnBoard()) { // If its AI board slot which doesn't have a card, card is placed on this slot
-                    Mana-=card.getManaCost();
+                    decreaseMana(card.getManaCost());
                     slot.setCard(card);
                     handSlot.removeCard();
                     cardsInHand--;
