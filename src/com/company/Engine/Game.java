@@ -4,6 +4,7 @@ import com.company.Classes.*;
 import com.company.Utils.CardReader;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
@@ -13,19 +14,30 @@ import java.util.ArrayList;
 
 
 public class Game implements Runnable{
-    private Display display;
+    public Display display;
     private String title;
     private int width;
     private int height;
-    private BufferedImage boardImg;
+    private BufferedImage boardImg,
+            backToMenu,
+            backImg;
+    private Image destroy;
+    private Image stun;
+    private Image buffimg;
+    private Image curseimg;
+    private Image bleedimg;
+    private Image boosthpimg;
+
+    long TimeBefore = 0;
 
     private Thread thread;
-    private boolean running;
+    public boolean running;
 
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
     private Player player1;
     private Player player2;
+    private Player winner;
 
     private CardSlot draggingSlot;
     private Card draggingCard;
@@ -40,6 +52,8 @@ public class Game implements Runnable{
     private BufferStrategy buffer;
     private Handler handler;
 
+    public GameState gameState;
+
     private double deltaTime;
 
     Board board;
@@ -51,21 +65,37 @@ public class Game implements Runnable{
         title = _title;
         width = _width;
         height = _height;
+        gameState = new GameState(_width, _height);
+
     }
     private void init(){
         display = new Display(title, width, height);
-        board = new Board(display);
-        handler = new Handler();
 
-        BufferedImage backImg = null;
+
+        backImg = null;
         try{
+//            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            stun = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
+            curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
+            bleedimg = new ImageIcon("src/com/company/Images/bleed2.gif").getImage();
+
             backImg = ImageIO.read(new File("src/com/company/Images/back.png"));
             boardImg = ImageIO.read(new File("src/com/company/Images/Board.png"));
+            backToMenu = ImageIO.read(new File("src/com/company/Images/backtomenu.png"));
         }catch (IOException e){
             e.printStackTrace();
         }
 
-        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot);
+
+        new MouseHandler(display.getCanvas(), this);
+    }
+    public void startGame(){
+        board = new Board(display);
+        handler = new Handler();
+        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0);
         draggingSlot.setWidth((int)(display.getWidth()*0.1));
         draggingSlot.setHeight((int)(display.getHeight()*0.2));
 
@@ -90,64 +120,95 @@ public class Game implements Runnable{
         player2_slots.get(5).setDeck(opponentDeck);
         opponentDeck.shuffle();
 
-        player1 = new Player(ID.Player1, deck, player1_slots, display);
-        player2 = new Player(ID.Player2, opponentDeck, player2_slots, display);
+        player1 = new Player(ID.Player1, deck, player1_slots, display, this);
+        player2 = new Player(ID.Player2, opponentDeck, player2_slots, display, this);
+
+        player1.setOpponent(player2);
+        player2.setOpponent(player1);
+
         phase = new Phase(width, height, player1, player2);
         handler.addObject(player1);
         handler.addObject(player2);
 
         handler.addObject(draggingSlot);
         currentPlayer = player1;
-        System.out.println(deck.getDeck().size());
-
-        new MouseHandler(display.getCanvas(), player1_slots, player2_slots, this);
+        gameState.startGame = false;
     }
     public double animTimer = 0;
     public boolean inAnimation = false;
     public ID animationCardID;
     double animX, animY;
     public int intID;
-    public void setAttacking(int index){
+    private boolean isEnemyAttacking;
+    public void setAttacking(int index, boolean _isEnemyAttacking){
         inAnimation = true;
 //        animationCardID = id;
         intID = index;
         animTimer = 0;
+        isEnemyAttacking = _isEnemyAttacking;
     }
     public int targetX = 0, targetY = 200;
     private void tick(){
-        if(inAnimation){
+        if(inAnimation && !isEnemyAttacking){
             animTimer += 1;
             // TODO move to animationHandler
             // swap animation direction if enemy
-            if(animTimer < 50){
-                animY -= (1 - (animTimer / 50)) * 7f;
-                animX += targetX * (animTimer/100);
-            }else if(animTimer < 100){
-                animY += (1 - ((animTimer - 50) / 50)) * 7f;
-                animX -= targetX * ((animTimer-50)/100);
+            if(animTimer < 17){
+                animY -= (1 - (animTimer / 50)) * 5f;
+                animX += targetX * (animTimer/(17*17/2));
+            }else if(animTimer < 34){
+                animY += (1 - ((animTimer - 50) / 50)) * 3f;
+                animX -= targetX * ((animTimer-17)/(17*17/2));
             }else{
                 inAnimation = false;
                 animY = 0;
             }
 
-            if(!phase.enemyTurn()){
-                System.out.println("ANIM1: ");
-                board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animX);
-                board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animY);
+            System.out.println("ANIM1: ");
+            board.getPlayer1_slots().get(intID).SetAnimationOffsetX(animX);
+            board.getPlayer1_slots().get(intID).SetAnimationOffsetY(animY);
+        }else if(inAnimation && isEnemyAttacking){
+            animTimer += 1;
+            // TODO move to animationHandler
+            // swap animation direction if enemy
+            if(animTimer < 17){
+                animY += (1 - (animTimer / 50)) * 5f;
+                animX += targetX * (animTimer/(17*17/2));
+            }else if(animTimer < 34){
+                animY -= (1 - ((animTimer - 50) / 50)) * 3f;
+                animX -= targetX * ((animTimer-17)/(17*17/2));
+            }else{
+                inAnimation = false;
+                animY = 0;
             }
-            else{
-                System.out.println("ANIM2: ");
-                board.getPlayer2_slots().get(intID).SetAnimationOffsetX(animX);
-                board.getPlayer2_slots().get(intID).SetAnimationOffsetY(animY);
-            }
+
+
+            System.out.println("ANIM2: ");
+            board.getPlayer2_slots().get(intID).SetAnimationOffsetX(animX);
+            board.getPlayer2_slots().get(intID).SetAnimationOffsetY(animY);
+
 
         }
 
-
-        handler.tick();
-        currentPlayer = phase.getCurrentPlayer();
+        if(gameState.isGame) {
+            handler.tick();
+            currentPlayer = phase.getCurrentPlayer();
+//            phase.updateTime();
+//            phase.checkTime();
+            if(phase.weHaveAWinner()){
+                gameState.isGame = false;
+                gameState.celebrationWindow = true;
+                if(currentPlayer.getHP() <= 0){
+                    System.out.println(currentPlayer.opponent.getID().toString() + " won!");
+                    winner = currentPlayer.opponent;
+                }else if(currentPlayer.opponent.getHP() <= 0) {
+                    System.out.println(currentPlayer.getID().toString() + " won!");
+                    winner = currentPlayer;
+                }
+            }
+        }
     }
-    private void render(){
+    public void render(){
         buffer = display.getCanvas().getBufferStrategy();
         if(buffer == null){
             display.getCanvas().createBufferStrategy(3);
@@ -155,12 +216,51 @@ public class Game implements Runnable{
         }
         g = buffer.getDrawGraphics();
         // Drawing
-        g.drawImage(boardImg, 0, 0, width, height, null);
-        g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX(), phase.GetEndTurnPosY(), phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight(), null);
+        if(gameState.isMenu){
+            //g.drawImage(menuBackgroundImg, 0, 0, width, height, null);
+            gameState.render(g);
+        }else if(gameState.isLoading){
+            g.drawImage(display.loadingIMG, 0, 0, width, height, null);
+        }
+        else if(gameState.isGame){
+            g.drawImage(boardImg, 0, 0, width, height, null);
+            g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX(), phase.GetEndTurnPosY(), phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight(), null);
 
-        g.setColor(Color.WHITE);
-        handler.render(g);
-        testImageDraw();
+            g.setColor(Color.WHITE);
+            handler.render(g);
+            DrawDraggingCard();
+            Font prev = g.getFont();
+            Font font = new Font(Font.SANS_SERIF, 3, (int)(height * 0.025));
+            g.setFont(font);
+            int roundTime = 35 - (int)phase.elapsedTime;
+            String timer = "Time left: " + roundTime;
+            Color color;
+            if(roundTime <= 23 && roundTime >= 15){
+                color = new Color(255, 224, 0);
+            }else if (roundTime < 15 && roundTime >= 8){
+                color = new Color(255, 159, 51);
+            }else if (roundTime < 8){
+                color = new Color(255, 0, 0);
+            }else{
+                color = new Color(255, 255, 255);
+            }
+            g.setColor(color);
+            g.drawString(timer, (int)(width * 0.01), (int)(height * 0.41));
+            g.setFont(prev);
+            g.setColor(Color.WHITE);
+        }else if(gameState.celebrationWindow){
+            g.setColor(Color.black);
+            g.fillRect(0, 0 , display.getWidth(), display.getHeight());
+            g.setColor(Color.WHITE);
+            Font prevFont = g.getFont();
+            Font newFont = new Font(Font.SANS_SERIF, 3, 30);
+            g.setFont(newFont);
+            String winnerTitle = winner.getID().toString() + " won!";
+            g.drawImage(backToMenu, (int)(width * 0.5 - width * 0.1), (int)(height * 0.5) + (int)(height * 0.1), (int)(width * 0.2), (int)(height * 0.1), null);
+            g.drawString(winnerTitle, (int) (display.getWidth()*0.5 - winnerTitle.length() * 0.25 * 30), height/2);
+            g.setFont(prevFont);
+
+        }
         //-------------------------------
         buffer.show();
         g.dispose();
@@ -182,12 +282,16 @@ public class Game implements Runnable{
             if(delta >= 1){
                 tick();
                 render();
-                if(phase.startPhase() && phase.getCurrentRound() == 1 && draws < 4){
-                    draws = startOfTheGame(draws);
+                if(gameState.isGame) {
+                    if (phase.startPhase() && phase.getCurrentRound() == 1 && draws < 4) {
+                        draws = startOfTheGame(draws);
+                        phase.startTime = System.nanoTime();
+                    }
+                    if (phase.enemyTurn()) {
+                        enemyTurn();
+                    }
                 }
-                if(phase.enemyTurn()){
-                    enemyTurn();
-                }
+                if(gameState.isMenu){ draws = 0; }
                 delta--;
             }
             try {
@@ -217,6 +321,9 @@ public class Game implements Runnable{
             e.printStackTrace();
         }
     }
+    public void exit(){
+        System.exit(0);
+    }
     public static void main(String[] args) {
         Game game = new Game("UbiHard Card Game", 1366, 768);
         game.start();
@@ -230,7 +337,7 @@ public class Game implements Runnable{
         musicPlayer1.playMusic(filepath2);
     }
 
-    public void testImageDraw(){
+    public void DrawDraggingCard(){
         BufferedImage img;
 
         // Drags a card
@@ -253,32 +360,55 @@ public class Game implements Runnable{
             System.out.println("Selected card: " + card);
         }
     }
-
+    public void drawffect(int x, int y, Image image, int time, String c){
+        if(TimeBefore < 500){
+            TimeBefore = System.nanoTime();
+        }
+        if (c.equals("-hp")){
+            while((System.nanoTime() - TimeBefore)/1000000000 <  time){
+                g.drawImage(image, 0, 0, display.getWidth(), display.getHeight(), null);
+            }
+        }else if(c.equals("+hp")){
+            while((System.nanoTime() - TimeBefore)/1000000000 <  time) {
+                g.drawImage(image, (int) (display.getWidth() * 0.1), (int) (display.getHeight() - (int)(display.getHeight()*0.35)), (int) (display.getWidth()*0.8), (int) (display.getHeight() * 0.3), null);
+            }
+        }else{
+            while((System.nanoTime() - TimeBefore)/1000000000 <  time){
+                g.drawImage(image, x, y, (int)(display.getWidth()*0.1), (int)(display.getHeight()*0.20), null);
+            }
+        }
+    }
+    public void threadSleep(int time){
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     // Places card on the board
     public void MouseReleased(){
         mouseHolding = false;
-
-        for(CardSlot c : player1_slots){
+        for(CardSlot c : currentPlayer.playerBoardSlots){
+            int x = c.getX(); int y = c.getY();
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
+                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){ // Buff
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
+                        drawffect(x, y, buffimg, 1, "Buff");
+                        threadSleep(500);
+                        TimeBefore = 0;
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
                     }
-                    //Curse logika
-                }else if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse){
-                    if(((Curse)(draggingCard)).curseLogic(c, phase.getCurrentPlayer(), phase.getOpponent())){
-                        chosenCardSlot.removeCard();
-                        chosenCardSlot = null;
+                    else if(draggingCard != null){
+                        this.chosenCardSlot.setCard(draggingCard);
                     }
-                    //Buff logika
-                }else if(draggingCard != null && c.getId() != ID.Player1_Deck && c.getId().toString().contains(String.format("%s_Slot",currentPlayer.getID().toString())) && !c.cardOnBoard()){
-                    if(draggingCard.getID() != ID.Buff && draggingCard.getID() != ID.Curse){
-                        //c.setCard(draggingCard);
+                    break;
+                }else if(draggingCard != null && c.getId() != ID.Player1_Deck && !c.cardOnBoard()){
+                    if(draggingCard.getID() != ID.Buff && draggingCard.getID() != ID.Curse){ // Monster
                         if(currentPlayer.placeCard(c, draggingCard)) {
                             this.chosenCardSlot.removeCard();
                             this.chosenCardSlot = null;
-                        }else{
+                        }else if(draggingCard != null){
                             this.chosenCardSlot.setCard(draggingCard);
                         }
                     }
@@ -287,25 +417,52 @@ public class Game implements Runnable{
             }else if(draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
                 Curse curse = ((Curse)(draggingCard));
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
-                    curse.hpCurseLogic(c, phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
-                    break;
-                }
+                    drawffect(x, y, bleedimg, 1, "-hp");
+                    TimeBefore = 0;
+                    curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
+                    chosenCardSlot.removeCard();
+                    chosenCardSlot = null;
+
+                }else if(draggingCard != null){
+                    this.chosenCardSlot.setCard(draggingCard);
+                }break;
                 //Buff hp logika
             }else if(draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
                 Buff buff = ((Buff)(draggingCard));
                 if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
+                    drawffect(x, y, boosthpimg, 1, "+hp");
+                    TimeBefore = 0;
                     buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot);
+                    chosenCardSlot.removeCard();
+                    chosenCardSlot = null;
+
+                }else if(draggingCard != null){
+                    this.chosenCardSlot.setCard(draggingCard);
+                }  break;
+            }
+
+        }
+        for(CardSlot c : currentPlayer.opponent.playerBoardSlots){
+            int x = c.getX(); int y = c.getY();
+            if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()) {
+                if (draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
+                    if (((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
+                        drawffect(x, y, destroy, 1, "Curse");
+                        TimeBefore = 0;
+                        chosenCardSlot.removeCard();
+                        chosenCardSlot = null;
+                    }
+                    else if(draggingCard != null){
+                        this.chosenCardSlot.setCard(draggingCard);
+                    }
                     break;
                 }
-            }
-            else if(draggingCard != null && this.chosenCardSlot != null){
-                this.chosenCardSlot.setCard(draggingCard);
+
             }
         }
 
-        if (display.getFrame().getMousePosition() != null && this.display.getFrame().getMousePosition().x >= phase.GetEndTurnPosX() && this.display.getFrame().getMousePosition().x <= phase.GetEndTurnPosX() + phase.GetEndTurnImgWidth() && this.display.getFrame().getMousePosition().y <= phase.GetEndTurnPosY() + phase.GetEndTurnImgHeight() && this.display.getFrame().getMousePosition().y >= phase.GetEndTurnPosY()) {
-            phase.nextPhase();
-            System.out.println("CLICKED END TURN");
+        if(draggingCard != null && this.chosenCardSlot != null){
+            this.chosenCardSlot.setCard(draggingCard);
         }
 
         draggingCard = null;
@@ -338,14 +495,6 @@ public class Game implements Runnable{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-//        //player2.setCardOnBoard();
-//        render();
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
         phase.nextPhase();
-        //player1.drawCard();
     }
 }
