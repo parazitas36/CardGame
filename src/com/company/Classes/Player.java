@@ -24,6 +24,7 @@ public class Player  extends GameObject{
     public Player opponent;
     private boolean possibleToDefeat;
     private Game game;
+    private boolean supper;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game){
         HP = 20;
 
@@ -40,6 +41,7 @@ public class Player  extends GameObject{
         this.display = _display;
         possibleToDefeat = false;
         game = _game;
+        supper = false;
     }
     public void setOpponent(Player opp){ this.opponent = opp;}
     public ID getID(){
@@ -91,7 +93,8 @@ public class Player  extends GameObject{
         if(enoughManaForCard(card)) {
             slot.setCard(card);
             cardsInHand--;
-            Mana = Mana - card.getManaCost();
+            decreaseMana(card.getManaCost());
+            //Mana = Mana - card.getManaCost();
             return true;
         }else{
             return false;
@@ -113,6 +116,13 @@ public class Player  extends GameObject{
             ManaStack++;
         }
         Mana = ManaCapacity;
+        if(ManaStack == ManaStackCapacity && ManaCapacity == 5){
+            supper = true;
+            System.out.println(supper);
+        }
+    }
+    public boolean isSuper(){
+        return this.supper;
     }
     public void takeDamage(int damage){
         HP-=damage;
@@ -176,7 +186,7 @@ public class Player  extends GameObject{
         }
     }
     private boolean enoughManaForCard(Card card){
-        if(card.getManaCost() <= this.getMana()){
+        if(card.getManaCost() <= this.getMana() + this.ManaStack){
             return true;
         }else{
             return false;
@@ -193,7 +203,9 @@ public class Player  extends GameObject{
             ManaStack--;
             temp--;
         }
-
+        if(isSuper()){
+            supper = false;
+        }
         this.Mana -= temp;
     }
     //===================================
@@ -663,12 +675,23 @@ public class Player  extends GameObject{
         int Height = display.getHeight();
         // draw mana in board
         Font prevFont = g.getFont();
+        Font font1 = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.02));
+        Color clr = Color.MAGENTA;
+        Color clrop = Color.GRAY;
+        Color clrprev = Color.WHITE;
         if(id == ID.Player1){
             Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
+
             g.setFont(font);
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.605));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.505));
             g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
+            if(this.isSuper()){
+                g.setColor(clr);
+                g.setFont(font1);
+                g.drawString(String.format("%s", "S"), (int)(width * 0.053), (int)(Height*0.515));
+            }
+            g.setColor(clrprev);
             g.setFont(prevFont);
         }else{
             Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
@@ -676,6 +699,13 @@ public class Player  extends GameObject{
             g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.199));
             g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.3));
             g.drawString(String.format("%s", getManaStack()) + "/3", (int)(width * 0.054), (int)(Height*0.194));
+            g.setFont(font1);
+            if(this.isSuper()){
+                g.setColor(clrop);
+                g.setFont(font1);
+                g.drawString(String.format("%s", "S"), (int)(width * 0.0545), (int)(Height*0.31));
+            }
+            g.setColor(clrprev);
             g.setFont(prevFont);
         }
     }
