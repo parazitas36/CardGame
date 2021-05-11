@@ -109,6 +109,9 @@ public class Player  extends GameObject{
         HP = HP - amount;
     }
     public void refillMana(){
+        if(Mana != 0 && ManaStackCapacity > ManaStack){
+            ManaStack++;
+        }
         Mana = ManaCapacity;
     }
     public void takeDamage(int damage){
@@ -184,7 +187,14 @@ public class Player  extends GameObject{
         cardsInHand--;
     }
     public void decreaseMana(int decrease){
-        this.Mana -= decrease;
+        int temp = decrease;
+
+        while(ManaStack != 0 && temp > 0){
+            ManaStack--;
+            temp--;
+        }
+
+        this.Mana -= temp;
     }
     //===================================
     // Use only for AI opponent

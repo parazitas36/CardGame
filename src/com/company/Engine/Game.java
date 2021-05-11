@@ -325,7 +325,7 @@ public class Game implements Runnable{
         System.exit(0);
     }
     public static void main(String[] args) {
-        Game game = new Game("UbiHard Card Game", 1366, 768);
+        Game game = new Game("UbiHard Card Game", 1920, 1080);
         game.start();
         // 1440x980
 
@@ -335,6 +335,7 @@ public class Game implements Runnable{
         musicPlayer.playMusic(filepath);
         MusicPlayer musicPlayer1 = new MusicPlayer();
         musicPlayer1.playMusic(filepath2);
+        //1366, 768
     }
 
     public void DrawDraggingCard(){

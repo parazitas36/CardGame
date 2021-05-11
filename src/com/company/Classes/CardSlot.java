@@ -50,16 +50,22 @@ public class CardSlot extends GameObject{
                 g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
                 if(card.getID() == ID.Monster) {
                     g.setFont(newfont);
-                    g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
-                    g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
+                    g.drawString(String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.885)), this.getY() + (int)(this.getHeight() * 0.325));
+                    g.drawString(String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.525));
+                    g.drawString(String.format("%s", ((Monster)card).getManaCost()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.095));
+                    g.setFont(prevfont);
+                }else if(card.getID() == ID.Curse || card.getID() == ID.Buff){
+                    g.setFont(newfont);
+                    g.drawString(String.format("%s", card.getManaCost()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.095));
                     g.setFont(prevfont);
                 }
             }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
             {
                 g.setFont(newfont);
                 g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
-                g.drawString("ATK: " + String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.1111)), this.getY() + (int)(this.getHeight() * 0.7908));
-                g.drawString("DEF: " + String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.604), this.getY() + (int)(this.getHeight() * 0.7908));
+                g.drawString(String.format("%s", ((Monster)card).getAttack()), (int)(this.getX() + (int)(this.getWidth() * 0.885)), this.getY() + (int)(this.getHeight() * 0.325));
+                g.drawString(String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.525));
+                g.drawString(String.format("%s", ((Monster)card).getManaCost()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.095));
                 g.setFont(prevfont);
                 if(((Monster) card).stunTime > 0){
                     g.drawImage(((Monster) card).stunnedImg, this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
