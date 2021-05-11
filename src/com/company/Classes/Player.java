@@ -157,11 +157,11 @@ public class Player  extends GameObject{
                             phase.getOpponent().takeDamage(damage);
                             attacker.setAttackedThisTurn();
                             defender.removeCard();
-                            if(game.sound_destroyEffectClip == null) {
-                                game.sound_destroyEffectClip = game.musicPlayer.playSound(game.sound_destroyEffect);
-                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            if(game.sound_deathClip == null) {
+                                game.sound_deathClip = game.musicPlayer.playSound(game.sound_death);
+                                game.musicPlayer.repeatSound(game.sound_deathClip);
                             }else{
-                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                                game.musicPlayer.repeatSound(game.sound_deathClip);
                             }
                         }
                     },
@@ -178,11 +178,11 @@ public class Player  extends GameObject{
                         public void run() {
                             attacker.setAttackedThisTurn();
                             attacker.removeCard();
-                            if(game.sound_destroyEffectClip == null) {
-                                game.sound_destroyEffectClip = game.musicPlayer.playSound(game.sound_destroyEffect);
-                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            if(game.sound_deathClip == null) {
+                                game.sound_deathClip = game.musicPlayer.playSound(game.sound_death);
+                                game.musicPlayer.repeatSound(game.sound_deathClip);
                             }else{
-                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                                game.musicPlayer.repeatSound(game.sound_deathClip);
                             }
                             defender.removeCard();
                         }
@@ -201,11 +201,11 @@ public class Player  extends GameObject{
                         public void run() {
                             attacker.setAttackedThisTurn();
                             attacker.removeCard();
-                            if(game.sound_destroyEffectClip == null) {
-                                game.sound_destroyEffectClip = game.musicPlayer.playSound(game.sound_destroyEffect);
-                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                            if(game.sound_deathClip == null) {
+                                game.sound_deathClip = game.musicPlayer.playSound(game.sound_death);
+                                game.musicPlayer.repeatSound(game.sound_deathClip);
                             }else{
-                                game.musicPlayer.repeatSound(game.sound_destroyEffectClip);
+                                game.musicPlayer.repeatSound(game.sound_deathClip);
                             }
                         }
                     },

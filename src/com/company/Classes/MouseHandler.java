@@ -65,6 +65,12 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                     e.getY() >= (int)(game.display.getHeight()*0.5)+(int)(game.display.getHeight()*0.1) && e.getY() <= (int)(game.display.getHeight()*0.5)+(int)(game.display.getHeight()*0.1) + (int)(game.display.getHeight() * 0.1)){
                 game.gameState.celebrationWindow = false;
                 game.gameState.isMenu = true;
+                if(game.menuMusicClip == null){
+                    game.menuMusicClip = game.musicPlayer.playMusic(game.menuMusic);
+                    game.musicPlayer.repeatMusic(game.menuMusicClip);
+                }else if(!game.menuMusicClip.isRunning()){
+                    game.musicPlayer.repeatMusic(game.menuMusicClip);
+                }
             }
         }
         //===================================
@@ -177,7 +183,12 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                             //game.setAttacking(selectedIndex - 1);
                             //game.targetX = c.getX() - selectedOffsetX;
                             game.currentPlayer.attack(attacker, c);
-                            game.musicPlayer.playSound(game.sound_attackEffect);
+                            if(game.sound_attackEffectClip == null) {
+                                game.sound_attackEffectClip = game.musicPlayer.playSound(game.sound_attackEffect);
+                                game.musicPlayer.repeatSound(game.sound_attackEffectClip);
+                            }else{
+                                game.musicPlayer.repeatSound(game.sound_attackEffectClip);
+                            }
                             attacker.attacking = false;
                             attacker = null;
 

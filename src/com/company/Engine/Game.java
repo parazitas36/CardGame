@@ -39,6 +39,11 @@ public class Game implements Runnable{
     public AudioInputStream sound_attackEffect;
     public AudioInputStream sound_destroyEffect;
     public AudioInputStream sound_placedEffect;
+    public AudioInputStream sound_stunEffect;
+    public AudioInputStream sound_buffEffect;
+    public AudioInputStream sound_death;
+    public AudioInputStream sound_hpBuff;
+    public AudioInputStream sound_hpCurse;
     public Clip menuMusicClip;
     public Clip inGameMusicClip;
     public Clip winnerMusicClip;
@@ -47,6 +52,11 @@ public class Game implements Runnable{
     public Clip sound_attackEffectClip;
     public Clip sound_destroyEffectClip;
     public Clip sound_placedEffectClip;
+    public Clip sound_stunEffectClip;
+    public Clip sound_buffEffectClip;
+    public Clip sound_deathClip;
+    public Clip sound_hpBuffClip;
+    public Clip sound_hpCurseClip;
 
     long TimeBefore = 0;
 
@@ -99,11 +109,22 @@ public class Game implements Runnable{
         sound_destroyEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/DestroyCardSound.wav");
         sound_placedEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/PutACardForPlayer.wav");
         sound_drawEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/Maišymas.wav");
+        sound_stunEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/stun.wav");
+        sound_buffEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/buff.wav");
+        sound_death = musicPlayer.getAudio("src/com/company/Assets/Muzika/death.wav");
+        sound_hpBuff = musicPlayer.getAudio("src/com/company/Assets/Muzika/hpBuff.wav");
+        sound_hpCurse = musicPlayer.getAudio("src/com/company/Assets/Muzika/hpCurse.wav");
+        sound_deathClip = null;
         sound_drawEffectClip = null;
         sound_attackEffectClip = null;
         sound_destroyEffectClip = null;
         sound_placedEffectClip = null;
         winnerMusicClip = null;
+        loserMusicClip = null;
+        sound_stunEffectClip = null;
+        sound_buffEffectClip = null;
+        sound_hpBuffClip = null;
+        sound_hpCurseClip = null;
         menuMusicClip = musicPlayer.playMusic(menuMusic);
         menuMusicClip.start();
     }
@@ -481,6 +502,12 @@ public class Game implements Runnable{
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
                 if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){ // Buff
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
+                        if(sound_buffEffectClip == null){
+                            sound_buffEffectClip = musicPlayer.playSound(sound_buffEffect);
+                            musicPlayer.repeatSound(sound_buffEffectClip);
+                        }else{
+                            musicPlayer.repeatSound(sound_buffEffectClip);
+                        }
                         drawffect(x, y, buffimg, 2, "Buff");
                         TimeBefore = 0;
                         chosenCardSlot.removeCard();
@@ -506,6 +533,12 @@ public class Game implements Runnable{
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.7))){
                     if(curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot)){
                         System.out.println("Ieina hp --");
+                        if(sound_hpCurseClip == null){
+                            sound_hpCurseClip = musicPlayer.playSound(sound_hpCurse);
+                            musicPlayer.repeatSound(sound_hpCurseClip);
+                        }else{
+                            musicPlayer.repeatSound(sound_hpCurseClip);
+                        }
                         drawffect(x, y, bleedimg, 1, "-hp");
                         TimeBefore = 0;
                         chosenCardSlot.removeCard();
@@ -520,6 +553,12 @@ public class Game implements Runnable{
                 if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.4)) && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.8))){
                     if(buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot)){
                         System.out.println("Ieina hp ++");
+                        if(sound_hpBuffClip == null){
+                            sound_hpBuffClip = musicPlayer.playSound(sound_hpBuff);
+                            musicPlayer.repeatSound(sound_hpBuffClip);
+                        }else{
+                            musicPlayer.repeatSound(sound_hpBuffClip);
+                        }
                         drawffect(x, y, boosthpimg, 1, "+hp");
                         TimeBefore = 0;
                         chosenCardSlot.removeCard();
@@ -537,9 +576,21 @@ public class Game implements Runnable{
                 if (draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
                     if (((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
                         if(((Curse) (draggingCard)).getEffect().equals("stun")){
+                            if(sound_stunEffectClip == null){
+                                sound_stunEffectClip = musicPlayer.playSound(sound_stunEffect);
+                                musicPlayer.repeatSound(sound_stunEffectClip);
+                            }else{
+                                musicPlayer.repeatSound(sound_stunEffectClip);
+                            }
                             drawffect(x, y, stun, 1, "Curse");
                             TimeBefore = 0;
                         }else{
+                            if(sound_destroyEffectClip == null){
+                                sound_destroyEffectClip = musicPlayer.playSound(sound_destroyEffect);
+                                musicPlayer.repeatSound(sound_destroyEffectClip);
+                            }else{
+                                musicPlayer.repeatSound(sound_destroyEffectClip);
+                            }
                             drawffect(x, y, destroy, 1, "Curse");
                             TimeBefore = 0;
                         }
