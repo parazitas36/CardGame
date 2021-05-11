@@ -96,7 +96,7 @@ public class Game implements Runnable{
         sound_attackEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/AttackSound.wav");
         sound_destroyEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/DestroyCardSound.wav");
         sound_placedEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/PutACardForPlayer.wav");
-        sound_drawEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/Shuffle.wav");
+        sound_drawEffect = musicPlayer.getAudio("src/com/company/Assets/Muzika/Maišymas.wav");
         sound_drawEffectClip = null;
         sound_attackEffectClip = null;
         sound_destroyEffectClip = null;
