@@ -25,7 +25,7 @@ public class Curse extends Card{
     }
     public boolean curseLogic(CardSlot c, Player currentPlayer, Player opponent){
         System.out.println("Current: " + currentPlayer.getID() + " opp" + opponent.getID());
-        if(currentPlayer.getMana() >= c.getCard().getManaCost()) {
+        if(currentPlayer.getMana() + currentPlayer.getManaStack() >= c.getCard().getManaCost()) {
             if (getEffect().equals("destroy")) {
                 if (c.getId().toString().contains(opponent.getID().toString())) {
                     c.removeCard();
@@ -45,8 +45,8 @@ public class Curse extends Card{
         }
         return  false;
     }
-    public void hpCurseLogic(Player currentPlayer, Player opponent, CardSlot chosenCardSlot){
-        if(getManaCost() <= currentPlayer.getMana()){
+    public boolean hpCurseLogic(Player currentPlayer, Player opponent, CardSlot chosenCardSlot){
+        if(getManaCost() <= currentPlayer.getMana() + currentPlayer.getManaStack()){
             System.out.println("Ieina");
             System.out.println( this.amount);
             opponent.decreaseHP(this.amount);
@@ -54,6 +54,8 @@ public class Curse extends Card{
             chosenCardSlot = null;
             currentPlayer.decreaseCardsInHandCount();
             currentPlayer.decreaseMana(getManaCost());
+            return true;
         }
+        return false;
     }
 }

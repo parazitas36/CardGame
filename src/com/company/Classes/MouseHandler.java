@@ -125,17 +125,24 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                                     attacker.attacking = true;
                                     selectedIndex = index;
                                     selectedOffsetX = c.getX();
-
                                     System.out.println("111111111111111");
 
                                 } else {
-                                    attacker.attacking = false;
-                                    attacker = c;
-                                    attacker.attacking = true;
-                                    System.out.println("22222222222222");
-                                    selectedIndex = index;
-                                    selectedOffsetX = c.getX();
-                                    // TODO HERE
+                                    if(!game.currentPlayer.opponentHasMonsterOnTheBoard() && attacker.equals(c) && !c.attackedThisTurn()){
+                                        game.attackOpponent(attacker, game.currentPlayer);
+                                        attacker.setAttackedThisTurn();
+                                        attacker.attacking = false;
+                                        attacker = null;
+
+                                    }else{
+                                        attacker.attacking = false;
+                                        attacker = c;
+                                        attacker.attacking = true;
+                                        System.out.println("22222222222222");
+                                        selectedIndex = index;
+                                        selectedOffsetX = c.getX();
+                                        // TODO HERE
+                                    }
                                 }
                             } else {
 

@@ -481,7 +481,7 @@ public class Game implements Runnable{
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
                 if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){ // Buff
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
-                        drawffect(x, y, buffimg, 1, "Buff");
+                        drawffect(x, y, buffimg, 2, "Buff");
                         TimeBefore = 0;
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
@@ -503,29 +503,31 @@ public class Game implements Runnable{
                 //Curse hp logikia
             }else if(draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
                 Curse curse = ((Curse)(draggingCard));
-                if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
-                    drawffect(x, y, bleedimg, 1, "-hp");
-                    TimeBefore = 0;
-                    curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot);
-                    chosenCardSlot.removeCard();
-                    chosenCardSlot = null;
-
-                }else if(draggingCard != null){
-                    this.chosenCardSlot.setCard(draggingCard);
-                }break;
+                if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.7))){
+                    if(curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot)){
+                        System.out.println("Ieina hp --");
+                        drawffect(x, y, bleedimg, 1, "-hp");
+                        TimeBefore = 0;
+                        chosenCardSlot.removeCard();
+                        chosenCardSlot = null;
+                    }else{
+                        this.chosenCardSlot.setCard(draggingCard);
+                    }break;
+                }
                 //Buff hp logika
             }else if(draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
                 Buff buff = ((Buff)(draggingCard));
-                if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.3))){
-                    drawffect(x, y, boosthpimg, 1, "+hp");
-                    TimeBefore = 0;
-                    buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot);
-                    chosenCardSlot.removeCard();
-                    chosenCardSlot = null;
-
-                }else if(draggingCard != null){
-                    this.chosenCardSlot.setCard(draggingCard);
-                }  break;
+                if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.4)) && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.8))){
+                    if(buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot)){
+                        System.out.println("Ieina hp ++");
+                        drawffect(x, y, boosthpimg, 1, "+hp");
+                        TimeBefore = 0;
+                        chosenCardSlot.removeCard();
+                        chosenCardSlot = null;
+                    }else {
+                        this.chosenCardSlot.setCard(draggingCard);
+                    }  break;
+                }
             }
 
         }
@@ -588,5 +590,8 @@ public class Game implements Runnable{
             e.printStackTrace();
         }
         phase.nextPhase();
+    }
+    public void attackOpponent(CardSlot attacker, Player currentplayer){
+        currentplayer.opponent.decreaseHP(((Monster)(attacker.getCard())).getAttack());
     }
 }
