@@ -24,31 +24,32 @@ public class Curse extends Card{
         return this.effect;
     }
     public boolean curseLogic(CardSlot c, Player currentPlayer, Player opponent){
-        if(getEffect().equals("destroy")){
-            if(c.getId().toString().contains(opponent.getID().toString())){
-                c.removeCard();
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(getManaCost());
-                return  true;
-            }
-        }else if(getEffect().equals("stun")){
-            if(c.getId().toString().contains(opponent.getID().toString())){
-                ((Monster)(c.getCard())).addStun();
-                currentPlayer.decreaseCardsInHandCount();
-                currentPlayer.decreaseMana(getManaCost());
-                return  true;
-            }
+        System.out.println("Current: " + currentPlayer.getID() + " opp" + opponent.getID());
+        if (getEffect().equals("destroy")) {
+            c.removeCard();
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(getManaCost());
+            return true;
+        }else if (getEffect().equals("stun")) {
+            System.out.println("Stunas");
+            ((Monster) (c.getCard())).addStun();
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(getManaCost());
+            return true;
         }
         return  false;
     }
-    public void hpCurseLogic(CardSlot c, Player currentPlayer, Player opponent, CardSlot chosenCardSlot){
-        if(getManaCost() <= currentPlayer.getMana()){
+    public boolean hpCurseLogic(Player currentPlayer, Player opponent, CardSlot chosenCardSlot){
+        if(getManaCost() <= currentPlayer.getMana() + currentPlayer.getManaStack()){
             System.out.println("Ieina");
-            opponent.decreaseHP(amount);
+            System.out.println( this.amount);
+            opponent.decreaseHP(this.amount);
             chosenCardSlot.removeCard();
             chosenCardSlot = null;
             currentPlayer.decreaseCardsInHandCount();
             currentPlayer.decreaseMana(getManaCost());
+            return true;
         }
+        return false;
     }
 }
