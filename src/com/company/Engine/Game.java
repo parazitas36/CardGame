@@ -269,16 +269,14 @@ public class Game implements Runnable{
             }
             handler.tick();
             currentPlayer = phase.getCurrentPlayer();
-//            phase.updateTime();
-//            phase.checkTime();
+            phase.updateTime();
+            phase.checkTime();
             if(phase.weHaveAWinner()){
                 gameState.isGame = false;
                 gameState.celebrationWindow = true;
                 if(currentPlayer.getHP() <= 0){
-                    System.out.println(currentPlayer.opponent.getID().toString() + " won!");
                     winner = currentPlayer.opponent;
                 }else if(currentPlayer.opponent.getHP() <= 0) {
-                    System.out.println(currentPlayer.getID().toString() + " won!");
                     winner = currentPlayer;
                 }
             }
@@ -466,7 +464,7 @@ public class Game implements Runnable{
             draggingCard = card;
             this.chosenCardSlot = slot;
             this.chosenCardSlot.removeCard();
-            System.out.println("Selected card: " + card);
+            System.out.println("Selected card: " + draggingCard);
         }
     }
     public void drawffect(int x, int y, Image image, int time, String c){
@@ -499,8 +497,9 @@ public class Game implements Runnable{
         mouseHolding = false;
         for(CardSlot c : currentPlayer.playerBoardSlots){
             int x = c.getX(); int y = c.getY();
-            if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()){
-                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){ // Buff
+            if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= x && display.getFrame().getMousePosition().x <= x+c.getWidth() && display.getFrame().getMousePosition().y <= y + c.getHeight() && display.getFrame().getMousePosition().y >= y){
+                // Buff
+                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
                         if(sound_buffEffectClip == null){
                             sound_buffEffectClip = musicPlayer.playSound(sound_buffEffect);
@@ -518,7 +517,8 @@ public class Game implements Runnable{
                     }
                     break;
                 }else if(draggingCard != null && c.getId() != ID.Player1_Deck && !c.cardOnBoard()){
-                    if(draggingCard.getID() != ID.Buff && draggingCard.getID() != ID.Curse){ // Monster
+                    // Monster
+                    if(draggingCard.getID() == ID.Monster){
                         if(currentPlayer.placeCard(c, draggingCard)) {
                             this.chosenCardSlot.removeCard();
                             this.chosenCardSlot = null;
@@ -527,12 +527,11 @@ public class Game implements Runnable{
                         }
                     }
                 }
-                //Curse hp logikia
+                // Curse HP logic
             }else if(draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
                 Curse curse = ((Curse)(draggingCard));
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.7))){
                     if(curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot)){
-                        System.out.println("Ieina hp --");
                         if(sound_hpCurseClip == null){
                             sound_hpCurseClip = musicPlayer.playSound(sound_hpCurse);
                             musicPlayer.repeatSound(sound_hpCurseClip);
@@ -547,12 +546,11 @@ public class Game implements Runnable{
                         this.chosenCardSlot.setCard(draggingCard);
                     }break;
                 }
-                //Buff hp logika
+                // Buff HP logic
             }else if(draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
                 Buff buff = ((Buff)(draggingCard));
                 if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.4)) && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.8))){
                     if(buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot)){
-                        System.out.println("Ieina hp ++");
                         if(sound_hpBuffClip == null){
                             sound_hpBuffClip = musicPlayer.playSound(sound_hpBuff);
                             musicPlayer.repeatSound(sound_hpBuffClip);
@@ -568,14 +566,14 @@ public class Game implements Runnable{
                     }  break;
                 }
             }
-
         }
+        // Curses which affect opponent cards
         for(CardSlot c : currentPlayer.opponent.playerBoardSlots){
             int x = c.getX(); int y = c.getY();
-            if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= c.getX() && display.getFrame().getMousePosition().x <= c.getX()+c.getWidth() && display.getFrame().getMousePosition().y <= c.getY() + c.getHeight() && display.getFrame().getMousePosition().y >= c.getY()) {
+            if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= x && display.getFrame().getMousePosition().x <= x+c.getWidth() && display.getFrame().getMousePosition().y <= y + c.getHeight() && display.getFrame().getMousePosition().y >= y) {
                 if (draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
-                    if (((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
-                        if(((Curse) (draggingCard)).getEffect().equals("stun")){
+                    if (currentPlayer.enoughManaForCard(draggingCard) && ((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
+                        if( ((Curse)(draggingCard)).getEffect().contains("stun") ){
                             if(sound_stunEffectClip == null){
                                 sound_stunEffectClip = musicPlayer.playSound(sound_stunEffect);
                                 musicPlayer.repeatSound(sound_stunEffectClip);
@@ -584,7 +582,7 @@ public class Game implements Runnable{
                             }
                             drawffect(x, y, stun, 1, "Curse");
                             TimeBefore = 0;
-                        }else{
+                        }else if( ((Curse)(draggingCard)).getEffect().contains("destroy") ){
                             if(sound_destroyEffectClip == null){
                                 sound_destroyEffectClip = musicPlayer.playSound(sound_destroyEffect);
                                 musicPlayer.repeatSound(sound_destroyEffectClip);
@@ -606,10 +604,10 @@ public class Game implements Runnable{
             }
         }
 
+        // If card wasn't placed returns it into hand.
         if(draggingCard != null && this.chosenCardSlot != null){
             this.chosenCardSlot.setCard(draggingCard);
         }
-
         draggingCard = null;
     }
     //----------------------------------------------------------

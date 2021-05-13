@@ -82,6 +82,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             // Phase button
             if(e.getX() >= game.phase.GetEndTurnPosX() && e.getX() <= game.phase.GetEndTurnPosX() +  game.phase.GetEndTurnImgWidth() && e.getY() <= game.phase.GetEndTurnPosY() + game.phase.GetEndTurnImgHeight() && e.getY() >= game.phase.GetEndTurnPosY()){
                 game.phase.nextPhase();
+                return;
             }
             //-------------------------------------------------------------
             // If it's not an attack phase, but attacker is still selected.
@@ -132,14 +133,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                                     selectedIndex = index;
                                     selectedOffsetX = c.getX();
                                     System.out.println("111111111111111");
-
+                                    return;
                                 } else {
                                     if(!game.currentPlayer.opponentHasMonsterOnTheBoard() && attacker.equals(c) && !c.attackedThisTurn()){
                                         game.attackOpponent(attacker, game.currentPlayer);
                                         attacker.setAttackedThisTurn();
                                         attacker.attacking = false;
                                         attacker = null;
-
+                                        return;
                                     }else{
                                         attacker.attacking = false;
                                         attacker = c;
@@ -147,6 +148,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                                         System.out.println("22222222222222");
                                         selectedIndex = index;
                                         selectedOffsetX = c.getX();
+                                        return;
                                         // TODO HERE
                                     }
                                 }
@@ -159,7 +161,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 
                                     attacker.attacking = false;
                                     attacker = null;
-
+                                    return;
                                 }
                             }
                         }
@@ -191,7 +193,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                             }
                             attacker.attacking = false;
                             attacker = null;
-
+                            return;
                         }
                     }
                 }

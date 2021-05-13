@@ -27,14 +27,11 @@ public class Player  extends GameObject{
     private boolean supper;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game){
         HP = 30;
-
         Mana = 1;
         ManaCapacity = 1;
         ManaStack = 0;
         ManaStackCapacity = 3;
-        id = _id;if(id == ID.Player2){
-            HP = 3;
-        }
+        id = _id;
         deck = _deck;
         playerSlots = slots;
         filterSlots();
@@ -100,6 +97,9 @@ public class Player  extends GameObject{
     public boolean placeCard(CardSlot slot, Card card){
         if(enoughManaForCard(card)) {
             slot.setCard(card);
+            if(!isSuper()) {
+                slot.setAttackedThisTurn();
+            }
             if(game.sound_placedEffectClip == null) {
                 game.sound_placedEffectClip = game.musicPlayer.playSound(game.sound_placedEffect);
                 game.musicPlayer.repeatSound(game.sound_placedEffectClip);
@@ -127,12 +127,16 @@ public class Player  extends GameObject{
     }
     public void refillMana(){
         if(Mana != 0 && ManaStackCapacity > ManaStack){
-            ManaStack++;
+            ManaStack += Mana;
+            if(ManaStack > 3){
+                ManaStack = 3;
+            }
         }
         Mana = ManaCapacity;
         if(ManaStack == ManaStackCapacity && ManaCapacity == 5){
             supper = true;
-            System.out.println(supper);
+        }else{
+            supper = false;
         }
     }
     public boolean isSuper(){
@@ -217,7 +221,7 @@ public class Player  extends GameObject{
             return false;
         }
     }
-    private boolean enoughManaForCard(Card card){
+    public boolean enoughManaForCard(Card card){
         if(card.getManaCost() <= this.getMana() + this.ManaStack){
             return true;
         }else{
@@ -235,9 +239,6 @@ public class Player  extends GameObject{
             ManaStack--;
             temp--;
         }
-        if(isSuper()){
-            supper = false;
-        }
         this.Mana -= temp;
     }
     //===================================
@@ -252,8 +253,11 @@ public class Player  extends GameObject{
                 if (!slot.cardOnBoard()) { // If its AI board slot which doesn't have a card, card is placed on this slot
                     decreaseMana(card.getManaCost());
                     slot.setCard(card);
+                    if(!isSuper()) {
+                        slot.setAttackedThisTurn();
+                    }
                     handSlot.removeCard();
-                    cardsInHand--;
+                    decreaseCardsInHandCount();
                     cardPlaced = true;
                     break;
                 }
