@@ -79,6 +79,9 @@ public class Player  extends GameObject{
     }
     public void drawCard(){
         Card card = deck.drawCard();
+        if(card == null){
+            HP--;
+        }
         for(int i = 0; i < playerHandSlots.size(); i++){
             CardSlot slot = playerHandSlots.get(i);
             if(!slot.cardOnBoard() && handSizeLimit > cardsInHand){
