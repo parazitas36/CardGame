@@ -539,6 +539,7 @@ public class Game implements Runnable{
                             musicPlayer.repeatSound(sound_hpCurseClip);
                         }
                         drawffect(x, y, bleedimg, 1, "-hp");
+                        threadSleep(500);
                         TimeBefore = 0;
                         chosenCardSlot.removeCard();
                         chosenCardSlot = null;
