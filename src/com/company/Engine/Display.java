@@ -1,11 +1,8 @@
 package com.company.Engine;
 
-import com.company.Classes.Buff;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
@@ -46,6 +43,13 @@ public class Display {
         frame.add(canvas);
         frame.pack();
     }
+
+    public void SetDisplaySize(int width, int height){
+        frame.setSize(width, height);
+        this.width = width;
+        this.height = height;
+    }
+
     public Canvas getCanvas(){
         return canvas;
     }

@@ -128,6 +128,12 @@ public class Game implements Runnable{
         menuMusicClip = musicPlayer.playMusic(menuMusic);
         menuMusicClip.start();
     }
+    public void SetDisplaySize(int width, int height){
+        display.SetDisplaySize(width, height);
+        this.height = height;
+        this.width = width;
+        gameState.setDisplaySize(width, height);
+    }
     private void init(){
         display = new Display(title, width, height);
 

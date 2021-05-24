@@ -31,7 +31,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         //===================================
         // MENU
         //===================================
-        if(game.gameState.isMenu){
+        if(game.gameState.isMenu && !game.gameState.isOptions){
             // Clicked on Start button
             if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + game.gameState.imgH && e.getY() >= game.gameState.imgYOffSet){
                 if(game.menuMusicClip != null){
@@ -48,12 +48,29 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             }
             // CLicked on Options button
             else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 2*game.gameState.imgH + game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + game.gameState.imgH + game.gameState.imgYButtonOffSet){
+                game.gameState.isOptions = true;
                 System.out.println("Options");
             }
             // Clicked on Exit button
             else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 3*game.gameState.imgH + 2*game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + 2*game.gameState.imgH + 2*game.gameState.imgYButtonOffSet){
                 game.exit();
             }return;
+        }
+        if(game.gameState.isOptions){
+            if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + game.gameState.imgH && e.getY() >= game.gameState.imgYOffSet){
+                game.SetDisplaySize(1366, 768);
+            }
+            // CLicked on Options button
+            else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 2*game.gameState.imgH + game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + game.gameState.imgH + game.gameState.imgYButtonOffSet){
+                game.SetDisplaySize(1600, 900);
+            }
+            // Clicked on Exit button
+            else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 3*game.gameState.imgH + 2*game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + 2*game.gameState.imgH + 2*game.gameState.imgYButtonOffSet){
+                game.SetDisplaySize(1920, 1080);
+            }
+            else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 4*game.gameState.imgH + 3*game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + 3*game.gameState.imgH + 3*game.gameState.imgYButtonOffSet){
+                game.gameState.isOptions = false;
+            }
         }
         //===================================
 
