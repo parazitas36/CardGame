@@ -101,7 +101,7 @@ public class Game implements Runnable{
         clean = false;
 
         musicPlayer = new MusicPlayer();
-        menuMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/MenuMusic.wav");
+        menuMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/InGameMusic.wav");
         inGameMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/InGameMusic.wav");
         winnerMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/WinnerMusic.wav");
         loserMusic = musicPlayer.getAudio("src/com/company/Assets/Muzika/LosingMusic.wav");
