@@ -1,6 +1,10 @@
 package com.company.Classes;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public class CardSlot extends GameObject{
     private Card card;
@@ -14,6 +18,15 @@ public class CardSlot extends GameObject{
     public boolean attacking; // flag to check if monster is in attacking position (marks this monster with a red rectangle)
     private boolean attackedThisTurn; // flag to check if monster attacked this turn already
     private double animationOffsetX, animationOffsetY;
+    public BufferedImage backimg;
+
+    public void readimages() {
+        try {
+            backimg = ImageIO.read(new File("src/com/company/Images/back.png"));
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
     public CardSlot(Card _card, int x, int y, ID slotID, int _index){
         super();
         setX(x);
@@ -24,6 +37,7 @@ public class CardSlot extends GameObject{
         attacking = false;
         attackedThisTurn = false;
         index = _index;
+        readimages();
     }
     public CardSlot(Deck _deck, int x, int y, ID slotID, int _index){
         super();
@@ -33,6 +47,7 @@ public class CardSlot extends GameObject{
         id = slotID;
         showCardsCount = false;
         index = _index;
+        readimages();
     }
     @Override
     public void tick() {
@@ -80,8 +95,9 @@ public class CardSlot extends GameObject{
                 g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
             }
             else{
-                g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+                    g.drawImage(backimg, (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                 if(card.getID() == ID.Monster && this.getId().toString().contains("Player2_Slot")){
+                    g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                     g.setFont(newfont);
                     g.drawString(String.format("%s", ((Monster)card).getAttack()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.74));
                     g.drawString(String.format("%s", ((Monster)card).getDef()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.52));
