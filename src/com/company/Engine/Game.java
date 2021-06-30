@@ -1,6 +1,8 @@
 package com.company.Engine;
 
 import com.company.Classes.*;
+import com.company.MultiPlayer.GameClient;
+import com.company.MultiPlayer.GameServer;
 import com.company.Utils.CardReader;
 
 import javax.imageio.ImageIO;
@@ -65,8 +67,12 @@ public class Game implements Runnable{
 
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
-    private Player player1;
-    private Player player2;
+
+    private GameClient socketClient;
+    private GameServer server;
+
+    private AIPlayer player1;
+    private AIPlayer player2;
     private Player winner;
 
     private CardSlot draggingSlot;
@@ -74,7 +80,7 @@ public class Game implements Runnable{
     private CardSlot chosenCardSlot;
 
     private ArrayList<Card> cards;
-    public Player currentPlayer;
+    public AIPlayer currentPlayer;
     public Phase phase;
 
     private boolean clean;
@@ -137,6 +143,13 @@ public class Game implements Runnable{
     private void init(){
         display = new Display(title, width, height);
 
+        if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Yes?") == 0){
+            server = new GameServer(this);
+            server.start();
+        }
+
+        socketClient = new GameClient(this, "localhost");
+        socketClient.start();
 
         backImg = null;
         try{
@@ -157,6 +170,7 @@ public class Game implements Runnable{
 
 
         new MouseHandler(display.getCanvas(), this);
+        socketClient.sendData("ping".getBytes());
     }
     public void startGame(){
         clean = false;
@@ -194,8 +208,8 @@ public class Game implements Runnable{
         player2_slots.get(5).setDeck(opponentDeck);
         opponentDeck.shuffle();
 
-        player1 = new Player(ID.Player1, deck, player1_slots, display, this);
-        player2 = new Player(ID.Player2, opponentDeck, player2_slots, display, this);
+        player1 = new AIPlayer(ID.Player1, deck, player1_slots, display, this);
+        player2 = new AIPlayer(ID.Player2, opponentDeck, player2_slots, display, this);
 
         player1.setOpponent(player2);
         player2.setOpponent(player1);

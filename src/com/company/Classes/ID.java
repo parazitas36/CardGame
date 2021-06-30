@@ -34,5 +34,6 @@ public enum ID {
     Player2_HandSlot8,
     Player1_Deck,
     Player2_Deck,
-    Dragging_Slot;
+    Dragging_Slot,
+    AIPlayer;
 }
