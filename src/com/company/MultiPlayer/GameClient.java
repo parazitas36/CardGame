@@ -3,6 +3,7 @@ import com.company.Classes.ID;
 import com.company.Engine.Game;
 import com.company.Packets.Packet;
 import com.company.Packets.Packet00Login;
+import com.company.Packets.Packet01Disconnect;
 
 import java.io.IOException;
 import java.net.*;
@@ -33,6 +34,10 @@ public class GameClient extends Thread{
                 e.printStackTrace();
             }
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
+            String message = new String(packet.getData());
+            if(message.trim().equalsIgnoreCase("ok")){
+                System.out.println("Startino game");
+            }
             //System.out.println("SERVER > " + new String(packet.getData()).trim() + " ip address: " + packet.getAddress().toString());
         }
     }
@@ -50,10 +55,14 @@ public class GameClient extends Thread{
                 packet = new Packet00Login(data);
                 System.out.println("["+address.getHostAddress()+":"+port+"] " + ((Packet00Login)packet).getUsername() + " has joined the game...");
                 PlayerMP player = null;
-                player = new PlayerMP(ID.Player1, null, null, null, game, address, port);
-                //game.level.addEntity(plauer)
+                game.player2 = new PlayerMP(ID.Player2, null, null, null, game, address, port);
+                game.player2.decreaseHP(5);
+                ((PlayerMP)(game.player2)).setUsername(((Packet00Login) packet).getUsername());
+                game.ME = game.player2;
                 break;
             case DISCONNECT:
+                packet = new Packet01Disconnect(data);
+                System.out.println("["+address.getHostAddress()+":"+port+"]" + new String(data).trim() + " has left a game...");
                 break;
         }
     }

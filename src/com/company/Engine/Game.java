@@ -70,12 +70,13 @@ public class Game implements Runnable{
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
 
-    private GameClient socketClient;
-    private GameServer server;
+    public GameClient socketClient;
+    public GameServer server;
 
-    private Player player1;
-    private Player player2;
-    private Player winner;
+    public Player player1;
+    public Player player2;
+    public Player ME;
+    public Player winner;
 
     private CardSlot draggingSlot;
     private Card draggingCard;
@@ -93,6 +94,7 @@ public class Game implements Runnable{
     private Handler handler;
 
     public GameState gameState;
+    public WindowHandler windowHandler;
 
     private double deltaTime;
 
@@ -161,6 +163,7 @@ public class Game implements Runnable{
             e.printStackTrace();
         }
         new MouseHandler(display.getCanvas(), this);
+        new WindowHandler(this);
     }
     public void MP(){
         if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Host?") == 0){
@@ -171,14 +174,25 @@ public class Game implements Runnable{
         socketClient.start();
         String username = JOptionPane.showInputDialog(this.display.getFrame(), "Enter username: ");
         System.out.println("Username: " + username);
-        player1 = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
-        ((PlayerMP)player1).setUsername(username);
+
         Packet00Login loginPacket = new Packet00Login(username);
         if(server != null){
+            System.out.println("Serveris");
+            player1 = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
+            ((PlayerMP)player1).setUsername(username);
+            ME = player1;
             server.addConnection((PlayerMP) player1, loginPacket);
+            loginPacket.writeData(socketClient);
+        }
+        if(server == null){
+            if(player2 != null){
+                System.out.println(((PlayerMP)(player2)).getUsername());
+            }
+            ME = player2;
+            loginPacket.writeData(socketClient);
+            socketClient.sendData("Start".getBytes());
         }
         //socketClient.sendData("ping".getBytes());
-        loginPacket.writeData(socketClient);
 
 
     }
@@ -273,7 +287,6 @@ public class Game implements Runnable{
         player1 = players.get(0);
         player1.filterSlots();
         players.get(1).deck = opponentDeck; players.get(1).playerSlots = player2_slots; players.get(1).display = display;
-        players.get(1).id = ID.Player2;
         player2 = players.get(1);
         player2.filterSlots();
 

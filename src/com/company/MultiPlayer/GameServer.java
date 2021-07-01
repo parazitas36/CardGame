@@ -38,11 +38,24 @@ public class GameServer extends Thread{
             }
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
             System.out.println(mpPlayers.size());
-//            String message = new String(packet.getData());
+            String message = new String(packet.getData());
 //            System.out.println("CLIENT > " +new String(packet.getData()).trim() + " ip address: " + packet.getAddress().toString());
 //            if(message.trim().equalsIgnoreCase("ping")){
 //                sendData("pong".getBytes(), packet.getAddress(), packet.getPort());
 //            }
+            if(message.trim().equalsIgnoreCase("start")){
+                sendData("ok".getBytes(), packet.getAddress(), packet.getPort());
+                if(game.menuMusicClip != null){
+                    game.menuMusicClip.stop();
+                    game.menuMusicClip.setFramePosition(0);
+                }
+                game.gameState.isMenu = false;
+                game.gameState.isLoading = true;
+                game.startGameMP(mpPlayers);
+                game.gameState.isLoading = false;
+                game.gameState.isGame = true;
+                game.gameState.startGame = true;
+            }
         }
     }
 
@@ -65,8 +78,27 @@ public class GameServer extends Thread{
                 this.addConnection(player, (Packet00Login)packet);
                 break;
             case DISCONNECT:
+                packet = new Packet01Disconnect(data);
+                System.out.println("["+address.getHostAddress()+":"+port+"]" + new String(data).trim() + " has disconnected...");
+                this.removeConnection((Packet01Disconnect)packet);
                 break;
         }
+    }
+
+    public void removeConnection(Packet01Disconnect packet) {
+        this.mpPlayers.remove(getPlayerMPIndex(packet.getUsername()));
+        packet.writeData(this);
+    }
+
+    public int getPlayerMPIndex(String username){
+        int index = 0;
+        for(PlayerMP p : mpPlayers){
+            if(p.getUsername().equals(username)){
+                break;
+            }
+            index++;
+        }
+        return index;
     }
 
     public void addConnection(PlayerMP player, Packet00Login packet) {
@@ -83,11 +115,13 @@ public class GameServer extends Thread{
                 alreadyConnected = true;
             }else{
                 sendData(packet.getData(), p.ip, p.port);
+
+                packet = new Packet00Login(p.getUsername());
+                sendData(packet.getData(), player.ip, player.port);
             }
         }
         if(!alreadyConnected){
             this.mpPlayers.add(player);
-            packet.writeData(this);
         }
     }
 
