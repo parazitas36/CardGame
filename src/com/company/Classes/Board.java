@@ -12,16 +12,18 @@ public class Board {
     private BufferStrategy buffer;
     private int offsetYHand;
     private int offsetY;
+    private Game game;
 
-    public Board(Display _display){
+    public Board(Display _display, Game game){
         display = _display;
         player1_slots = new ArrayList<CardSlot>(5);
         player2_slots = new ArrayList<CardSlot>(5);
         offsetY = (int)(display.getHeight()*(-0.105));
         offsetYHand = (int)(display.getHeight()*(0.1));
+        this.game = game;
         generateBoard();
     }
-    private CardSlot generateSlot(double widthscale, double heightScale, int index, int firstId, int ii, int ij, int firstPos, ID id, int indexArray)
+    private CardSlot generateSlot(double widthscale, double heightScale, int index, int firstId, int ii, int ij, int firstPos, int indexArray)
     {
         // firstId - represents which position is first in line number
         CardSlot slot;
@@ -29,23 +31,36 @@ public class Board {
         int spaceWidth = (int)(Math.ceil(display.getWidth()*0.05));
         int heightS = (int)(display.getHeight()*heightScale); // number represents display window height
         int heightHalf = display.getHeight()/2;
-        if(id.toString() == "Player1") {
+        if(game.ME.getID() == ID.Player1 || game.ME.getID() == ID.Player2) {
+            int adjust = game.ME.getID() == ID.Player1 ? 0 : 5;
             if (index == firstId) // if card is first in that line
             {
-                slot = new CardSlot((Card) null, (int)(widthS * 2), heightHalf + heightS + offsetY, ID.values()[index], indexArray);
+                slot = new CardSlot((Card) null, (int)(widthS * 2), heightHalf + heightS + offsetY, ID.values()[index + adjust], indexArray);
             } else // if card is not first in that line
             {
-                slot = new CardSlot((Card) null, (int)(firstPos + ((index - ii) * spaceWidth + (index - ij) * widthS * 2)), heightHalf + heightS + offsetY, ID.values()[index], indexArray);
+                slot = new CardSlot((Card) null, (int)(firstPos + ((index - ii) * spaceWidth + (index - ij) * widthS * 2)), heightHalf + heightS + offsetY, ID.values()[index + adjust], indexArray);
             }
 
             return slot;
-        } else if(id.toString() == "Player2")
+        }
+        return null;
+    }
+    private CardSlot generateSlotOpp(double widthscale, double heightScale, int index, int firstId, int ii, int ij, int firstPos, int indexArray)
+    {
+        // firstId - represents which position is first in line number
+        CardSlot slot;
+        double widthS = (display.getWidth()*widthscale); //number represents display window procentege of width
+        int spaceWidth = (int)(Math.ceil(display.getWidth()*0.05));
+        int heightS = (int)(display.getHeight()*heightScale); // number represents display window height
+        int heightHalf = display.getHeight()/2;
+        if(game.ME.opponent.getID() == ID.Player1 || game.ME.opponent.getID() == ID.Player2)
         {
+            int adjust = game.ME.opponent.getID() == ID.Player1 ? 5 : 0;
             if(index == firstId)
             {
-                slot = new CardSlot((Card)null, (int)(widthS*2), heightHalf - heightS*2 - heightS/2 + offsetY, ID.values()[index], indexArray);
+                slot = new CardSlot((Card)null, (int)(widthS*2), heightHalf - heightS*2 - heightS/2 + offsetY, ID.values()[index - adjust], indexArray);
             }else{
-                slot = new CardSlot((Card) null, (int)(firstPos + ((index-ii)*spaceWidth + (index-ij)*widthS*2)), heightHalf - heightS*2 - heightS/2 + offsetY, ID.values()[index], indexArray);
+                slot = new CardSlot((Card) null, (int)(firstPos + ((index-ii)*spaceWidth + (index-ij)*widthS*2)), heightHalf - heightS*2 - heightS/2 + offsetY, ID.values()[index-adjust], indexArray);
             }
             return slot;
         }
@@ -55,7 +70,7 @@ public class Board {
         int firstPos = (int)(display.getWidth()*0.1)+(int)(display.getWidth()*0.1);
         for(int i = 5; i < 10; i++){
             CardSlot slot;
-            slot = generateSlot(0.05,0.05,i,5,5,6, firstPos, ID.Player1, i-5);
+            slot = generateSlot(0.05,0.05,i,5,5,6, firstPos, i-5);
             slot.setWidth((int)(display.getWidth()*0.1));
             slot.setHeight((int)(display.getHeight()*0.2));
             player1_slots.add(slot);
@@ -69,7 +84,7 @@ public class Board {
         }
         for(int i = 10; i < 15; i++){
             CardSlot slot;
-            slot = generateSlot(0.05,0.1,i,10,10,11, firstPos, ID.Player2, i-10);
+            slot = generateSlotOpp(0.05,0.1,i,10,10,11, firstPos, i-10);
             slot.setWidth((int)(display.getWidth()*0.1));
             slot.setHeight((int)(display.getHeight()*0.2));
             player2_slots.add(slot);

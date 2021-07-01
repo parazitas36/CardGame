@@ -41,7 +41,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 System.out.println("Start");
                 game.gameState.isMenu = false;
                 game.gameState.isLoading = true;
-                game.startGame();
+                //game.startGame();
                 game.gameState.isLoading = false;
                 game.gameState.isGame = true;
                 game.gameState.startGame = true;
@@ -100,6 +100,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
         //===================================
         // Game
         //===================================
+
         if(game.gameState.isGame) {
             // Phase button
             if(e.getX() >= game.phase.GetEndTurnPosX() && e.getX() <= game.phase.GetEndTurnPosX() +  game.phase.GetEndTurnImgWidth() && e.getY() <= game.phase.GetEndTurnPosY() + game.phase.GetEndTurnImgHeight() && e.getY() >= game.phase.GetEndTurnPosY()){
@@ -223,6 +224,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             //---------------------------------------
         }
         //===================================
+
+
     }
     public int selectedIndex, selectedOffsetX;
     @Override
@@ -251,6 +254,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
 
     @Override
     public void mouseMoved(MouseEvent e) {
+        /*
         if(game.gameState.isMenu){
             if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + game.gameState.imgH && e.getY() >= game.gameState.imgYOffSet){
                 game.gameState.overStartButton = true;
@@ -305,5 +309,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 oppDeck.showCardsCount = false;
             }
         }
+
+         */
     }
 }

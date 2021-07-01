@@ -1,5 +1,7 @@
 package com.company.Classes;
 
+import com.company.MultiPlayer.PlayerMP;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -14,13 +16,13 @@ public final class Phase {
     private static int endTurnPosY;
     private boolean start, attack, end, enemy;
     private int width, height;
-    private Player player1;
-    private Player player2;
-    private Player currentPlayer;
+    private PlayerMP player1;
+    private PlayerMP player2;
+    private PlayerMP currentPlayer;
     public long startTime;
     public long elapsedTime;
     private BufferedImage phaseStartImg, phaseAttackImg, phaseEndImg, phaseEnemyTurnImg, currentPhaseImg, endTurnImg, endPhaseImg, currentEndImg;
-    public Phase(int w, int h, Player p1, Player p2){
+    public Phase(int w, int h, PlayerMP p1, PlayerMP p2){
         width = w;
         height = h;
         this.LoadImages();
@@ -85,7 +87,7 @@ public final class Phase {
             end = false;
             currentPhaseImg = phaseEnemyTurnImg;
             currentPlayer = currentPlayer == player1 ? player2 : player1;
-            enemyTurnSequence();
+            //enemyTurnSequence();
         }else if(this.enemyTurn()){
             start = true;
             enemy = false;
@@ -95,6 +97,7 @@ public final class Phase {
             startPhaseActions();
         }
     }
+    /*
     public void enemyTurnSequence(){enemyStartPhase();}
     public void enemyAttackPhase(){((AIPlayer)(currentPlayer)).attackAI();}
     public void enemyStartPhase(){
@@ -109,6 +112,7 @@ public final class Phase {
             }
         }
     }
+    */
     public void startPhaseActions(){
         if(currentRound > 1){
             currentPlayer.addMana();
@@ -152,7 +156,7 @@ public final class Phase {
     public BufferedImage GetEndTurnImage(){
         return currentEndImg;
     }
-    public Player getCurrentPlayer(){
+    public PlayerMP getCurrentPlayer(){
         return this.currentPlayer;
     }
     public int GetPhaseIconWidth(){

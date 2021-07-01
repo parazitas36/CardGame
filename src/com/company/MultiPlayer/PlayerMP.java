@@ -14,6 +14,7 @@ public class PlayerMP extends Player {
     public InetAddress ip;
     public int port;
     public String username;
+    public PlayerMP opponent;
 
     public PlayerMP(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game, InetAddress ip, int port) {
         super(_id, _deck, slots, _display, _game);
@@ -29,5 +30,10 @@ public class PlayerMP extends Player {
     @Override
     public void tick() {
         super.tick();
+    }
+
+    public PlayerMP getOpponent(){ return this.opponent; }
+    public void setOpponent(PlayerMP opponent) {
+        this.opponent = opponent;
     }
 }

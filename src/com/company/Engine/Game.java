@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 
 public class Game implements Runnable{
@@ -75,7 +76,7 @@ public class Game implements Runnable{
 
     public Player player1;
     public Player player2;
-    public Player ME;
+    public PlayerMP ME;
     public Player winner;
 
     private CardSlot draggingSlot;
@@ -83,7 +84,7 @@ public class Game implements Runnable{
     private CardSlot chosenCardSlot;
 
     private ArrayList<Card> cards;
-    public Player currentPlayer;
+    public PlayerMP currentPlayer;
     public Phase phase;
 
     private boolean clean;
@@ -176,29 +177,33 @@ public class Game implements Runnable{
         System.out.println("Username: " + username);
 
         Packet00Login loginPacket = new Packet00Login(username);
+
+
+
         if(server != null){
+            ME = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
+            ME.decreaseHP(2);
+            ((PlayerMP)ME).setUsername(username);
             System.out.println("Serveris");
-            player1 = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
-            ((PlayerMP)player1).setUsername(username);
-            ME = player1;
-            server.addConnection((PlayerMP) player1, loginPacket);
-            loginPacket.writeData(socketClient);
+            server.addConnection((PlayerMP) ME, loginPacket);
+        }else{
+            ME = new PlayerMP(ID.Player2, null, null, display, this, null, -1);
+            ((PlayerMP)ME).setUsername(username);
         }
-        if(server == null){
-            if(player2 != null){
-                System.out.println(((PlayerMP)(player2)).getUsername());
-            }
-            ME = player2;
-            loginPacket.writeData(socketClient);
-            socketClient.sendData("Start".getBytes());
-        }
+
+
+
+        loginPacket.writeData(socketClient);
+        if(server == null)
+        socketClient.sendData("Start".getBytes());
         //socketClient.sendData("ping".getBytes());
 
 
     }
+    /*
     public void startGame(){
         clean = false;
-        board = new Board(display);
+        board = new Board(display, this);
         handler = new Handler();
         draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0);
         draggingSlot.setWidth((int)(display.getWidth()*0.1));
@@ -246,10 +251,11 @@ public class Game implements Runnable{
         currentPlayer = player1;
         gameState.startGame = false;
     }
+     */
 
     public void startGameMP(ArrayList<PlayerMP> players){
         clean = false;
-        board = new Board(display);
+        board = new Board(display, this);
         handler = new Handler();
         draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0);
         draggingSlot.setWidth((int)(display.getWidth()*0.1));
@@ -283,22 +289,45 @@ public class Game implements Runnable{
         player2_slots.get(5).setDeck(opponentDeck);
         opponentDeck.shuffle();
 
-        players.get(0).deck = deck; players.get(0).playerSlots = player1_slots; players.get(0).display = display;
-        player1 = players.get(0);
-        player1.filterSlots();
-        players.get(1).deck = opponentDeck; players.get(1).playerSlots = player2_slots; players.get(1).display = display;
-        player2 = players.get(1);
-        player2.filterSlots();
+        ME.setOpponent(ME.opponent);
+        ME.opponent.setOpponent(ME);
 
-        player1.setOpponent(player2);
-        player2.setOpponent(player1);
+        if(ME.getID() == ID.Player1){
+            ME.deck = deck;
+            ME.playerSlots = player1_slots;
+            ME.display = display;
+            ME.filterSlots();
 
-        phase = new Phase(width, height, player1, player2);
-        handler.addObject(player1);
-        handler.addObject(player2);
+            ME.opponent.deck = opponentDeck;
+            ME.opponent.playerSlots = player2_slots;
+            ME.opponent.display = display;
+            ME.opponent.filterSlots();
+        }else{
+            ME.opponent.deck = deck;
+            ME.opponent.playerSlots = player1_slots;
+            ME.opponent.display = display;
+            ME.opponent.filterSlots();
 
+            ME.deck = opponentDeck;
+            ME.playerSlots = player2_slots;
+            ME.display = display;
+            ME.filterSlots();
+        }
+
+        int rand = new Random().nextInt(100);
+        if(rand <= 50) {
+            currentPlayer = ME;
+        }else{
+            currentPlayer = ME.opponent;
+        }
+        if(ME == currentPlayer){
+            phase = new Phase(width, height, ME, ME.opponent);
+        }else{
+            phase = new Phase(width, height, ME.opponent, ME);
+        }
+        handler.addObject(ME);
+        handler.addObject(ME.opponent);
         handler.addObject(draggingSlot);
-        currentPlayer = player1;
         gameState.startGame = false;
     }
 
@@ -372,15 +401,15 @@ public class Game implements Runnable{
             currentPlayer = phase.getCurrentPlayer();
             phase.updateTime();
             phase.checkTime();
-            if(phase.weHaveAWinner()){
-                gameState.isGame = false;
-                gameState.celebrationWindow = true;
-                if(currentPlayer.getHP() <= 0){
-                    winner = currentPlayer.opponent;
-                }else if(currentPlayer.opponent.getHP() <= 0) {
-                    winner = currentPlayer;
-                }
-            }
+//            if(phase.weHaveAWinner()){
+//                gameState.isGame = false;
+//                gameState.celebrationWindow = true;
+//                if(currentPlayer.getHP() <= 0){
+//                    winner = currentPlayer.opponent;
+//                }else if(currentPlayer.opponent.getHP() <= 0) {
+//                    winner = currentPlayer;
+//                }
+//            }
         }else if(gameState.celebrationWindow){
             if(inGameMusicClip != null){
                inGameMusicClip.stop();
@@ -718,9 +747,9 @@ public class Game implements Runnable{
     //----------------------------------------------------------
     public int startOfTheGame(int draws){
         if(draws < 3) {
-            player1.drawCard();
+            currentPlayer.drawCard();
         }
-        player2.drawCard();
+        currentPlayer.opponent.drawCard();
         draws++;
         try {
             Thread.sleep(500); // Draws a card and waits a little bit before drawing another one

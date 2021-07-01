@@ -44,7 +44,8 @@ public class GameServer extends Thread{
 //                sendData("pong".getBytes(), packet.getAddress(), packet.getPort());
 //            }
             if(message.trim().equalsIgnoreCase("start")){
-                sendData("ok".getBytes(), packet.getAddress(), packet.getPort());
+
+                //sendData("ok".getBytes(), packet.getAddress(), packet.getPort());
                 if(game.menuMusicClip != null){
                     game.menuMusicClip.stop();
                     game.menuMusicClip.setFramePosition(0);
@@ -55,6 +56,7 @@ public class GameServer extends Thread{
                 game.gameState.isLoading = false;
                 game.gameState.isGame = true;
                 game.gameState.startGame = true;
+                sendDataToAllClients("ok".getBytes());
             }
         }
     }
@@ -72,14 +74,19 @@ public class GameServer extends Thread{
             case LOGIN:
                 packet = new Packet00Login(data);
                 System.out.println("["+address.getHostAddress()+":"+port+"]" + ((Packet00Login)packet).getUsername() + " has connected...");
-                PlayerMP player = null;
-                player = new PlayerMP(ID.Player1, null, null, null, game, address, port);
-                player.setUsername(((Packet00Login) packet).getUsername());
-                this.addConnection(player, (Packet00Login)packet);
+                if(game.ME == null) {
+                    game.ME = new PlayerMP(ID.Player1, null, null, null, game, address, port);
+                    game.ME.setUsername(((Packet00Login) packet).getUsername());
+                    this.addConnection(game.ME, (Packet00Login) packet);
+                }else{
+                    game.ME.opponent = new PlayerMP(ID.Player2, null, null, null, game, address, port);
+                    game.ME.opponent.setUsername(((Packet00Login) packet).getUsername());
+                    this.addConnection(game.ME.opponent, (Packet00Login) packet);
+                }
                 break;
             case DISCONNECT:
                 packet = new Packet01Disconnect(data);
-                System.out.println("["+address.getHostAddress()+":"+port+"]" + new String(data).trim() + " has disconnected...");
+                System.out.println("["+address.getHostAddress()+":"+port+"]" + ((Packet01Disconnect)packet).getUsername() + " has disconnected...");
                 this.removeConnection((Packet01Disconnect)packet);
                 break;
         }
