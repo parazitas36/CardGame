@@ -6,7 +6,10 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 
 public class GameState {
-    public BufferedImage menuBackgroundImg, menuButton_StartGame, menuButton_Options, menuButton_Exit, optionsButton_res1, optionsButton_res2, optionsButton_res3, optionsButton_back, optionsButton_back2, optionsOver1, optionsOver2, optionsOver3, overStart, overOptions, overExit;
+    public BufferedImage menuBackgroundImg, menuButton_StartGame, menuButton_Options, menuButton_Exit,
+            optionsButton_res1, optionsButton_res2, optionsButton_res3, optionsButton_back, optionsButton_back2, optionsOver1, optionsOver2, optionsOver3, overStart, overOptions,
+            overExit,
+            multiplayerButtion;
     private int w, h; //display width and height
     public int imgW, imgH, imgYButtonOffSet, imgX, imgYOffSet;
     public GameState(int width, int height){
@@ -22,6 +25,7 @@ public class GameState {
         try {
             menuBackgroundImg = ImageIO.read(new File("src/com/company/Images/MenuBackgroundImg.png"));
             menuButton_StartGame = ImageIO.read(new File("src/com/company/Images/MenuButton_Start.png"));
+            multiplayerButtion = ImageIO.read(new File("src/com/company/Images/MenuButton_Start.png"));
             optionsButton_res1 = ImageIO.read(new File("src/com/company/Images/options_1366x768.png"));
             optionsButton_res2 = ImageIO.read(new File("src/com/company/Images/options_1600x900.png"));
             optionsButton_res3 = ImageIO.read(new File("src/com/company/Images/options_1920x1080.png"));
@@ -40,11 +44,12 @@ public class GameState {
         }
     }
 
-    public boolean isMenu, isOptions, isGame, startGame, isLoading, overStartButton, overOptionsButton, overExitButton, overBackButton, someoneWon, celebrationWindow;
+    public boolean isMenu, isOptions, isGame, startGame, isLoading, overStartButton, overOptionsButton, overExitButton, overBackButton, someoneWon, celebrationWindow, isWaiting;
 
     public void render(Graphics g){
 
         g.drawImage(menuBackgroundImg, 0, 0, w, h, null);
+        g.drawImage(multiplayerButtion, 0, 0, imgW, imgH, null);
         if(!overStartButton) {
             g.drawImage(menuButton_StartGame, imgX, imgYOffSet, imgW, imgH, null);
         }else{

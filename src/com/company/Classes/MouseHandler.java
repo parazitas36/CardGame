@@ -46,6 +46,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 game.gameState.isGame = true;
                 game.gameState.startGame = true;
             }
+            // Clicked on Multiplayer button
+            else if(e.getX() >= 0 && e.getX() <= game.gameState.imgW && e.getY() <= game.gameState.imgH && e.getY() >= 0){
+                System.out.println("MP button");
+                game.MP();
+            }
             // CLicked on Options button
             else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 2*game.gameState.imgH + game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + game.gameState.imgH + game.gameState.imgYButtonOffSet){
                 game.gameState.isOptions = true;

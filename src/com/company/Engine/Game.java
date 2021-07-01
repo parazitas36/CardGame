@@ -3,6 +3,8 @@ package com.company.Engine;
 import com.company.Classes.*;
 import com.company.MultiPlayer.GameClient;
 import com.company.MultiPlayer.GameServer;
+import com.company.MultiPlayer.PlayerMP;
+import com.company.Packets.Packet00Login;
 import com.company.Utils.CardReader;
 
 import javax.imageio.ImageIO;
@@ -71,8 +73,8 @@ public class Game implements Runnable{
     private GameClient socketClient;
     private GameServer server;
 
-    private AIPlayer player1;
-    private AIPlayer player2;
+    private Player player1;
+    private Player player2;
     private Player winner;
 
     private CardSlot draggingSlot;
@@ -80,7 +82,7 @@ public class Game implements Runnable{
     private CardSlot chosenCardSlot;
 
     private ArrayList<Card> cards;
-    public AIPlayer currentPlayer;
+    public Player currentPlayer;
     public Phase phase;
 
     private boolean clean;
@@ -142,15 +144,6 @@ public class Game implements Runnable{
     }
     private void init(){
         display = new Display(title, width, height);
-
-        if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Yes?") == 0){
-            server = new GameServer(this);
-            server.start();
-        }
-
-        socketClient = new GameClient(this, "localhost");
-        socketClient.start();
-
         backImg = null;
         try{
 //            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
@@ -167,10 +160,27 @@ public class Game implements Runnable{
         }catch (IOException e){
             e.printStackTrace();
         }
-
-
         new MouseHandler(display.getCanvas(), this);
-        socketClient.sendData("ping".getBytes());
+    }
+    public void MP(){
+        if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Host?") == 0){
+            server = new GameServer(this);
+            server.start();
+        }
+        socketClient = new GameClient(this, "localhost");
+        socketClient.start();
+        String username = JOptionPane.showInputDialog(this.display.getFrame(), "Enter username: ");
+        System.out.println("Username: " + username);
+        player1 = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
+        ((PlayerMP)player1).setUsername(username);
+        Packet00Login loginPacket = new Packet00Login(username);
+        if(server != null){
+            server.addConnection((PlayerMP) player1, loginPacket);
+        }
+        //socketClient.sendData("ping".getBytes());
+        loginPacket.writeData(socketClient);
+
+
     }
     public void startGame(){
         clean = false;
@@ -208,7 +218,7 @@ public class Game implements Runnable{
         player2_slots.get(5).setDeck(opponentDeck);
         opponentDeck.shuffle();
 
-        player1 = new AIPlayer(ID.Player1, deck, player1_slots, display, this);
+        player1 = new Player(ID.Player1, deck, player1_slots, display, this);
         player2 = new AIPlayer(ID.Player2, opponentDeck, player2_slots, display, this);
 
         player1.setOpponent(player2);
@@ -222,6 +232,64 @@ public class Game implements Runnable{
         currentPlayer = player1;
         gameState.startGame = false;
     }
+
+    public void startGameMP(ArrayList<PlayerMP> players){
+        clean = false;
+        board = new Board(display);
+        handler = new Handler();
+        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0);
+        draggingSlot.setWidth((int)(display.getWidth()*0.1));
+        draggingSlot.setHeight((int)(display.getHeight()*0.2));
+
+        // Creates card slots for both players
+        player1_slots = board.getPlayer1_slots();
+        for(CardSlot s: player1_slots){
+            handler.addObject(s);
+        }
+        player2_slots = board.getPlayer2_slots();
+        for(CardSlot s: player2_slots){
+            handler.addObject(s);
+        }
+
+        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt"); // Reads cards data from file
+        deck = new Deck(cards.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cards, backImg);
+        player1_slots.get(5).setDeck(deck);
+        deck.shuffle();
+        cards = new ArrayList<>();
+        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
+
+        if(inGameMusicClip == null){
+            System.out.println("dd");
+            inGameMusicClip = musicPlayer.playSound(inGameMusic);
+        }
+        if(!inGameMusicClip.isRunning()){
+            musicPlayer.repeatMusic(inGameMusicClip);
+        }
+        opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
+        player2_slots.get(5).setDeck(opponentDeck);
+        opponentDeck.shuffle();
+
+        players.get(0).deck = deck; players.get(0).playerSlots = player1_slots; players.get(0).display = display;
+        player1 = players.get(0);
+        player1.filterSlots();
+        players.get(1).deck = opponentDeck; players.get(1).playerSlots = player2_slots; players.get(1).display = display;
+        players.get(1).id = ID.Player2;
+        player2 = players.get(1);
+        player2.filterSlots();
+
+        player1.setOpponent(player2);
+        player2.setOpponent(player1);
+
+        phase = new Phase(width, height, player1, player2);
+        handler.addObject(player1);
+        handler.addObject(player2);
+
+        handler.addObject(draggingSlot);
+        currentPlayer = player1;
+        gameState.startGame = false;
+    }
+
+
     public double animTimer = 0;
     public boolean inAnimation = false;
     public ID animationCardID;

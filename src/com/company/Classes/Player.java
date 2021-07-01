@@ -34,7 +34,9 @@ public class Player  extends GameObject{
         id = _id;
         deck = _deck;
         playerSlots = slots;
-        filterSlots();
+        if(slots != null) {
+            filterSlots();
+        }
         handSizeLimit = 7;
         cardsInHand = 0;
         this.display = _display;
@@ -239,6 +241,14 @@ public class Player  extends GameObject{
             temp--;
         }
         this.Mana -= temp;
+    }
+    public boolean opponentHasMonsterOnTheBoard(){
+        for(CardSlot slot : this.opponent.playerBoardSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

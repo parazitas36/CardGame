@@ -14,13 +14,13 @@ public final class Phase {
     private static int endTurnPosY;
     private boolean start, attack, end, enemy;
     private int width, height;
-    private AIPlayer player1;
-    private AIPlayer player2;
-    private AIPlayer currentPlayer;
+    private Player player1;
+    private Player player2;
+    private Player currentPlayer;
     public long startTime;
     public long elapsedTime;
     private BufferedImage phaseStartImg, phaseAttackImg, phaseEndImg, phaseEnemyTurnImg, currentPhaseImg, endTurnImg, endPhaseImg, currentEndImg;
-    public Phase(int w, int h, AIPlayer p1, AIPlayer p2){
+    public Phase(int w, int h, Player p1, Player p2){
         width = w;
         height = h;
         this.LoadImages();
@@ -96,10 +96,10 @@ public final class Phase {
         }
     }
     public void enemyTurnSequence(){enemyStartPhase();}
-    public void enemyAttackPhase(){currentPlayer.attackAI();}
+    public void enemyAttackPhase(){((AIPlayer)(currentPlayer)).attackAI();}
     public void enemyStartPhase(){
         startPhaseActions();
-        currentPlayer.startPhaseSequenceAI();
+        ((AIPlayer)(currentPlayer)).startPhaseSequenceAI();
         enemyAttackPhase();
         for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){
             CardSlot slot = currentPlayer.playerBoardSlots.get(i);
@@ -152,7 +152,7 @@ public final class Phase {
     public BufferedImage GetEndTurnImage(){
         return currentEndImg;
     }
-    public AIPlayer getCurrentPlayer(){
+    public Player getCurrentPlayer(){
         return this.currentPlayer;
     }
     public int GetPhaseIconWidth(){
