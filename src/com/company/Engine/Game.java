@@ -183,12 +183,12 @@ public class Game implements Runnable{
         if(server != null){
             ME = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
             ME.decreaseHP(2);
-            ((PlayerMP)ME).setUsername(username);
+            ME.setUsername(username);
             System.out.println("Serveris");
-            server.addConnection((PlayerMP) ME, loginPacket);
+            server.addConnection(ME, loginPacket);
         }else{
             ME = new PlayerMP(ID.Player2, null, null, display, this, null, -1);
-            ((PlayerMP)ME).setUsername(username);
+            ME.setUsername(username);
         }
 
 
@@ -257,7 +257,7 @@ public class Game implements Runnable{
         clean = false;
         board = new Board(display, this);
         handler = new Handler();
-        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0);
+        draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0, this);
         draggingSlot.setWidth((int)(display.getWidth()*0.1));
         draggingSlot.setHeight((int)(display.getHeight()*0.2));
 
@@ -291,40 +291,23 @@ public class Game implements Runnable{
 
         ME.setOpponent(ME.opponent);
         ME.opponent.setOpponent(ME);
+        ME.deck = deck;
+        ME.playerSlots = player1_slots;
+        ME.display = display;
+        ME.filterSlots();
 
-        if(ME.getID() == ID.Player1){
-            ME.deck = deck;
-            ME.playerSlots = player1_slots;
-            ME.display = display;
-            ME.filterSlots();
-
-            ME.opponent.deck = opponentDeck;
-            ME.opponent.playerSlots = player2_slots;
-            ME.opponent.display = display;
-            ME.opponent.filterSlots();
-        }else{
-            ME.opponent.deck = deck;
-            ME.opponent.playerSlots = player1_slots;
-            ME.opponent.display = display;
-            ME.opponent.filterSlots();
-
-            ME.deck = opponentDeck;
-            ME.playerSlots = player2_slots;
-            ME.display = display;
-            ME.filterSlots();
-        }
-
+        ME.opponent.deck = opponentDeck;
+        ME.opponent.playerSlots = player2_slots;
+        ME.opponent.display = display;
+        ME.opponent.filterSlots();
         int rand = new Random().nextInt(100);
         if(rand <= 50) {
             currentPlayer = ME;
         }else{
             currentPlayer = ME.opponent;
         }
-        if(ME == currentPlayer){
-            phase = new Phase(width, height, ME, ME.opponent);
-        }else{
-            phase = new Phase(width, height, ME.opponent, ME);
-        }
+
+        phase = new Phase(width, height, ME, ME.opponent);
         handler.addObject(ME);
         handler.addObject(ME.opponent);
         handler.addObject(draggingSlot);
@@ -749,6 +732,7 @@ public class Game implements Runnable{
         if(draws < 3) {
             currentPlayer.drawCard();
         }
+        System.out.println(draws);
         currentPlayer.opponent.drawCard();
         draws++;
         try {

@@ -35,10 +35,10 @@ public class Board {
             int adjust = game.ME.getID() == ID.Player1 ? 0 : 5;
             if (index == firstId) // if card is first in that line
             {
-                slot = new CardSlot((Card) null, (int)(widthS * 2), heightHalf + heightS + offsetY, ID.values()[index + adjust], indexArray);
+                slot = new CardSlot((Card) null, (int)(widthS * 2), heightHalf + heightS + offsetY, ID.values()[index + adjust], indexArray, this.game);
             } else // if card is not first in that line
             {
-                slot = new CardSlot((Card) null, (int)(firstPos + ((index - ii) * spaceWidth + (index - ij) * widthS * 2)), heightHalf + heightS + offsetY, ID.values()[index + adjust], indexArray);
+                slot = new CardSlot((Card) null, (int)(firstPos + ((index - ii) * spaceWidth + (index - ij) * widthS * 2)), heightHalf + heightS + offsetY, ID.values()[index + adjust], indexArray, this.game);
             }
 
             return slot;
@@ -58,9 +58,9 @@ public class Board {
             int adjust = game.ME.opponent.getID() == ID.Player1 ? 5 : 0;
             if(index == firstId)
             {
-                slot = new CardSlot((Card)null, (int)(widthS*2), heightHalf - heightS*2 - heightS/2 + offsetY, ID.values()[index - adjust], indexArray);
+                slot = new CardSlot((Card)null, (int)(widthS*2), heightHalf - heightS*2 - heightS/2 + offsetY, ID.values()[index - adjust], indexArray, this.game);
             }else{
-                slot = new CardSlot((Card) null, (int)(firstPos + ((index-ii)*spaceWidth + (index-ij)*widthS*2)), heightHalf - heightS*2 - heightS/2 + offsetY, ID.values()[index-adjust], indexArray);
+                slot = new CardSlot((Card) null, (int)(firstPos + ((index-ii)*spaceWidth + (index-ij)*widthS*2)), heightHalf - heightS*2 - heightS/2 + offsetY, ID.values()[index-adjust], indexArray, this.game);
             }
             return slot;
         }
@@ -76,7 +76,8 @@ public class Board {
             player1_slots.add(slot);
 
             if(i == 9){
-                slot = new CardSlot((Deck)null, firstPos + ((i-4)*(int)(Math.ceil(display.getWidth()*0.05)) + (i-5)*(int)(display.getWidth()*0.1)), display.getHeight()/2 + (int)(display.getHeight()*0.05) + offsetY, ID.Player1_Deck, i-5);
+                ID id = this.game.ME.getID() == ID.Player1 ? ID.Player1_Deck : ID.Player2_Deck;
+                slot = new CardSlot((Deck)null, firstPos + ((i-4)*(int)(Math.ceil(display.getWidth()*0.05)) + (i-5)*(int)(display.getWidth()*0.1)), display.getHeight()/2 + (int)(display.getHeight()*0.05) + offsetY, id, i-5, this.game);
                 slot.setWidth((int)(display.getWidth()*0.1));
                 slot.setHeight((int)(display.getHeight()*0.2));
                 player1_slots.add(slot);
@@ -89,7 +90,8 @@ public class Board {
             slot.setHeight((int)(display.getHeight()*0.2));
             player2_slots.add(slot);
             if(i == 14){
-                slot = new CardSlot((Deck) null, firstPos + ((i-9)*(int)(int)(Math.ceil(display.getWidth()*0.05)) + (i-10)*(int)(display.getWidth()*0.1)), display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + offsetY, ID.Player2_Deck, i - 10);
+                ID id = this.game.ME.getID() == ID.Player1 ? ID.Player1_Deck : ID.Player2_Deck;
+                slot = new CardSlot((Deck) null, firstPos + ((i-9)*(int)(int)(Math.ceil(display.getWidth()*0.05)) + (i-10)*(int)(display.getWidth()*0.1)), display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + offsetY, id, i - 10, this.game);
                 slot.setWidth((int)(display.getWidth()*0.1));
                 slot.setHeight((int)(display.getHeight()*0.2));
                 player2_slots.add(slot);
@@ -100,18 +102,20 @@ public class Board {
         int handSize = 7;
         int handSizeLimit = 8;
         // Generating hand slots
+        int adjust = this.game.ME.getID() == ID.Player1 ? 0 : 7;
         for(int i = 0; i < handSize; i++){
             CardSlot slot;
             slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - handSize * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
-                        display.getHeight() / 2 + (int) (display.getHeight() * 0.2) + offsetYHand, ID.values()[15 + i], i);
+                        display.getHeight() / 2 + (int) (display.getHeight() * 0.2) + offsetYHand, ID.values()[15 + i + adjust], i, this.game);
                 slot.setWidth((int)(display.getWidth()*0.1));
                 slot.setHeight((int)(display.getHeight()*0.2));
                 player1_slots.add(slot);
         }
+        adjust = this.game.ME.getID() == ID.Player2 ? 0 : 7;
         for(int i = 0; i < handSize; i++){
             CardSlot slot;
             slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - handSize * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
-                    display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + (offsetY-(int)(display.getHeight()*0.153)) - offsetYHand, ID.values()[23 + i], i);
+                    display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + (offsetY-(int)(display.getHeight()*0.153)) - offsetYHand, ID.values()[22 + i - adjust], i, this.game);
             slot.setWidth((int)(display.getWidth()*0.1));
             slot.setHeight((int)(display.getHeight()*0.2));
             player2_slots.add(slot);

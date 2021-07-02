@@ -86,14 +86,18 @@ public final class Phase {
             enemy = true;
             end = false;
             currentPhaseImg = phaseEnemyTurnImg;
-            currentPlayer = currentPlayer == player1 ? player2 : player1;
+            currentPlayer = currentPlayer.opponent;
+            startPhaseActions();
             //enemyTurnSequence();
         }else if(this.enemyTurn()){
-            start = true;
             enemy = false;
             currentRound++;
+
+            //startPhaseActions();
+        }else if(!this.enemyTurn() && !start){
+            start = true;
             currentPhaseImg = phaseStartImg;
-            currentPlayer = currentPlayer == player1 ? player2 : player1;
+            currentPlayer = currentPlayer.opponent;
             startPhaseActions();
         }
     }
@@ -119,6 +123,7 @@ public final class Phase {
             currentPlayer.refillMana();
 
         }
+        System.out.println("Current player turn: " + currentPlayer.getUsername());
         currentPlayer.drawCard();
         for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){
             CardSlot slot = currentPlayer.playerBoardSlots.get(i);
@@ -129,7 +134,7 @@ public final class Phase {
         }
         startTime = System.nanoTime();
     }
-    public Player getOpponent(){
+    public PlayerMP getOpponent(){
         return currentPlayer.opponent;
     }
     public boolean weHaveAWinner(){

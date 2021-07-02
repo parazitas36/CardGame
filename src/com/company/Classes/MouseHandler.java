@@ -130,8 +130,18 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             //---------------------------------------
             // Chooses a card which will be dragged
             //---------------------------------------
-            for (CardSlot c : game.currentPlayer.playerHandSlots) {
+            for (CardSlot c : game.ME.playerHandSlots) {
                 if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
+                    System.out.println(c.getId());
+                    if (c.getId() != ID.Player1_Deck) {
+                        if (c.getCard() != null)
+                            game.SlotClicked(c.getCard(), c);
+                    }
+                }
+            }
+            for (CardSlot c : game.ME.opponent.playerHandSlots) {
+                if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
+                    System.out.println(c.getId());
                     if (c.getId() != ID.Player1_Deck) {
                         if (c.getCard() != null)
                             game.SlotClicked(c.getCard(), c);
@@ -144,10 +154,12 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             // Chooses a monster which is going to attack.
             //---------------------------------------
             int index = 0;
-            for (CardSlot c : game.currentPlayer.playerBoardSlots) {
+            for (CardSlot c : game.ME.playerBoardSlots) {
                 index++;
                 if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
+                    System.out.println(c.getId());
                     if (c.cardOnBoard()) {
+                        System.out.println(c.getId() + " " + c.getCard().getID());
                         if (game.phase.attackPhase()) {
                             if (c.getCard().getID() == ID.Monster && !c.attackedThisTurn() && ((Monster) c.getCard()).stunTime == 0) {
                                 if (attacker == null) {
@@ -196,8 +208,9 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             //---------------------------------------
             // Selects a monster which will be attacked.
             //---------------------------------------
-            for(CardSlot c : game.currentPlayer.opponent.playerBoardSlots){
+            for(CardSlot c : game.ME.opponent.playerBoardSlots){
                 if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
+                    System.out.println(c.getId());
                     if (c.cardOnBoard()) {
                         System.out.println(c.getCard().getName());
                         System.out.println(((Monster) c.getCard()).getStunTime());

@@ -130,6 +130,7 @@ public class GameServer extends Thread{
         if(!alreadyConnected){
             this.mpPlayers.add(player);
         }
+        System.out.println("size:" + mpPlayers.size());
     }
 
     public void sendData(byte[] data, InetAddress ipAddress, int port){

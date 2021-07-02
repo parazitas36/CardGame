@@ -1,5 +1,7 @@
 package com.company.Classes;
 
+import com.company.Engine.Game;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -27,8 +29,10 @@ public class CardSlot extends GameObject{
             e.printStackTrace();
         }
     }
-    public CardSlot(Card _card, int x, int y, ID slotID, int _index){
+    public  Game game;
+    public CardSlot(Card _card, int x, int y, ID slotID, int _index, Game game){
         super();
+        this.game = game;
         setX(x);
         setY(y);
         card = _card;
@@ -39,8 +43,9 @@ public class CardSlot extends GameObject{
         index = _index;
         readimages();
     }
-    public CardSlot(Deck _deck, int x, int y, ID slotID, int _index){
+    public CardSlot(Deck _deck, int x, int y, ID slotID, int _index, Game game){
         super();
+        this.game = game;
         deck = _deck;
         setX(x);
         setY(y);
@@ -61,7 +66,7 @@ public class CardSlot extends GameObject{
 
         if(this.cardOnBoard() ) {
             Card card = this.getCard();
-            if(this.id.toString().contains("Player1_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
+            if(this.id.toString().contains(this.game.ME.getID() +"_HandSlot") || this.id.toString().contains("Dragging_Slot")) {
                 g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
                 if(card.getID() == ID.Monster) {
                     g.setFont(newfont);
@@ -74,7 +79,7 @@ public class CardSlot extends GameObject{
                     g.drawString(String.format("%s", card.getManaCost()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.095));
                     g.setFont(prevfont);
                 }
-            }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains("Player1_Slot"))
+            }else if (card.getID().toString() == ID.Monster.toString() && this.id.toString().contains(this.game.ME.getID() + "_Slot"))
             {
                 g.setFont(newfont);
                 g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
@@ -91,12 +96,12 @@ public class CardSlot extends GameObject{
                     g.drawRect(this.getX() - 10, this.getY() - 10, this.getWidth() + 20, this.getHeight() + 20);
                     g.setColor(c);
                 }
-            } else if(card.getID().toString() != ID.Monster.toString() && this.id.toString().contains("Player1_Slot")){
+            } else if(card.getID() != ID.Monster && this.id.toString().contains(this.game.ME.getID() + "_Slot")){
                 g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
             }
             else{
                     g.drawImage(backimg, (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
-                if(card.getID() == ID.Monster && this.getId().toString().contains("Player2_Slot")){
+                if(card.getID() == ID.Monster && this.getId().toString().contains(this.game.ME.opponent.getID() + "_Slot")){
                     g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                     g.setFont(newfont);
                     g.drawString(String.format("%s", ((Monster)card).getAttack()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.74));
@@ -109,7 +114,7 @@ public class CardSlot extends GameObject{
                 }
             }
         }else if(deck != null){
-            if(id.toString().contains("Player1")){
+            if(id.toString().contains(this.game.ME.getID().toString())){
                 g.drawImage(deck.getImage(),(int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
                 if(showCardsCount){
                     g.setFont(deckFont);

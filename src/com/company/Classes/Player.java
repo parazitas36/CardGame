@@ -23,7 +23,7 @@ public class Player  extends GameObject{
     public Display display;
     public Player opponent;
     public boolean possibleToDefeat;
-    private Game game;
+    public Game game;
     public boolean supper;
     public Player(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game){
         HP = 30;
@@ -83,6 +83,8 @@ public class Player  extends GameObject{
         Card card = deck.drawCard();
         if(card == null){
             HP--;
+        }else{
+            System.out.println(card.getName());
         }
         for(int i = 0; i < playerHandSlots.size(); i++){
             CardSlot slot = playerHandSlots.get(i);
