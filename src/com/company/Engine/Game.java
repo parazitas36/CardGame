@@ -167,11 +167,18 @@ public class Game implements Runnable{
         new WindowHandler(this);
     }
     public void MP(){
+        String hostIP = null;
         if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Host?") == 0){
             server = new GameServer(this);
             server.start();
+        }else{
+            hostIP = JOptionPane.showInputDialog(this.display.getFrame(), "Enter a host IP you want to join: ");
         }
-        socketClient = new GameClient(this, "localhost");
+        if(hostIP == null){
+            socketClient = new GameClient(this, "localhost");
+        }else{
+            socketClient = new GameClient(this, hostIP);
+        }
         socketClient.start();
         String username = JOptionPane.showInputDialog(this.display.getFrame(), "Enter username: ");
         System.out.println("Username: " + username);
@@ -307,7 +314,7 @@ public class Game implements Runnable{
             currentPlayer = ME.opponent;
         }
 
-        phase = new Phase(width, height, ME, ME.opponent);
+        phase = new Phase(width, height, currentPlayer, currentPlayer.opponent);
         handler.addObject(ME);
         handler.addObject(ME.opponent);
         handler.addObject(draggingSlot);
@@ -514,9 +521,9 @@ public class Game implements Runnable{
                         draws = startOfTheGame(draws);
                         phase.startTime = System.nanoTime();
                     }
-                    if (phase.enemyTurn()) {
-                        enemyTurn();
-                    }
+//                    if (phase.enemyTurn()) {
+//                        enemyTurn();
+//                    }
                 }
                 if(gameState.isMenu){ draws = 0; }
                 delta--;
@@ -577,7 +584,7 @@ public class Game implements Runnable{
             draggingCard = card;
             this.chosenCardSlot = slot;
             this.chosenCardSlot.removeCard();
-            System.out.println("Selected card: " + draggingCard);
+            System.out.println("Selected card:\t" + draggingCard.getName());
         }
     }
     public void drawffect(int x, int y, Image image, int time, String c){
@@ -746,6 +753,7 @@ public class Game implements Runnable{
     // Imitation of enemy turn, draws a card at the beginning
     // of the turn, places the first card in the hand on the board.
     //--------------------------------------------------------
+    /*
     public void enemyTurn(){
         render();
         try {
@@ -755,6 +763,7 @@ public class Game implements Runnable{
         }
         phase.nextPhase();
     }
+    */
     public void attackOpponent(CardSlot attacker, Player currentplayer){
         currentplayer.opponent.decreaseHP(((Monster)(attacker.getCard())).getAttack());
     }

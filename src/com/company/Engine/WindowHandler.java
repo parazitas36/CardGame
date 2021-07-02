@@ -21,8 +21,8 @@ public class WindowHandler implements WindowListener {
     @Override
     public void windowClosing(WindowEvent e) {
         Packet01Disconnect packet = new Packet01Disconnect(((PlayerMP)(this.game.ME)).getUsername());
-        System.out.println("ME: " + ((PlayerMP)game.ME).getUsername() + "[ " + game.ME.getID() +" ]");
-        System.out.println("ME Opponent: " + ((PlayerMP)game.ME.opponent).getUsername()  + "[ " + game.ME.opponent.getID() +" ]");
+        System.out.println(" Me:\t" + ((PlayerMP)game.ME).getUsername() + "[ " + game.ME.getID() +" ]");
+        System.out.println(" My opponent:\t" + ((PlayerMP)game.ME.opponent).getUsername()  + "[ " + game.ME.opponent.getID() +" ]");
         packet.writeData(this.game.socketClient);
     }
 

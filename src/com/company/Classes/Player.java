@@ -84,12 +84,15 @@ public class Player  extends GameObject{
         if(card == null){
             HP--;
         }else{
-            System.out.println(card.getName());
+            System.out.println("Drawn card:\t" + card.getName());
         }
         for(int i = 0; i < playerHandSlots.size(); i++){
             CardSlot slot = playerHandSlots.get(i);
+            System.out.println("\tChecking slot:\t" + slot.getId().toString());
+            System.out.println("\tCards in the hand:\t" + cardsInHand);
             if(!slot.cardOnBoard() && handSizeLimit > cardsInHand){
                 slot.setCard(card);
+                System.out.println("\tCard placed on: " + slot.getId());
                 if(game.sound_drawEffectClip == null) {
                     game.sound_drawEffectClip = game.musicPlayer.playSound(game.sound_drawEffect);
                     game.musicPlayer.repeatSound(game.sound_drawEffectClip);

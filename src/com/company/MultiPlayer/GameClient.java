@@ -37,7 +37,7 @@ public class GameClient extends Thread{
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
             String message = new String(packet.getData());
             if(message.trim().equalsIgnoreCase("ok")){
-                System.out.println("Startino game");
+                System.out.println("\tGame started...");
                 ArrayList<PlayerMP> playerMPS = new ArrayList<>();
                 playerMPS.add(game.ME);
                 playerMPS.add(game.ME.opponent);

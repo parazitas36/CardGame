@@ -37,7 +37,6 @@ public class GameServer extends Thread{
                 e.printStackTrace();
             }
             this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
-            System.out.println(mpPlayers.size());
             String message = new String(packet.getData());
 //            System.out.println("CLIENT > " +new String(packet.getData()).trim() + " ip address: " + packet.getAddress().toString());
 //            if(message.trim().equalsIgnoreCase("ping")){
@@ -56,14 +55,13 @@ public class GameServer extends Thread{
                 game.gameState.isLoading = false;
                 game.gameState.isGame = true;
                 game.gameState.startGame = true;
-                sendDataToAllClients("ok".getBytes());
+                sendData("ok".getBytes(), packet.getAddress(), packet.getPort());
             }
         }
     }
 
     private void parsePacket(byte[] data, InetAddress address, int port) {
         String message = new String(data).trim();
-        System.out.println(message);
         Packet.PacketTypes type = Packet.lookupPacket(message.substring(0, 2));
         Packet packet = null;
         switch (type){
@@ -130,7 +128,7 @@ public class GameServer extends Thread{
         if(!alreadyConnected){
             this.mpPlayers.add(player);
         }
-        System.out.println("size:" + mpPlayers.size());
+        System.out.println("Players count:\t" + mpPlayers.size());
     }
 
     public void sendData(byte[] data, InetAddress ipAddress, int port){

@@ -111,7 +111,6 @@ public class Board {
                 slot.setHeight((int)(display.getHeight()*0.2));
                 player1_slots.add(slot);
         }
-        adjust = this.game.ME.getID() == ID.Player2 ? 0 : 7;
         for(int i = 0; i < handSize; i++){
             CardSlot slot;
             slot = new CardSlot((Card) null, (int) display.getWidth() / 2 - handSize * (int) (display.getWidth() * 0.13) / 2 + (i) * (int) (display.getWidth() * 0.13),
