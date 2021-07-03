@@ -3,7 +3,9 @@ package com.company.Packets;
 import com.company.MultiPlayer.GameClient;
 import com.company.MultiPlayer.GameServer;
 
-public class Packet00Login extends Packet{
+import java.io.Serializable;
+
+public class Packet00Login extends Packet  implements Serializable {
     private String username;
     public Packet00Login(byte[] data){
         super(00);
@@ -22,6 +24,12 @@ public class Packet00Login extends Packet{
     public void writeData(GameServer server) {
         server.sendDataToAllClients(getData());
     }
+
+    @Override
+    public Object readObject(byte[] data) {
+        return null;
+    }
+
     public byte[] getData(){
         return ("00" + this.username).getBytes();
     }

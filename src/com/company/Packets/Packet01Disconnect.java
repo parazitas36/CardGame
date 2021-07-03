@@ -3,7 +3,9 @@ package com.company.Packets;
 import com.company.MultiPlayer.GameClient;
 import com.company.MultiPlayer.GameServer;
 
-public class Packet01Disconnect extends Packet{
+import java.io.Serializable;
+
+public class Packet01Disconnect extends Packet  implements Serializable {
     private String username;
     public Packet01Disconnect(byte[] data){
         super(01);
@@ -22,6 +24,12 @@ public class Packet01Disconnect extends Packet{
     public void writeData(GameServer server) {
         server.sendDataToAllClients(getData());
     }
+
+    @Override
+    public Object readObject(byte[] data) {
+        return null;
+    }
+
     public byte[] getData(){
         return ("01" + this.username).getBytes();
     }

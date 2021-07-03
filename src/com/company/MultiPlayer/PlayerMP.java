@@ -6,17 +6,19 @@ import com.company.Classes.ID;
 import com.company.Classes.Player;
 import com.company.Engine.Display;
 import com.company.Engine.Game;
+import com.company.TCPMP.TCPClient;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.ArrayList;
 
-public class PlayerMP extends Player {
+public class PlayerMP extends Player  implements Serializable {
     public InetAddress ip;
     public int port;
     public String username;
     public PlayerMP opponent;
-
+    public TCPClient tcpClient;
     public PlayerMP(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game, InetAddress ip, int port) {
         super(_id, _deck, slots, _display, _game);
         this.ip = ip;
@@ -37,6 +39,7 @@ public class PlayerMP extends Player {
     public void setOpponent(PlayerMP opponent) {
         this.opponent = opponent;
     }
+    public void setTCPClient(TCPClient tcpClient){ this.tcpClient = tcpClient; }
 
     @Override
     public void render(Graphics g) {
@@ -52,9 +55,9 @@ public class PlayerMP extends Player {
             Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
 
             g.setFont(font);
-            g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.605));
-            g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.505));
-            g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
+            g.drawString(String.format("%s", this.game.ME.getMana()), (int)(width * 0.007), (int)(Height*0.605));
+            g.drawString(String.format("%s", this.game.ME.getHP()), (int)(width * 0.005), (int)(Height*0.505));
+            g.drawString(String.format("%s", this.game.ME.getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
             if(this.isSuper()){
                 g.setColor(clr);
                 g.setFont(font1);
@@ -65,9 +68,9 @@ public class PlayerMP extends Player {
         }else{
             Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
             g.setFont(font);
-            g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.199));
-            g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.3));
-            g.drawString(String.format("%s", getManaStack()) + "/3", (int)(width * 0.054), (int)(Height*0.194));
+            g.drawString(String.format("%s", this.game.ME.opponent.getMana()), (int)(width * 0.007), (int)(Height*0.199));
+            g.drawString(String.format("%s", this.game.ME.opponent.getHP()), (int)(width * 0.005), (int)(Height*0.3));
+            g.drawString(String.format("%s", this.game.ME.opponent.getManaStack()) + "/3", (int)(width * 0.054), (int)(Height*0.194));
             g.setFont(font1);
             if(this.isSuper()){
                 g.setColor(clrop);

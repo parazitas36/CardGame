@@ -1,5 +1,7 @@
 package com.company.Classes;
 
-public class AnimationHandler {
+import java.io.Serializable;
+
+public class AnimationHandler  implements Serializable {
     //TODO move code here
 }

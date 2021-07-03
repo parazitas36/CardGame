@@ -3,11 +3,13 @@ package com.company.Classes;
 import com.company.MultiPlayer.PlayerMP;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
-public final class Phase {
+public final class Phase  implements Serializable {
 
     private int currentRound;
     private static int phaseIconWidth = 50, phaseIconHeight = 50;
@@ -21,7 +23,7 @@ public final class Phase {
     private PlayerMP currentPlayer;
     public long startTime;
     public long elapsedTime;
-    private BufferedImage phaseStartImg, phaseAttackImg, phaseEndImg, phaseEnemyTurnImg, currentPhaseImg, endTurnImg, endPhaseImg, currentEndImg;
+    private ImageIcon phaseStartImg, phaseAttackImg, phaseEndImg, phaseEnemyTurnImg, currentPhaseImg, endTurnImg, endPhaseImg, currentEndImg;
     public Phase(int w, int h, PlayerMP p1, PlayerMP p2){
         width = w;
         height = h;
@@ -45,23 +47,21 @@ public final class Phase {
     }
 
     private void LoadImages(){
-        try{
-            phaseStartImg = ImageIO.read(new File("src/com/company/Images/phase1.png"));
-            phaseAttackImg = ImageIO.read(new File("src/com/company/Images/phase2.png"));
-            phaseEndImg = ImageIO.read(new File("src/com/company/Images/phase3.png"));
-            phaseEnemyTurnImg = ImageIO.read(new File("src/com/company/Images/phase4.png"));
-            endTurnImg = ImageIO.read(new File("src/com/company/Images/endTurn.png"));
-            endPhaseImg = ImageIO.read(new File("src/com/company/Images/endPhase.png"));
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+
+            phaseStartImg = new ImageIcon("src/com/company/Images/phase1.png");
+            phaseAttackImg = new ImageIcon("src/com/company/Images/phase2.png");
+            phaseEndImg = new ImageIcon("src/com/company/Images/phase3.png");
+            phaseEnemyTurnImg = new ImageIcon("src/com/company/Images/phase4.png");
+            endTurnImg = new ImageIcon("src/com/company/Images/endTurn.png");
+            endPhaseImg = new ImageIcon("src/com/company/Images/endPhase.png");
+
 
         endTurnPosX = (int)(width * 0.87);
         endTurnPosY = (int)(height * 0.375);
-        endTurnImgHeight = endTurnImg.getHeight();
-        endTurnImgWidth = endTurnImg.getWidth();
-        phaseIconWidth = phaseEndImg.getWidth();
-        phaseIconHeight = phaseEndImg.getHeight();
+        endTurnImgHeight = endTurnImg.getIconHeight();
+        endTurnImgWidth = endTurnImg.getIconWidth();
+        phaseIconWidth = phaseEndImg.getIconWidth();
+        phaseIconHeight = phaseEndImg.getIconHeight();
     }
     public void nextPhase(){
         if(this.startPhase()){
@@ -154,11 +154,11 @@ public final class Phase {
             }
         }
     }
-    public BufferedImage GetCurrentPhaseImage(){
+    public ImageIcon GetCurrentPhaseImage(){
         return currentPhaseImg;
     }
 
-    public BufferedImage GetEndTurnImage(){
+    public ImageIcon GetEndTurnImage(){
         return currentEndImg;
     }
     public PlayerMP getCurrentPlayer(){

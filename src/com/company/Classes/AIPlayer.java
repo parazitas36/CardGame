@@ -3,9 +3,10 @@ package com.company.Classes;
 import com.company.Engine.Display;
 import com.company.Engine.Game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class AIPlayer extends Player{
+public class AIPlayer extends Player  implements Serializable {
     public AIPlayer(ID _id, Deck _deck, ArrayList<CardSlot> slots, Display _display, Game _game) {
         super(_id, _deck, slots, _display, _game);
     }

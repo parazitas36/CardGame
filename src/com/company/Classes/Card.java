@@ -1,14 +1,15 @@
 package com.company.Classes;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 
-public class Card extends GameObject {
+public class Card extends GameObject  implements Serializable {
     private String Name;
     private int ManaCost;
     private ID id;
-    private BufferedImage img;
-    public Card(String name, int manaCost, ID _id, BufferedImage image){
+    private ImageIcon img;
+    public Card(String name, int manaCost, ID _id, ImageIcon image){
         super();
         this.Name = name;
         this.ManaCost = manaCost;
@@ -30,6 +31,6 @@ public class Card extends GameObject {
     public int getManaCost(){
         return this.ManaCost;
     }
-    public BufferedImage getImage(){return this.img;}
+    public Image getImage(){return this.img.getImage();}
     public ID getID() { return this.id; }
 }

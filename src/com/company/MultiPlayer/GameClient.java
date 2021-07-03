@@ -1,15 +1,18 @@
 package com.company.MultiPlayer;
+import com.company.Classes.Card;
 import com.company.Classes.ID;
+import com.company.Classes.Phase;
+import com.company.Engine.Display;
 import com.company.Engine.Game;
 import com.company.Packets.Packet;
 import com.company.Packets.Packet00Login;
 import com.company.Packets.Packet01Disconnect;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-public class GameClient extends Thread{
+public class GameClient extends Thread  implements Serializable {
     private InetAddress ipAddress;
     private DatagramSocket socket;
     private Game game;
@@ -38,6 +41,7 @@ public class GameClient extends Thread{
             String message = new String(packet.getData());
             if(message.trim().equalsIgnoreCase("ok")){
                 System.out.println("\tGame started...");
+
                 ArrayList<PlayerMP> playerMPS = new ArrayList<>();
                 playerMPS.add(game.ME);
                 playerMPS.add(game.ME.opponent);
@@ -51,14 +55,45 @@ public class GameClient extends Thread{
                 game.gameState.isLoading = false;
                 game.gameState.isGame = true;
                 game.gameState.startGame = true;
+                sendData("update".getBytes());
             }
+            byte[] messageBuf = packet.getData();
+            byte[] code = new byte[2];
+            code[0] = messageBuf[0]; code[1] = messageBuf[1];
+            if(new String(code).trim().equalsIgnoreCase("02")){
+                System.out.println("Got update...");
+                byte[] buf = new byte[messageBuf.length - 2];
+                for(int i = 2; i < messageBuf.length; i++){
+                    buf[i-2] = messageBuf[i];
+                }
+                ByteArrayInputStream byteStream = new ByteArrayInputStream(buf);
+                try {
+                    ObjectInputStream is = new ObjectInputStream(new BufferedInputStream(byteStream));
+                    Object o = is.readObject();
+                    Card card = (Card)o;
+                    if(card != null) {
+                        System.out.println("Got a card: " + card.getName());
+                    }else{
+                        System.out.println("Didn't get a card...");
+                    }
+                    game.ME.opponent.playerHandSlots.get(0).setCard(card);
+                    is.close();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+
             //System.out.println("SERVER > " + new String(packet.getData()).trim() + " ip address: " + packet.getAddress().toString());
         }
     }
 
     private void parsePacket(byte[] data, InetAddress address, int port) {
-        String message = new String(data).trim();
-        Packet.PacketTypes type = Packet.lookupPacket(message.substring(0, 2));
+        byte[] message = new byte[2];
+        message[0] = data[0]; message[1] = data[1];
+        Packet.PacketTypes type = Packet.lookupPacket(new String(message).substring(0, 2));
         Packet packet = null;
         switch (type){
             default:

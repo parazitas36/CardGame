@@ -1,6 +1,8 @@
 package com.company.Classes;
 
-public enum ID {
+import java.io.Serializable;
+
+public enum ID  implements Serializable {
     Buff,
     Curse,
     Monster,

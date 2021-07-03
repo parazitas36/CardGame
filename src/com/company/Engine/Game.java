@@ -5,6 +5,8 @@ import com.company.MultiPlayer.GameClient;
 import com.company.MultiPlayer.GameServer;
 import com.company.MultiPlayer.PlayerMP;
 import com.company.Packets.Packet00Login;
+import com.company.TCPMP.TCPClient;
+import com.company.TCPMP.TCPServer;
 import com.company.Utils.CardReader;
 
 import javax.imageio.ImageIO;
@@ -13,19 +15,19 @@ import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
 
 
-public class Game implements Runnable{
+public class Game implements Runnable, Serializable {
     public Display display;
     private String title;
     private int width;
     private int height;
-    private BufferedImage boardImg,
+    private ImageIcon boardImg,
             backToMenu,
             backImg;
     private Image destroy;
@@ -73,6 +75,8 @@ public class Game implements Runnable{
 
     public GameClient socketClient;
     public GameServer server;
+    public TCPServer tcpServer;
+    public TCPClient tcpClient;
 
     public Player player1;
     public Player player2;
@@ -148,24 +152,41 @@ public class Game implements Runnable{
     private void init(){
         display = new Display(title, width, height);
         backImg = null;
-        try{
 //            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-            destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-            stun = new ImageIcon("src/com/company/Images/stun.gif").getImage();
-            buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
-            curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-            boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
-            bleedimg = new ImageIcon("src/com/company/Images/bleed2.gif").getImage();
+//            destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+//            stun = new ImageIcon("src/com/company/Images/stun.gif").getImage();
+//            buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
+//            curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+//            boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
+//            bleedimg = new ImageIcon("src/com/company/Images/bleed2.gif").getImage();
 
-            backImg = ImageIO.read(new File("src/com/company/Images/back.png"));
-            boardImg = ImageIO.read(new File("src/com/company/Images/Board.png"));
-            backToMenu = ImageIO.read(new File("src/com/company/Images/backtomenu.png"));
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+            backImg = new ImageIcon("src/com/company/Images/back.png");
+            boardImg = new ImageIcon("src/com/company/Images/Board.png");
+            backToMenu = new ImageIcon("src/com/company/Images/backtomenu.png");
+
         new MouseHandler(display.getCanvas(), this);
         new WindowHandler(this);
     }
+    public void TCP_MP(){
+        if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Host?") == 0){
+            tcpServer = new TCPServer();
+            System.out.println("Server created.");
+            tcpServer.acceptConnections();
+        }else{
+            System.out.println("Client created.");
+            tcpClient = new TCPClient("localhost", this);
+            ME = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
+            ME.opponent = new PlayerMP(ID.Player2, null, null, display, this, null, -1);
+            ME.setTCPClient(tcpClient);
+            this.gameState.isMenu = false;
+            this.gameState.isLoading = true;
+            startGameMP(new ArrayList<>());
+            this.gameState.isLoading = false;
+            this.gameState.isGame = true;
+            this.gameState.startGame = true;
+        }
+    }
+    /*
     public void MP(){
         String hostIP = null;
         if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Host?") == 0){
@@ -185,8 +206,6 @@ public class Game implements Runnable{
 
         Packet00Login loginPacket = new Packet00Login(username);
 
-
-
         if(server != null){
             ME = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
             ME.decreaseHP(2);
@@ -198,15 +217,12 @@ public class Game implements Runnable{
             ME.setUsername(username);
         }
 
-
-
         loginPacket.writeData(socketClient);
         if(server == null)
         socketClient.sendData("Start".getBytes());
         //socketClient.sendData("ping".getBytes());
-
-
     }
+     */
     /*
     public void startGame(){
         clean = false;
@@ -454,11 +470,11 @@ public class Game implements Runnable{
             //g.drawImage(menuBackgroundImg, 0, 0, width, height, null);
             gameState.render(g);
         }else if(gameState.isLoading){
-            g.drawImage(display.loadingIMG, 0, 0, width, height, null);
+            g.drawImage(display.loadingIMG.getImage(), 0, 0, width, height, null);
         }
         else if(gameState.isGame){
-            g.drawImage(boardImg, 0, 0, width, height, null);
-            g.drawImage(phase.GetCurrentPhaseImage(), phase.GetEndTurnPosX(), phase.GetEndTurnPosY(), phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight(), null);
+            g.drawImage(boardImg.getImage(), 0, 0, width, height, null);
+            g.drawImage(phase.GetCurrentPhaseImage().getImage(), phase.GetEndTurnPosX(), phase.GetEndTurnPosY(), phase.GetEndTurnImgWidth(), phase.GetEndTurnImgHeight(), null);
 
             g.setColor(Color.WHITE);
             handler.render(g);
@@ -490,7 +506,7 @@ public class Game implements Runnable{
             Font newFont = new Font(Font.SANS_SERIF, 3, 30);
             g.setFont(newFont);
             String winnerTitle = winner.getID().toString() + " won!";
-            g.drawImage(backToMenu, (int)(width * 0.5 - width * 0.1), (int)(height * 0.5) + (int)(height * 0.1), (int)(width * 0.2), (int)(height * 0.1), null);
+            g.drawImage(backToMenu.getImage(), (int)(width * 0.5 - width * 0.1), (int)(height * 0.5) + (int)(height * 0.1), (int)(width * 0.2), (int)(height * 0.1), null);
             g.drawString(winnerTitle, (int) (display.getWidth()*0.5 - winnerTitle.length() * 0.25 * 30), height/2);
             g.setFont(prevFont);
 
@@ -565,7 +581,6 @@ public class Game implements Runnable{
     }
 
     public void DrawDraggingCard(){
-        BufferedImage img;
 
         // Drags a card
         if(mouseHolding && display.getFrame().getMousePosition() != null) {

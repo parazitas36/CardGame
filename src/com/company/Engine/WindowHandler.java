@@ -6,8 +6,9 @@ import com.company.Packets.Packet01Disconnect;
 import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.Serializable;
 
-public class WindowHandler implements WindowListener {
+public class WindowHandler implements WindowListener, Serializable {
     private final Game game;
     public WindowHandler(Game game){
         this.game = game;
@@ -20,10 +21,13 @@ public class WindowHandler implements WindowListener {
 
     @Override
     public void windowClosing(WindowEvent e) {
+       /*
         Packet01Disconnect packet = new Packet01Disconnect(((PlayerMP)(this.game.ME)).getUsername());
         System.out.println(" Me:\t" + ((PlayerMP)game.ME).getUsername() + "[ " + game.ME.getID() +" ]");
         System.out.println(" My opponent:\t" + ((PlayerMP)game.ME.opponent).getUsername()  + "[ " + game.ME.opponent.getID() +" ]");
         packet.writeData(this.game.socketClient);
+
+        */
     }
 
     @Override

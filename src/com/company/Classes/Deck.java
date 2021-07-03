@@ -2,18 +2,19 @@ package com.company.Classes;
 
 import com.company.Utils.CardReader;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.Stack;
 
-public class Deck extends GameObject{
+public class Deck extends GameObject  implements Serializable {
     Stack<Card> deck;
     private int size;
-    private BufferedImage image;
-    public Deck(int _size, int x, int y, ArrayList<Card> _card, BufferedImage img) {
+    private ImageIcon image;
+    public Deck(int _size, int x, int y, ArrayList<Card> _card, ImageIcon img) {
         super();
         this.image = img;
         this.size = _size;
@@ -56,8 +57,8 @@ public class Deck extends GameObject{
     public void render(Graphics g) {
 
     }
-    public BufferedImage getImage(){
-        return image;
+    public Image getImage(){
+        return image.getImage();
     }
     public Stack getDeck(){
         return deck;

@@ -3,12 +3,13 @@ package com.company.Classes;
 import com.company.Engine.Game;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 
-public class CardSlot extends GameObject{
+public class CardSlot extends GameObject  implements Serializable {
     private Card card;
     private Deck deck;
     private ID id;
@@ -20,14 +21,10 @@ public class CardSlot extends GameObject{
     public boolean attacking; // flag to check if monster is in attacking position (marks this monster with a red rectangle)
     private boolean attackedThisTurn; // flag to check if monster attacked this turn already
     private double animationOffsetX, animationOffsetY;
-    public BufferedImage backimg;
+    public ImageIcon backimg;
 
     public void readImages() {
-        try {
-            backimg = ImageIO.read(new File("src/com/company/Images/back.png"));
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+            backimg = new ImageIcon("src/com/company/Images/back.png");
     }
     public Game game;
     public CardSlot(Card _card, int x, int y, ID slotID, int _index, Game game){
@@ -88,7 +85,7 @@ public class CardSlot extends GameObject{
                 g.drawString(String.format("%s", ((Monster)card).getManaCost()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.095));
                 g.setFont(prevFont);
                 if(((Monster) card).stunTime > 0){
-                    g.drawImage(((Monster) card).stunnedImg, this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                    g.drawImage(((Monster) card).stunnedImg.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
                 }
                 if(attacking == true){
                     Color c = g.getColor();
@@ -100,7 +97,7 @@ public class CardSlot extends GameObject{
                 g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY), this.getWidth(), this.getHeight(), null);
             }
             else{
-                    g.drawImage(backimg, (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
+                    g.drawImage(backimg.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                 if(card.getID() == ID.Monster && this.getId().toString().contains(this.game.ME.opponent.getID() + "_Slot")){
                     g.drawImage(card.getImage(), (int)(this.getX() + animationOffsetX), (int)(this.getY() + animationOffsetY) + this.getHeight(), this.getWidth(), -this.getHeight(), null);
                     g.setFont(newFont);
@@ -109,7 +106,7 @@ public class CardSlot extends GameObject{
                     g.drawString(String.format("%s", ((Monster)card).getManaCost()), this.getX() + (int)(this.getWidth() * 0.885), this.getY() + (int)(this.getHeight() * 0.96));
                     g.setFont(prevFont);
                     if(((Monster) card).stunTime > 0){
-                        g.drawImage(((Monster) card).stunnedImg, this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
+                        g.drawImage(((Monster) card).stunnedImg.getImage(), this.getX(), this.getY(), this.getWidth(), this.getHeight(), null);
                     }
                 }
             }

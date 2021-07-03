@@ -1,14 +1,16 @@
 package com.company.Classes;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-public class Monster extends Card {
+import java.io.Serializable;
+
+public class Monster extends Card  implements Serializable {
     private int attack,defense;
     public int stunTime;
-    public BufferedImage stunnedImg;
+    public ImageIcon stunnedImg;
     private boolean wasAttacked;
-    public Monster(String name, int manaCost,  ID id,  int atk, int def, BufferedImage img) {
+    public Monster(String name, int manaCost,  ID id,  int atk, int def, ImageIcon img) {
         super(name, manaCost,id, img);
         attack = atk;
         defense = def;
@@ -43,7 +45,7 @@ public class Monster extends Card {
     public int getDef(){
         return this.defense;
     }
-    public void setStunnedImg(BufferedImage img){
+    public void setStunnedImg(ImageIcon img){
         stunnedImg = img;
     }
     @Override

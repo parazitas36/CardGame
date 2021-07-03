@@ -3,9 +3,11 @@ package com.company.Packets;
 import com.company.MultiPlayer.GameClient;
 import com.company.MultiPlayer.GameServer;
 
-public abstract class Packet {
+import java.io.Serializable;
+
+public abstract class Packet  implements Serializable {
     public static enum PacketTypes{
-        INVALID(-1), LOGIN(00), DISCONNECT(01);
+        INVALID(-1), LOGIN(00), DISCONNECT(01), GAME(02);
         private int packetID;
 
         private PacketTypes(int packetID){
@@ -29,6 +31,7 @@ public abstract class Packet {
         String message = new String(data).trim();
         return message.substring(2);
     }
+    public abstract Object readObject(byte[] data);
     public static PacketTypes lookupPacket(String packetId){
         try{
             return lookupPacket(Integer.parseInt(packetId));

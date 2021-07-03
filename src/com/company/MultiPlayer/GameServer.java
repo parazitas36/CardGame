@@ -1,5 +1,6 @@
 package com.company.MultiPlayer;
 
+import com.company.Classes.Card;
 import com.company.Classes.Deck;
 import com.company.Classes.ID;
 import com.company.Classes.Player;
@@ -7,12 +8,12 @@ import com.company.Engine.Game;
 import com.company.Packets.*;
 import com.company.Utils.CardReader;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GameServer extends Thread{
+public class GameServer extends Thread implements Serializable {
     private DatagramSocket socket;
     private Game game;
     public int count ;
@@ -56,6 +57,38 @@ public class GameServer extends Thread{
                 game.gameState.isGame = true;
                 game.gameState.startGame = true;
                 sendData("ok".getBytes(), packet.getAddress(), packet.getPort());
+            }
+            if(message.trim().equalsIgnoreCase("update")){
+                System.out.println("Updating...");
+                ByteArrayOutputStream byteStream = new ByteArrayOutputStream(16);
+                ObjectOutputStream os = null;
+                try {
+                     os = new ObjectOutputStream(new BufferedOutputStream(byteStream));
+                     os.flush();
+                     Card card = game.ME.playerHandSlots.get(0).getCard();
+                    System.out.println("Sending card: " + card.getName());
+                     os.writeObject(card);
+                     os.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                byte[] sendBuf = byteStream.toByteArray();
+                String code = "02";
+                System.out.println("Uzima baitu:" + code.getBytes().length);
+                byte[] newBuf = new byte[sendBuf.length + 2];
+                byte[] codeBytes = code.getBytes();
+                newBuf[0] = codeBytes[0];
+                newBuf[1] = codeBytes[1];
+                for(int i = 2; i < sendBuf.length; i++){
+                    newBuf[i-2] = sendBuf[i];
+                }
+                System.out.println("Packet size: " + newBuf.length);
+                sendData(newBuf, packet.getAddress(), packet.getPort());
+                try {
+                    os.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }

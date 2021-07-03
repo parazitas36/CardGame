@@ -3,15 +3,16 @@ package com.company.Utils;
 import com.company.Classes.*;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
-public class CardReader {
+public class CardReader  implements Serializable {
     public static ArrayList<Card> Read(String path) {
         ArrayList<Card> cards = new ArrayList<>();
         Scanner scan = null;
@@ -20,12 +21,10 @@ public class CardReader {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        BufferedImage stunnedImg = null;
-        try{
-            stunnedImg = ImageIO.read(new File("src/com/company/Images/stunnedoverlay.png"));
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        ImageIcon stunnedImg = null;
+
+        stunnedImg = new ImageIcon("src/com/company/Images/stunnedoverlay.png");
+
         while(scan.hasNextLine()) {
             //--------------------------------------------
             // Reads the data every card has
@@ -38,12 +37,9 @@ public class CardReader {
             int manaCost = Integer.parseInt(values[2]);
             String imgPath = values[3];
 
-            BufferedImage img = null;
-            try {
-                img = ImageIO.read(new File(imgPath));
-            }catch (IOException e){
-                e.printStackTrace();
-            }
+            ImageIcon img = null;
+            img = new ImageIcon(imgPath);
+
             //--------------------------------------------
             // Reads additional data for each type of card
             //--------------------------------------------

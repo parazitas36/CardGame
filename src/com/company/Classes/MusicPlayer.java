@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.io.*;
 import java.net.URL;
 
-public class MusicPlayer {
+public class MusicPlayer  implements Serializable{
     // Reads audio files
     public AudioInputStream getAudio(String path) {
         AudioInputStream audioInput = null;
@@ -26,6 +26,8 @@ public class MusicPlayer {
             if (audio != null) {
                 clip = AudioSystem.getClip();
                 clip.open(audio);
+                float min = ((FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN)).getMinimum();
+                ((FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(min);
                 return clip;
             }
         } catch (Exception e) {
@@ -41,6 +43,8 @@ public class MusicPlayer {
             if (audio != null) {
                 clip = AudioSystem.getClip();
                 clip.open(audio);
+                float min = ((FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN)).getMinimum();
+                ((FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(min);
                 return clip;
             }
         } catch (Exception e) {
@@ -54,6 +58,9 @@ public class MusicPlayer {
         }
         clip.setFramePosition(0);
         clip.start();
+        float min = ((FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN)).getMinimum();
+        ((FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(min);
+
         clip.loop(Clip.LOOP_CONTINUOUSLY);
     }
     public void repeatSound(Clip clip) {
@@ -62,5 +69,7 @@ public class MusicPlayer {
         }
         clip.setFramePosition(0);
         clip.start();
+        float min = ((FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN)).getMinimum();
+        ((FloatControl)clip.getControl(FloatControl.Type.MASTER_GAIN)).setValue(min);
     }
 }

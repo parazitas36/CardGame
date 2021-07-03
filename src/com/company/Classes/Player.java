@@ -4,9 +4,10 @@ import com.company.Engine.Display;
 import com.company.Engine.Game;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Player  extends GameObject{
+public class Player  extends GameObject  implements Serializable {
     public int HP;
     public int Mana;
     public int ManaCapacity;
@@ -83,16 +84,11 @@ public class Player  extends GameObject{
         Card card = deck.drawCard();
         if(card == null){
             HP--;
-        }else{
-            System.out.println("Drawn card:\t" + card.getName());
         }
         for(int i = 0; i < playerHandSlots.size(); i++){
             CardSlot slot = playerHandSlots.get(i);
-            System.out.println("\tChecking slot:\t" + slot.getId().toString());
-            System.out.println("\tCards in the hand:\t" + cardsInHand);
             if(!slot.cardOnBoard() && handSizeLimit > cardsInHand){
                 slot.setCard(card);
-                System.out.println("\tCard placed on: " + slot.getId());
                 if(game.sound_drawEffectClip == null) {
                     game.sound_drawEffectClip = game.musicPlayer.playSound(game.sound_drawEffect);
                     game.musicPlayer.repeatSound(game.sound_drawEffectClip);
@@ -271,13 +267,13 @@ public class Player  extends GameObject{
         Color clr = Color.MAGENTA;
         Color clrop = Color.GRAY;
         Color clrprev = Color.WHITE;
-        if(id == ID.Player1){
+        if(id == game.ME.getID()){
             Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
 
             g.setFont(font);
-            g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.605));
-            g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.505));
-            g.drawString(String.format("%s", getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
+            g.drawString(String.format("%s", this.game.ME.getMana()), (int)(width * 0.007), (int)(Height*0.605));
+            g.drawString(String.format("%s", this.game.ME.getHP()), (int)(width * 0.005), (int)(Height*0.505));
+            g.drawString(String.format("%s", this.game.ME.getManaStack()) + String.format("/%s", ManaStackCapacity), (int)(width * 0.054), (int)(Height*0.615));
             if(this.isSuper()){
                 g.setColor(clr);
                 g.setFont(font1);
@@ -288,9 +284,9 @@ public class Player  extends GameObject{
         }else{
             Font font = new Font( Font.SANS_SERIF, 3, (int)((Height + width) * 0.00933));
             g.setFont(font);
-            g.drawString(String.format("%s", getMana()), (int)(width * 0.007), (int)(Height*0.199));
-            g.drawString(String.format("%s", getHP()), (int)(width * 0.005), (int)(Height*0.3));
-            g.drawString(String.format("%s", getManaStack()) + "/3", (int)(width * 0.054), (int)(Height*0.194));
+            g.drawString(String.format("%s", this.game.ME.opponent.getMana()), (int)(width * 0.007), (int)(Height*0.199));
+            g.drawString(String.format("%s", this.game.ME.opponent.getHP()), (int)(width * 0.005), (int)(Height*0.3));
+            g.drawString(String.format("%s", this.game.ME.opponent.getManaStack()) + "/3", (int)(width * 0.054), (int)(Height*0.194));
             g.setFont(font1);
             if(this.isSuper()){
                 g.setColor(clrop);

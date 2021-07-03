@@ -3,22 +3,22 @@ package com.company.Engine;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.Serializable;
 
-public class Display {
+public class Display  implements Serializable {
     private JFrame frame;
     private Canvas canvas;
     private String title;
     private int width, height;
-    public BufferedImage loadingIMG;
+    public ImageIcon loadingIMG;
 
     public Display(String title, int width, int height){
         this.title = title;
         this.width = width;
         this.height = height;
         try{
-            loadingIMG = ImageIO.read(new File("src/com/company/Images/Loading.png"));
+            loadingIMG = new ImageIcon("src/com/company/Images/Loading.png");
         }catch (Exception e){
             e.printStackTrace();
         }

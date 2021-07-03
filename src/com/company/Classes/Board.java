@@ -3,9 +3,10 @@ package com.company.Classes;
 import com.company.Engine.*;
 
 import java.awt.image.BufferStrategy;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Board {
+public class Board  implements Serializable {
     private ArrayList<CardSlot> player1_slots;
     private ArrayList<CardSlot> player2_slots;
     private Display display;

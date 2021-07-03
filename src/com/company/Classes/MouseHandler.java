@@ -4,9 +4,10 @@ import com.company.Engine.Game;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class MouseHandler implements MouseListener, MouseMotionListener {
+public class MouseHandler implements MouseListener, MouseMotionListener, Serializable {
 
     private Canvas canvas;
     private Game game;
@@ -49,7 +50,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             // Clicked on Multiplayer button
             else if(e.getX() >= 0 && e.getX() <= game.gameState.imgW && e.getY() <= game.gameState.imgH && e.getY() >= 0){
                 System.out.println("MP button");
-                game.MP();
+                //game.MP();
+                game.TCP_MP();
             }
             // CLicked on Options button
             else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 2*game.gameState.imgH + game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + game.gameState.imgH + game.gameState.imgYButtonOffSet){
@@ -105,6 +107,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             // Phase button
             if(e.getX() >= game.phase.GetEndTurnPosX() && e.getX() <= game.phase.GetEndTurnPosX() +  game.phase.GetEndTurnImgWidth() && e.getY() <= game.phase.GetEndTurnPosY() + game.phase.GetEndTurnImgHeight() && e.getY() >= game.phase.GetEndTurnPosY()){
                 game.phase.nextPhase();
+                game.ME.tcpClient.sendUpdate(1);
                 return;
             }
             //-------------------------------------------------------------

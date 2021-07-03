@@ -1,20 +1,22 @@
 package com.company.Classes;
 
+import javax.swing.*;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
-public class Buff extends Card{
+import java.io.Serializable;
+
+public class Buff extends Card  implements Serializable {
     private boolean special; // Special card like "unstun" or something like that
     private String effect;
     private int amount;
-    public Buff(String name, int manaCost,  ID id, BufferedImage img, String eff, int _amount) {
+    public Buff(String name, int manaCost, ID id, ImageIcon img, String eff, int _amount) {
         super(name, manaCost, id, img);
         effect = eff;
         amount = _amount;
         special = false;
     }
 
-    public Buff(String name, int manaCost,  ID id, BufferedImage img, String eff) {
+    public Buff(String name, int manaCost,  ID id, ImageIcon img, String eff) {
         super(name, manaCost, id, img);
         effect = eff;
         special = true;
