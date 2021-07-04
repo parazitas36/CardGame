@@ -40,6 +40,13 @@ public class PlayerMP extends Player  implements Serializable {
         this.opponent = opponent;
     }
     public void setTCPClient(TCPClient tcpClient){ this.tcpClient = tcpClient; }
+    public void placeCardMP(int handSlotIndex, int boardSlotIndex){
+        CardSlot handSlot = this.opponent.playerHandSlots.get(handSlotIndex);
+        System.out.println("Padejo korta:" + handSlot.getCard().getName());
+        CardSlot boardSlot = this.opponent.playerBoardSlots.get(boardSlotIndex);
+        this.opponent.placeCard(boardSlot, handSlot.getCard());
+        handSlot.removeCard();
+    }
 
     @Override
     public void render(Graphics g) {

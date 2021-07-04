@@ -99,6 +99,7 @@ public class Game implements Runnable, Serializable {
 
     private double deltaTime;
     private boolean startOfGame;
+    private int slotClickedNr;
 
     Board board;
     Deck deck;
@@ -614,6 +615,7 @@ public class Game implements Runnable, Serializable {
         if(card != null) {
             mouseHolding = true;
             draggingCard = card;
+            this.slotClickedNr = ME.playerHandSlots.indexOf(slot);
             this.chosenCardSlot = slot;
             this.chosenCardSlot.removeCard();
             System.out.println("Selected card:\t" + draggingCard.getName());
@@ -672,6 +674,8 @@ public class Game implements Runnable, Serializable {
                     // Monster
                     if(draggingCard.getID() == ID.Monster){
                         if(currentPlayer.placeCard(c, draggingCard)) {
+                            int boardSlotIndex = currentPlayer.playerBoardSlots.indexOf(c);
+                            this.tcpClient.sendCardPlaced(slotClickedNr, boardSlotIndex);
                             this.chosenCardSlot.removeCard();
                             this.chosenCardSlot = null;
                         }else if(draggingCard != null){

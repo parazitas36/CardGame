@@ -31,8 +31,8 @@ public class TCPClient implements Runnable{
     }
     public void getUpdate(){
         try {
-            int message = input.readInt();
-            if(message == 1){
+            String message = input.readUTF();
+            if(message.trim().equalsIgnoreCase("phase")){
                 System.out.println("Got phase update");
                 game.phase.attack = true;
                 game.phase.enemy = false;
@@ -42,14 +42,14 @@ public class TCPClient implements Runnable{
                 }
                 game.phase.currentPlayer = game.phase.currentPlayer.opponent;
                 game.phase.startPhaseActions();
-           }else if(message == 2){
+           }else if(message.trim().equalsIgnoreCase("player1Cards")){
                 int size = input.readInt();
                 cardLines = new String[size];
                 for(int i = 0; i < size; i++){
                     cardLines[i] = input.readUTF();
                     System.out.println(cardLines[i]);
                 }
-            }else if(message == 3){
+            }else if(message.trim().equalsIgnoreCase("player2Cards")){
                 int size = input.readInt();
                 cardOppLines = new String[size];
                 for(int i = 0; i < size; i++){
@@ -57,19 +57,35 @@ public class TCPClient implements Runnable{
                     System.out.println();
                 }
                 game.initMP();
+            }else if(message.trim().equalsIgnoreCase("placedCard")){
+                System.out.println("Atejo placed card");
+                int oppHandSlotIndex = input.readInt();
+                int boardSlotIndex = input.readInt();
+                game.ME.placeCardMP(oppHandSlotIndex, boardSlotIndex);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
     }
-    public void sendUpdate(int message){
+    public void sendUpdate(String message){
         try{
-            if(message == 1){
+            if(message.trim().equalsIgnoreCase("phase")){
                 System.out.println("Sending phase update...");
-                output.writeInt(message);
+                output.writeUTF(message);
                 output.flush();
             }
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendCardPlaced(int handSlotIndex, int boardSlotIndex){
+        try{
+            System.out.println(String.format("Sending card [Handslot index: %d] [Board slot index: %d]", handSlotIndex, boardSlotIndex));
+            output.writeUTF("placedCard");
+            output.writeInt(handSlotIndex);
+            output.writeInt(boardSlotIndex);
+            output.flush();
         }catch(IOException e){
             e.printStackTrace();
         }

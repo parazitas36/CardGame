@@ -148,7 +148,7 @@ public final class Phase  implements Serializable {
             currentPlayer.addMana();
             currentPlayer.refillMana();
         }
-        System.out.println("Current player turn: " + currentPlayer.getID());
+        //System.out.println("Current player turn: " + currentPlayer.getID());
         currentPlayer.drawCard();
         for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){
             CardSlot slot = currentPlayer.playerBoardSlots.get(i);
@@ -183,12 +183,12 @@ public final class Phase  implements Serializable {
         }
     }
     public ImageIcon GetCurrentPhaseImage(){
-        System.out.println(String.format("Current: %s me: %s", currentPlayer.getID().toString(), this.game.ME.getID().toString()));
+        //System.out.println(String.format("Current: %s me: %s", currentPlayer.getID().toString(), this.game.ME.getID().toString()));
         if(currentPlayer.getID() != this.game.ME.getID()){
-            System.out.println("T");
+           // System.out.println("T");
             return phaseEnemyTurnImg;
         }else{
-            System.out.println("F");
+            //System.out.println("F");
             return phaseAttackImg;
         }
     }

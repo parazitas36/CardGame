@@ -108,7 +108,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
             if(e.getX() >= game.phase.GetEndTurnPosX() && e.getX() <= game.phase.GetEndTurnPosX() +  game.phase.GetEndTurnImgWidth() && e.getY() <= game.phase.GetEndTurnPosY() + game.phase.GetEndTurnImgHeight() && e.getY() >= game.phase.GetEndTurnPosY()){
                 game.phase.nextPhase();
                 if(game.phase.sendToOther) {
-                    game.ME.tcpClient.sendUpdate(1);
+                    game.ME.tcpClient.sendUpdate("phase");
                     game.phase.sendToOther = false;
                 }
                 return;

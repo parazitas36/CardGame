@@ -73,7 +73,14 @@ public class TCPServer implements Serializable{
                 e.printStackTrace();
             }
         }
-
+        /*
+            Messages list:
+            "phase" - Phase update
+            "player1Cards" - Player1 Cards
+            "player2Cards" - Player2 cards
+            "placedCard" - placed card
+            "battle" - monster attacked
+         */
         @Override
         public void run() {
             try{
@@ -81,17 +88,35 @@ public class TCPServer implements Serializable{
                 output.flush();
                 while(true){
                     if(playerID == 1) {
-                        int message = input.readInt();
+                        String message = input.readUTF();
                         System.out.println(" 1 Message in run: " );
-                        if(message == 1) {
-                            player2.output.writeInt(message);
+                        if(message.trim().equalsIgnoreCase("phase")) {
+                            player2.output.writeUTF(message);
+                            player2.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("placedCard")){
+                            System.out.println("Player1 atejo placedCard");
+                            int oppHandSlotIndex = input.readInt();
+                            System.out.println("Handslot index: " +oppHandSlotIndex);
+                            int oppBoardSlotIndex = input.readInt();
+                            System.out.println("BoardSlot index: " + oppBoardSlotIndex);
+                            player2.output.writeUTF(message);
+                            player2.output.writeInt(oppHandSlotIndex);
+                            player2.output.writeInt(oppBoardSlotIndex);
                             player2.output.flush();
                         }
                     }else{
-                        int message = input.readInt(); // 1 = Phase
+                        String message = input.readUTF();
                         System.out.println(" 2 Message in run: ");
-                        if(message == 1) {
-                            player1.output.writeInt(message);
+                        if(message.trim().equalsIgnoreCase("phase")) {
+                            player1.output.writeUTF(message);
+                            player1.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("placedCard")){
+                            System.out.println("Player2 atejo placedCard");
+                            int oppHandSlotIndex = input.readInt();
+                            int oppBoardSlotIndex = input.readInt();
+                            player1.output.writeUTF(message);
+                            player1.output.writeInt(oppHandSlotIndex);
+                            player1.output.writeInt(oppBoardSlotIndex);
                             player1.output.flush();
                         }
                     }
@@ -104,14 +129,14 @@ public class TCPServer implements Serializable{
     public void sendLines(String[] lines, int id){
         try {
             if(id == 1) {
-                player1.output.writeInt(2);
+                player1.output.writeUTF("player1Cards");
                 player1.output.writeInt(lines.length);
                 for (String line : lines) {
                     player1.output.writeUTF(line);
                 }
                 player1.output.flush();
             }else {
-                player2.output.writeInt(2);
+                player2.output.writeUTF("player1Cards");
                 player2.output.writeInt(lines.length);
                 for (String line : lines) {
                     player2.output.writeUTF(line);
@@ -125,14 +150,14 @@ public class TCPServer implements Serializable{
     public void sendOppLines(String[] lines, int id){
         try {
             if(id == 1) {
-                player1.output.writeInt(3);
+                player1.output.writeUTF("player2Cards");
                 player1.output.writeInt(lines.length);
                 for (String line : lines) {
                     player1.output.writeUTF(line);
                 }
                 player1.output.flush();
             }else {
-                player2.output.writeInt(3);
+                player2.output.writeUTF("player2Cards");
                 player2.output.writeInt(lines.length);
                 for (String line : lines) {
                     player2.output.writeUTF(line);
