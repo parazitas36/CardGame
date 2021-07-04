@@ -4,19 +4,15 @@ import com.company.Classes.*;
 import com.company.MultiPlayer.GameClient;
 import com.company.MultiPlayer.GameServer;
 import com.company.MultiPlayer.PlayerMP;
-import com.company.Packets.Packet00Login;
 import com.company.TCPMP.TCPClient;
 import com.company.TCPMP.TCPServer;
 import com.company.Utils.CardReader;
 
-import javax.imageio.ImageIO;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Random;
@@ -102,6 +98,7 @@ public class Game implements Runnable, Serializable {
     public WindowHandler windowHandler;
 
     private double deltaTime;
+    private boolean startOfGame;
 
     Board board;
     Deck deck;
@@ -175,16 +172,25 @@ public class Game implements Runnable, Serializable {
         }else{
             System.out.println("Client created.");
             tcpClient = new TCPClient("localhost", this);
-            ME = new PlayerMP(ID.Player1, null, null, display, this, null, -1);
-            ME.opponent = new PlayerMP(ID.Player2, null, null, display, this, null, -1);
-            ME.setTCPClient(tcpClient);
-            this.gameState.isMenu = false;
-            this.gameState.isLoading = true;
-            startGameMP(new ArrayList<>());
-            this.gameState.isLoading = false;
-            this.gameState.isGame = true;
-            this.gameState.startGame = true;
+
+
         }
+    }
+    public void initMP(){
+        System.out.println("isejo");
+        ID id;
+        ID oppID;
+        id = tcpClient.playerNr == 1 ? ID.Player1 : ID.Player2;
+        oppID = id == ID.Player1 ? ID.Player2 : ID.Player1;
+        ME = new PlayerMP(id, null, null, display, this, null, -1);
+        ME.opponent = new PlayerMP(oppID, null, null, display, this, null, -1);
+        ME.setTCPClient(tcpClient);
+        this.gameState.isMenu = false;
+        this.gameState.isLoading = true;
+        startGameMP(new ArrayList<>());
+        this.gameState.isLoading = false;
+        this.gameState.isGame = true;
+        this.gameState.startGame = true;
     }
     /*
     public void MP(){
@@ -278,6 +284,7 @@ public class Game implements Runnable, Serializable {
 
     public void startGameMP(ArrayList<PlayerMP> players){
         clean = false;
+        startOfGame = true;
         board = new Board(display, this);
         handler = new Handler();
         draggingSlot = new CardSlot((Card) null, 0, 0, ID.Dragging_Slot, 0, this);
@@ -294,12 +301,14 @@ public class Game implements Runnable, Serializable {
             handler.addObject(s);
         }
 
-        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt"); // Reads cards data from file
+        //cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt"); // Reads cards data from file
+        cards = CardReader.Read(tcpClient.cardLines);
         deck = new Deck(cards.size(), player1_slots.get(5).getX(), player1_slots.get(5).getY(), cards, backImg);
         player1_slots.get(5).setDeck(deck);
-        deck.shuffle();
+        //deck.shuffle();
         cards = new ArrayList<>();
-        cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
+        //cards = CardReader.Read("src/com/company/Assets/Cards_Data.txt");
+        cards = CardReader.Read(tcpClient.cardOppLines);
 
         if(inGameMusicClip == null){
             System.out.println("dd");
@@ -310,7 +319,7 @@ public class Game implements Runnable, Serializable {
         }
         opponentDeck = new Deck(cards.size(), player2_slots.get(5).getX(), player2_slots.get(5).getY(), cards, backImg);
         player2_slots.get(5).setDeck(opponentDeck);
-        opponentDeck.shuffle();
+       // opponentDeck.shuffle();
 
         ME.setOpponent(ME.opponent);
         ME.opponent.setOpponent(ME);
@@ -323,14 +332,20 @@ public class Game implements Runnable, Serializable {
         ME.opponent.playerSlots = player2_slots;
         ME.opponent.display = display;
         ME.opponent.filterSlots();
-        int rand = new Random().nextInt(100);
-        if(rand <= 50) {
+        if(ME.getID() == ID.Player1) {
             currentPlayer = ME;
         }else{
             currentPlayer = ME.opponent;
         }
 
-        phase = new Phase(width, height, currentPlayer, currentPlayer.opponent);
+        phase = new Phase(width, height, currentPlayer, currentPlayer.opponent, this);
+        if(ME.getID() == ID.Player1){
+            phase.attack = true;
+            phase.enemy = false;
+        }else{
+            phase.attack = false;
+            phase.enemy = true;
+        }
         handler.addObject(ME);
         handler.addObject(ME.opponent);
         handler.addObject(draggingSlot);
@@ -533,9 +548,11 @@ public class Game implements Runnable, Serializable {
                 tick();
                 render();
                 if(gameState.isGame) {
-                    if (phase.startPhase() && phase.getCurrentRound() == 1 && draws < 4) {
+                    if (this.startOfGame && phase.getCurrentRound() == 1 && draws < 4) {
                         draws = startOfTheGame(draws);
                         phase.startTime = System.nanoTime();
+                    }else{
+                        startOfGame = false;
                     }
 //                    if (phase.enemyTurn()) {
 //                        enemyTurn();
@@ -634,7 +651,7 @@ public class Game implements Runnable, Serializable {
             int x = c.getX(); int y = c.getY();
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= x && display.getFrame().getMousePosition().x <= x+c.getWidth() && display.getFrame().getMousePosition().y <= y + c.getHeight() && display.getFrame().getMousePosition().y >= y){
                 // Buff
-                if(draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
+                if(this.phase.attackPhase() && draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
                         if(sound_buffEffectClip == null){
                             sound_buffEffectClip = musicPlayer.playSound(sound_buffEffect);
@@ -651,7 +668,7 @@ public class Game implements Runnable, Serializable {
                         this.chosenCardSlot.setCard(draggingCard);
                     }
                     break;
-                }else if(draggingCard != null && c.getId() != ID.Player1_Deck && !c.cardOnBoard()){
+                }else if(this.phase.attackPhase() && draggingCard != null && c.getId() != ID.Player1_Deck && !c.cardOnBoard()){
                     // Monster
                     if(draggingCard.getID() == ID.Monster){
                         if(currentPlayer.placeCard(c, draggingCard)) {
@@ -663,7 +680,7 @@ public class Game implements Runnable, Serializable {
                     }
                 }
                 // Curse HP logic
-            }else if(draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
+            }else if(this.phase.attackPhase() && draggingCard != null && draggingCard.getID() == ID.Curse && ((Curse)(draggingCard)).getEffect().equals("hp")){
                 Curse curse = ((Curse)(draggingCard));
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.7))){
                     if(curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot)){
@@ -683,7 +700,7 @@ public class Game implements Runnable, Serializable {
                     }break;
                 }
                 // Buff HP logic
-            }else if(draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
+            }else if(this.phase.attackPhase() &&draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
                 Buff buff = ((Buff)(draggingCard));
                 if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.4)) && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.8))){
                     if(buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot)){
@@ -707,7 +724,7 @@ public class Game implements Runnable, Serializable {
         for(CardSlot c : currentPlayer.opponent.playerBoardSlots){
             int x = c.getX(); int y = c.getY();
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= x && display.getFrame().getMousePosition().x <= x+c.getWidth() && display.getFrame().getMousePosition().y <= y + c.getHeight() && display.getFrame().getMousePosition().y >= y) {
-                if (draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
+                if (this.phase.attackPhase() && draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
                     if (currentPlayer.enoughManaForCard(draggingCard) && ((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
                         if( ((Curse)(draggingCard)).getEffect().contains("stun") ){
                             if(sound_stunEffectClip == null){

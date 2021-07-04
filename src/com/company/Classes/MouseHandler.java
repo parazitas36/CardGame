@@ -103,11 +103,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
         // Game
         //===================================
 
-        if(game.gameState.isGame) {
+        if(game.gameState.isGame && game.phase.attackPhase()) {
             // Phase button
             if(e.getX() >= game.phase.GetEndTurnPosX() && e.getX() <= game.phase.GetEndTurnPosX() +  game.phase.GetEndTurnImgWidth() && e.getY() <= game.phase.GetEndTurnPosY() + game.phase.GetEndTurnImgHeight() && e.getY() >= game.phase.GetEndTurnPosY()){
                 game.phase.nextPhase();
-                game.ME.tcpClient.sendUpdate(1);
+                if(game.phase.sendToOther) {
+                    game.ME.tcpClient.sendUpdate(1);
+                    game.phase.sendToOther = false;
+                }
                 return;
             }
             //-------------------------------------------------------------
@@ -247,7 +250,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
     @Override
     public void mouseReleased(MouseEvent e) {
         if(game.gameState.isMenu){
-
             return;
         }
         if(game.gameState.isGame) {
