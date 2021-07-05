@@ -65,7 +65,7 @@ public class TCPServer implements Serializable{
         private int playerID;
         public ServerSideConnection(Socket s, int id){
             ssocket = s;
-            playerID = id;
+            this.playerID = id;
             try{
                 input = new DataInputStream(ssocket.getInputStream());
                 output = new DataOutputStream(ssocket.getOutputStream());
@@ -80,6 +80,10 @@ public class TCPServer implements Serializable{
             "player2Cards" - Player2 cards
             "placedCard" - placed card
             "battle" - monster attacked
+            "curse" - played "destroy" or "stun"
+            "curseHP" - played "HP" curse card
+            "buff" - played buff card
+            "buffHP" - played "HP" buff card
          */
         @Override
         public void run() {
@@ -87,7 +91,7 @@ public class TCPServer implements Serializable{
                 output.writeInt(playerID);
                 output.flush();
                 while(true){
-                    if(playerID == 1) {
+                    if(this.playerID == 1) {
                         String message = input.readUTF();
                         System.out.println(" 1 Message in run: " );
                         if(message.trim().equalsIgnoreCase("phase")) {
@@ -107,8 +111,32 @@ public class TCPServer implements Serializable{
                             player2.output.writeInt(attackerIndex);
                             player2.output.writeInt(defenderIndex);
                             player2.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("curse")){
+                            int curseIndexInHand = input.readInt();
+                            int cursedCardIndex = input.readInt();
+                            player2.output.writeUTF(message);
+                            player2.output.writeInt(curseIndexInHand);
+                            player2.output.writeInt(cursedCardIndex);
+                            player2.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("curseHP")){
+                            int curseIndexInHand = input.readInt();
+                            player2.output.writeUTF(message);
+                            player2.output.writeInt(curseIndexInHand);
+                            player2.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("buff")){
+                            int buffIndexInHand = input.readInt();
+                            int targetedCardIndex = input.readInt();
+                            player2.output.writeUTF(message);
+                            player2.output.writeInt(buffIndexInHand);
+                            player2.output.writeInt(targetedCardIndex);
+                            player2.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("buffHP")){
+                            int buffIndexInHand = input.readInt();
+                            player2.output.writeUTF(message);
+                            player2.output.writeInt(buffIndexInHand);
+                            player2.output.flush();
                         }
-                    }else{
+                    }else if(this.playerID == 2){
                         String message = input.readUTF();
                         System.out.println(" 2 Message in run: ");
                         if(message.trim().equalsIgnoreCase("phase")) {
@@ -128,6 +156,30 @@ public class TCPServer implements Serializable{
                             player1.output.writeUTF(message);
                             player1.output.writeInt(attackerIndex);
                             player1.output.writeInt(defenderIndex);
+                            player1.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("curse")){
+                            int curseIndexInHand = input.readInt();
+                            int cursedCardIndex = input.readInt();
+                            player1.output.writeUTF(message);
+                            player1.output.writeInt(curseIndexInHand);
+                            player1.output.writeInt(cursedCardIndex);
+                            player1.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("curseHP")){
+                            int curseIndexInHand = input.readInt();
+                            player1.output.writeUTF(message);
+                            player1.output.writeInt(curseIndexInHand);
+                            player1.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("buff")){
+                            int buffIndexInHand = input.readInt();
+                            int targetedCardIndex = input.readInt();
+                            player1.output.writeUTF(message);
+                            player1.output.writeInt(buffIndexInHand);
+                            player1.output.writeInt(targetedCardIndex);
+                            player1.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("buffHP")){
+                            int buffIndexInHand = input.readInt();
+                            player1.output.writeUTF(message);
+                            player1.output.writeInt(buffIndexInHand);
                             player1.output.flush();
                         }
                     }

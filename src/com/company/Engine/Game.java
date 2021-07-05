@@ -424,15 +424,15 @@ public class Game implements Runnable, Serializable {
             currentPlayer = phase.getCurrentPlayer();
             phase.updateTime();
             phase.checkTime();
-//            if(phase.weHaveAWinner()){
-//                gameState.isGame = false;
-//                gameState.celebrationWindow = true;
-//                if(currentPlayer.getHP() <= 0){
-//                    winner = currentPlayer.opponent;
-//                }else if(currentPlayer.opponent.getHP() <= 0) {
-//                    winner = currentPlayer;
-//                }
-//            }
+            if(phase.weHaveAWinner()){
+                gameState.isGame = false;
+                gameState.celebrationWindow = true;
+                if(currentPlayer.getHP() <= 0){
+                    winner = currentPlayer.opponent;
+                }else if(currentPlayer.opponent.getHP() <= 0) {
+                    winner = currentPlayer;
+                }
+            }
         }else if(gameState.celebrationWindow){
             if(inGameMusicClip != null){
                inGameMusicClip.stop();
@@ -651,11 +651,13 @@ public class Game implements Runnable, Serializable {
     public void MouseReleased(){
         mouseHolding = false;
         for(CardSlot c : currentPlayer.playerBoardSlots){
+            int targetCardIndex = currentPlayer.playerBoardSlots.indexOf(c);
             int x = c.getX(); int y = c.getY();
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= x && display.getFrame().getMousePosition().x <= x+c.getWidth() && display.getFrame().getMousePosition().y <= y + c.getHeight() && display.getFrame().getMousePosition().y >= y){
                 // Buff
                 if(this.phase.attackPhase() && draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
+                        this.tcpClient.sendBuff(slotClickedNr, targetCardIndex);
                         if(sound_buffEffectClip == null){
                             sound_buffEffectClip = musicPlayer.playSound(sound_buffEffect);
                             musicPlayer.repeatSound(sound_buffEffectClip);
@@ -689,6 +691,7 @@ public class Game implements Runnable, Serializable {
                 Curse curse = ((Curse)(draggingCard));
                 if(curse.getEffect().equals("hp") && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.7))){
                     if(curse.hpCurseLogic(phase.getCurrentPlayer(), phase.getOpponent(), chosenCardSlot)){
+                        this.tcpClient.sendCurseHP(slotClickedNr);
                         if(sound_hpCurseClip == null){
                             sound_hpCurseClip = musicPlayer.playSound(sound_hpCurse);
                             musicPlayer.repeatSound(sound_hpCurseClip);
@@ -706,9 +709,10 @@ public class Game implements Runnable, Serializable {
                 }
                 // Buff HP logic
             }else if(this.phase.attackPhase() &&draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
+                this.tcpClient.sendBuffHP(slotClickedNr);
                 Buff buff = ((Buff)(draggingCard));
                 if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.4)) && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.8))){
-                    if(buff.hpBuffLogic(c, phase.getCurrentPlayer(), chosenCardSlot)){
+                    if(buff.hpBuffLogic(phase.getCurrentPlayer(), chosenCardSlot)){
                         if(sound_hpBuffClip == null){
                             sound_hpBuffClip = musicPlayer.playSound(sound_hpBuff);
                             musicPlayer.repeatSound(sound_hpBuffClip);
@@ -727,10 +731,12 @@ public class Game implements Runnable, Serializable {
         }
         // Curses which affect opponent cards
         for(CardSlot c : currentPlayer.opponent.playerBoardSlots){
+            int cursedCardIndex = currentPlayer.opponent.playerBoardSlots.indexOf(c);
             int x = c.getX(); int y = c.getY();
             if(display.getFrame().getMousePosition() != null && display.getFrame().getMousePosition().x >= x && display.getFrame().getMousePosition().x <= x+c.getWidth() && display.getFrame().getMousePosition().y <= y + c.getHeight() && display.getFrame().getMousePosition().y >= y) {
                 if (this.phase.attackPhase() && draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Curse) {
                     if (currentPlayer.enoughManaForCard(draggingCard) && ((Curse) (draggingCard)).curseLogic(c, currentPlayer, currentPlayer.opponent)) {
+                        tcpClient.sendCurse(slotClickedNr, cursedCardIndex);
                         if( ((Curse)(draggingCard)).getEffect().contains("stun") ){
                             if(sound_stunEffectClip == null){
                                 sound_stunEffectClip = musicPlayer.playSound(sound_stunEffect);

@@ -1,6 +1,8 @@
 package com.company.TCPMP;
 
+import com.company.Classes.Buff;
 import com.company.Classes.CardSlot;
+import com.company.Classes.Curse;
 import com.company.Classes.ID;
 import com.company.Engine.Game;
 
@@ -35,14 +37,6 @@ public class TCPClient implements Runnable{
             String message = input.readUTF();
             if(message.trim().equalsIgnoreCase("phase")){
                 System.out.println("Got phase update");
-//                game.phase.attack = true;
-//                game.phase.enemy = false;
-//                game.phase.currentPhaseImg = game.phase.phaseStartImg;
-////                if(game.ME.getID() == ID.Player1){
-////                    game.phase.currentRound++;
-////                }
-//                game.phase.currentPlayer = game.phase.currentPlayer.opponent;
-//                game.phase.startPhaseActions();
                 game.phase.nextPhase();
            }else if(message.trim().equalsIgnoreCase("player1Cards")){
                 int size = input.readInt();
@@ -78,6 +72,35 @@ public class TCPClient implements Runnable{
                 if(defender != null){
                     game.ME.opponent.attack(attacker, defender);
                 }
+            }else if(message.trim().equalsIgnoreCase("curse")){
+                int curseIndexInHand = input.readInt();
+                int cursedCardIndex = input.readInt();
+                CardSlot curse = game.ME.opponent.playerHandSlots.get(curseIndexInHand);
+                CardSlot cursedSlot = game.ME.playerBoardSlots.get(cursedCardIndex);
+                Curse card = (Curse)curse.getCard();
+                card.curseLogicMP(cursedSlot, game.ME.opponent, game.ME);
+                curse.removeCard();
+            }else if(message.trim().equalsIgnoreCase("curseHP")){
+                System.out.println("Got curse hp...");
+                int curseIndexInHand = input.readInt();
+                CardSlot curse = game.ME.opponent.playerHandSlots.get(curseIndexInHand);
+                Curse card = (Curse)curse.getCard();
+                card.hpCurseLogicMP(game.ME.opponent, game.ME, curse);
+            }else if(message.trim().equalsIgnoreCase("buff")){
+                System.out.println("Got buff...");
+                int buffInHandIndex = input.readInt();
+                int targetedCardIndex = input.readInt();
+                CardSlot buffSlot = game.ME.opponent.playerHandSlots.get(buffInHandIndex);
+                CardSlot targetedSlot = game.ME.opponent.playerBoardSlots.get(targetedCardIndex);
+                Buff buff = (Buff)buffSlot.getCard();
+                buff.buffLogic(targetedSlot, game.ME.opponent);
+                buffSlot.removeCard();
+            }else if(message.trim().equalsIgnoreCase("buffHP")){
+                System.out.println("Got HP buff...");
+                int buffInHandIndex = input.readInt();
+                CardSlot buffSlot = game.ME.opponent.playerHandSlots.get(buffInHandIndex);
+                Buff buff = (Buff)buffSlot.getCard();
+                buff.hpBuffLogic(game.ME.opponent, buffSlot);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -114,6 +137,46 @@ public class TCPClient implements Runnable{
             output.writeInt(defenderIndex);
             output.flush();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendCurse(int curseIndexInHand, int cursedCardIndex){
+        try{
+            output.writeUTF("curse");
+            output.writeInt(curseIndexInHand);
+            output.writeInt(cursedCardIndex);
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendCurseHP(int curseIndexInHand){
+        try{
+            System.out.println("Played curse hp [index: " + curseIndexInHand +"]");
+            output.writeUTF("curseHP");
+            output.writeInt(curseIndexInHand);
+            output.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendBuff(int buffInHandIndex, int targetedCardIndex){
+        try{
+            System.out.println("Sending buff...");
+            output.writeUTF("buff");
+            output.writeInt(buffInHandIndex);
+            output.writeInt(targetedCardIndex);
+            output.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendBuffHP(int buffInHandIndex){
+        try{
+            System.out.println("Sending HP buff...");
+            output.writeUTF("buffHP");
+            output.writeInt(buffInHandIndex);
+            output.flush();
+        }catch(IOException e){
             e.printStackTrace();
         }
     }

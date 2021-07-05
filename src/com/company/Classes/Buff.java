@@ -47,7 +47,7 @@ public class Buff extends Card  implements Serializable {
         }
         return false;
     }
-    public boolean hpBuffLogic(CardSlot c, Player currentPlayer, CardSlot chosenCardSlot){
+    public boolean hpBuffLogic(Player currentPlayer, CardSlot chosenCardSlot){
         if(getManaCost() <= currentPlayer.getMana() + currentPlayer.getManaStack()){
             currentPlayer.addHP(amount);
             chosenCardSlot.removeCard();

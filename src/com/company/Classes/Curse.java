@@ -1,5 +1,7 @@
 package com.company.Classes;
 
+import com.company.MultiPlayer.PlayerMP;
+
 import javax.swing.*;
 import java.io.Serializable;
 
@@ -40,7 +42,36 @@ public class Curse extends Card  implements Serializable {
         }
         return  false;
     }
+    public boolean curseLogicMP(CardSlot c, PlayerMP currentPlayer, PlayerMP opponent){
+        System.out.println("Current: " + currentPlayer.getID() + " opp" + opponent.getID());
+        if (getEffect().equals("destroy")) {
+            c.removeCard();
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(getManaCost());
+            return true;
+        }else if (getEffect().equals("stun")) {
+            System.out.println("Stunas");
+            ((Monster) (c.getCard())).addStun();
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(getManaCost());
+            return true;
+        }
+        return  false;
+    }
     public boolean hpCurseLogic(Player currentPlayer, Player opponent, CardSlot chosenCardSlot){
+        if(getManaCost() <= currentPlayer.getMana() + currentPlayer.getManaStack()){
+            System.out.println("Ieina");
+            System.out.println( this.amount);
+            opponent.decreaseHP(this.amount);
+            chosenCardSlot.removeCard();
+            chosenCardSlot = null;
+            currentPlayer.decreaseCardsInHandCount();
+            currentPlayer.decreaseMana(getManaCost());
+            return true;
+        }
+        return false;
+    }
+    public boolean hpCurseLogicMP(PlayerMP currentPlayer, PlayerMP opponent, CardSlot chosenCardSlot){
         if(getManaCost() <= currentPlayer.getMana() + currentPlayer.getManaStack()){
             System.out.println("Ieina");
             System.out.println( this.amount);
