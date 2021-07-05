@@ -47,7 +47,15 @@ public class PlayerMP extends Player  implements Serializable {
         this.opponent.placeCard(boardSlot, handSlot.getCard());
         handSlot.removeCard();
     }
-
+    @Override
+    public boolean opponentHasMonsterOnTheBoard(){
+        for(CardSlot slot : this.opponent.playerBoardSlots){
+            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
+                return true;
+            }
+        }
+        return false;
+    }
     @Override
     public void render(Graphics g) {
         int width = display.getWidth();

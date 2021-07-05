@@ -171,8 +171,9 @@ public class Game implements Runnable, Serializable {
             System.out.println("Server created.");
             tcpServer.acceptConnections();
         }else{
+            String host = JOptionPane.showInputDialog(this.display.getFrame(), "Enter host IP: ");
             System.out.println("Client created.");
-            tcpClient = new TCPClient("localhost", this);
+            tcpClient = new TCPClient(host, this);
 
 
         }
@@ -800,7 +801,7 @@ public class Game implements Runnable, Serializable {
         phase.nextPhase();
     }
     */
-    public void attackOpponent(CardSlot attacker, Player currentplayer){
+    public void attackOpponent(CardSlot attacker, PlayerMP currentplayer){
         currentplayer.opponent.decreaseHP(((Monster)(attacker.getCard())).getAttack());
     }
 }
