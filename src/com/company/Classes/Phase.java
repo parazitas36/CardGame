@@ -69,6 +69,9 @@ public final class Phase  implements Serializable {
         phaseIconHeight = phaseEndImg.getIconHeight();
     }
     public void nextPhase(){
+        if(game.currentPlayer.getID() == ID.Player2){
+            currentRound++;
+        }
         if(this.attackPhase()){
             currentPlayer = currentPlayer.opponent;
             attack = false;
@@ -177,9 +180,7 @@ public final class Phase  implements Serializable {
     }
     public void checkTime(){
         if(elapsedTime >= 35){
-            while(!this.enemyTurn()){
-                nextPhase();
-            }
+            nextPhase();
         }
     }
     public ImageIcon GetCurrentPhaseImage(){

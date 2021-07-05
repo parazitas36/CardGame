@@ -34,14 +34,15 @@ public class TCPClient implements Runnable{
             String message = input.readUTF();
             if(message.trim().equalsIgnoreCase("phase")){
                 System.out.println("Got phase update");
-                game.phase.attack = true;
-                game.phase.enemy = false;
-                game.phase.currentPhaseImg = game.phase.phaseStartImg;
-                if(this.game.phase.currentPlayer.getID() == ID.Player2){
-                    game.phase.currentRound++;
-                }
-                game.phase.currentPlayer = game.phase.currentPlayer.opponent;
-                game.phase.startPhaseActions();
+//                game.phase.attack = true;
+//                game.phase.enemy = false;
+//                game.phase.currentPhaseImg = game.phase.phaseStartImg;
+////                if(game.ME.getID() == ID.Player1){
+////                    game.phase.currentRound++;
+////                }
+//                game.phase.currentPlayer = game.phase.currentPlayer.opponent;
+//                game.phase.startPhaseActions();
+                game.phase.nextPhase();
            }else if(message.trim().equalsIgnoreCase("player1Cards")){
                 int size = input.readInt();
                 cardLines = new String[size];
