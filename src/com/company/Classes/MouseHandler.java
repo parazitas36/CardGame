@@ -12,7 +12,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
     private Canvas canvas;
     private Game game;
     private CardSlot enteredSlot; // need this one for lifting up a card when mouse is on it
-
+    private int attackerIndex;
+    private int defenderIndex;
     ArrayList<CardSlot> cardSlots;
     CardSlot attacker; // card slot which has a monster that is going to attack
     public MouseHandler(Canvas canvas1, Game game){
@@ -173,6 +174,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
                             if (c.getCard().getID() == ID.Monster && !c.attackedThisTurn() && ((Monster) c.getCard()).stunTime == 0) {
                                 if (attacker == null) {
                                     attacker = c;
+                                    attackerIndex = game.ME.playerBoardSlots.indexOf(c);
                                     attacker.attacking = true;
                                     selectedIndex = index;
                                     selectedOffsetX = c.getX();
@@ -180,6 +182,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
                                     return;
                                 } else {
                                     if(!game.currentPlayer.opponentHasMonsterOnTheBoard() && attacker.equals(c) && !c.attackedThisTurn()){
+                                        game.tcpClient.sendAttack(attackerIndex, 10);
                                         game.attackOpponent(attacker, game.currentPlayer);
                                         attacker.setAttackedThisTurn();
                                         attacker.attacking = false;
@@ -225,11 +228,12 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
                         System.out.println(((Monster) c.getCard()).getStunTime());
 
                         if (game.phase.attackPhase() && attacker != null && c.getCard().getID() == ID.Monster) {
-
+                            defenderIndex = game.ME.opponent.playerBoardSlots.indexOf(c);
                             System.out.println("444444444444444444");
                             //game.setAttacking(selectedIndex - 1);
                             //game.targetX = c.getX() - selectedOffsetX;
                             game.currentPlayer.attack(attacker, c);
+                            game.tcpClient.sendAttack(attackerIndex, defenderIndex);
                             if(game.sound_attackEffectClip == null) {
                                 game.sound_attackEffectClip = game.musicPlayer.playSound(game.sound_attackEffect);
                                 game.musicPlayer.repeatSound(game.sound_attackEffectClip);

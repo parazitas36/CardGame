@@ -1,5 +1,6 @@
 package com.company.TCPMP;
 
+import com.company.Classes.CardSlot;
 import com.company.Classes.ID;
 import com.company.Engine.Game;
 
@@ -63,6 +64,20 @@ public class TCPClient implements Runnable{
                 int oppHandSlotIndex = input.readInt();
                 int boardSlotIndex = input.readInt();
                 game.ME.placeCardMP(oppHandSlotIndex, boardSlotIndex);
+            }else if(message.trim().equalsIgnoreCase("battle")){
+                int attackerIndex = input.readInt();
+                int defenderIndex = input.readInt();
+                CardSlot attacker = game.ME.opponent.playerBoardSlots.get(attackerIndex);
+                CardSlot defender = null;
+                if(defenderIndex == 10){
+                    System.out.println("attacked enemy");
+                    game.attackOpponent(attacker, game.ME.opponent);
+                }else{
+                    defender = game.ME.playerBoardSlots.get(defenderIndex);
+                }
+                if(defender != null){
+                    game.ME.opponent.attack(attacker, defender);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,6 +103,17 @@ public class TCPClient implements Runnable{
             output.writeInt(boardSlotIndex);
             output.flush();
         }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendAttack(int attackerIndex, int defenderIndex){
+        System.out.println("Send attack: [attacker index: " + attackerIndex + "] [defender index: " + defenderIndex + "]");
+        try {
+            output.writeUTF("battle");
+            output.writeInt(attackerIndex);
+            output.writeInt(defenderIndex);
+            output.flush();
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

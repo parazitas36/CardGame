@@ -94,14 +94,18 @@ public class TCPServer implements Serializable{
                             player2.output.writeUTF(message);
                             player2.output.flush();
                         }else if(message.trim().equalsIgnoreCase("placedCard")){
-                            System.out.println("Player1 atejo placedCard");
                             int oppHandSlotIndex = input.readInt();
-                            System.out.println("Handslot index: " +oppHandSlotIndex);
                             int oppBoardSlotIndex = input.readInt();
-                            System.out.println("BoardSlot index: " + oppBoardSlotIndex);
                             player2.output.writeUTF(message);
                             player2.output.writeInt(oppHandSlotIndex);
                             player2.output.writeInt(oppBoardSlotIndex);
+                            player2.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("battle")){
+                            int attackerIndex = input.readInt();
+                            int defenderIndex = input.readInt();
+                            player2.output.writeUTF(message);
+                            player2.output.writeInt(attackerIndex);
+                            player2.output.writeInt(defenderIndex);
                             player2.output.flush();
                         }
                     }else{
@@ -117,6 +121,13 @@ public class TCPServer implements Serializable{
                             player1.output.writeUTF(message);
                             player1.output.writeInt(oppHandSlotIndex);
                             player1.output.writeInt(oppBoardSlotIndex);
+                            player1.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("battle")){
+                            int attackerIndex = input.readInt();
+                            int defenderIndex = input.readInt();
+                            player1.output.writeUTF(message);
+                            player1.output.writeInt(attackerIndex);
+                            player1.output.writeInt(defenderIndex);
                             player1.output.flush();
                         }
                     }
