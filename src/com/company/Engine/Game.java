@@ -1,6 +1,7 @@
 package com.company.Engine;
 
 import com.company.Classes.*;
+import com.company.Database.DatabaseHandler;
 import com.company.MultiPlayer.GameClient;
 import com.company.MultiPlayer.GameServer;
 import com.company.MultiPlayer.PlayerMP;
@@ -61,6 +62,8 @@ public class Game implements Runnable, Serializable {
     public Clip sound_hpBuffClip;
     public Clip sound_hpCurseClip;
 
+    public  DatabaseHandler dbHandler;
+
     long TimeBefore = 0;
 
     private Thread thread;
@@ -105,7 +108,7 @@ public class Game implements Runnable, Serializable {
     Deck deck;
     Deck opponentDeck;
     private int dragginCardOffsetX = -50, dragginCardOffsetY = -100;
-
+    public boolean isGuest = false;
     public Game(String _title, int _width, int _height){
         title = _title;
         width = _width;
@@ -166,20 +169,36 @@ public class Game implements Runnable, Serializable {
         new WindowHandler(this);
     }
     public void TCP_MP(){
-        if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Host?") == 0){
-            tcpServer = new TCPServer();
-            System.out.println("Server created.");
-            tcpServer.acceptConnections();
-        }else{
-            String host = JOptionPane.showInputDialog(this.display.getFrame(), "Enter host IP: ");
+        String host = JOptionPane.showInputDialog(this.display.getFrame(), "Enter host IP: ", "Connect to serverv");
+        dbHandler = new DatabaseHandler(this.display.getFrame(), host);
+        Object[] options = {"Create New Account", "Login", "Guest"};
+        isGuest = false;
+        while(!dbHandler.loggedIn) {
+            int value = JOptionPane.showOptionDialog(this.display.getFrame(), "How would you like to join?", "LOGIN", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+            if (value == 0) {
+                dbHandler.createUser();
+                dbHandler.login();
+            } else if(value == 1){
+                dbHandler.login();
+            }else{
+                isGuest = true;
+                break;
+            }
+        }
+//        if(JOptionPane.showConfirmDialog(this.display.getFrame(), "Host?") == 0){
+//            tcpServer = new TCPServer();
+//            System.out.println("Server created.");
+//            tcpServer.acceptConnections();
+//        }else{
             System.out.println("Client created.");
             tcpClient = new TCPClient(host, this);
-
-
-        }
+            if(!isGuest) {
+                tcpClient.sendOppUsername(dbHandler.getUser().username);
+            }else{
+                tcpClient.sendOppUsername("Guest");
+            }
     }
     public void initMP(){
-        System.out.println("isejo");
         ID id;
         ID oppID;
         id = tcpClient.playerNr == 1 ? ID.Player1 : ID.Player2;
@@ -522,7 +541,22 @@ public class Game implements Runnable, Serializable {
             Font prevFont = g.getFont();
             Font newFont = new Font(Font.SANS_SERIF, 3, 30);
             g.setFont(newFont);
-            String winnerTitle = winner.getID().toString() + " won!";
+            String winnerTitle = "";
+            String uname =  null;
+            if(!isGuest) {
+                uname = dbHandler.getUser().username;
+            }
+            if(winner.getID() == ME.getID()){
+                if(!isGuest && !dbHandler.updated){
+                    dbHandler.updateStats(true);
+                }
+                winnerTitle = dbHandler.getUser().username + " won!";
+            }else{
+                if(!isGuest && !dbHandler.updated){
+                    dbHandler.updateStats(false);
+                }
+                winnerTitle = tcpClient.oppUsername + " won!";
+            }
             g.drawImage(backToMenu.getImage(), (int)(width * 0.5 - width * 0.1), (int)(height * 0.5) + (int)(height * 0.1), (int)(width * 0.2), (int)(height * 0.1), null);
             g.drawString(winnerTitle, (int) (display.getWidth()*0.5 - winnerTitle.length() * 0.25 * 30), height/2);
             g.setFont(prevFont);

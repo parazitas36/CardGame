@@ -20,10 +20,18 @@ public class TCPServer implements Serializable{
     private ServerSideConnection player2;
     private String[] player1Lines;
     private String[] player2Lines;
-
+    private String player1Username;
+    private String player2Username;
+    private boolean usernamesSent;
+    private boolean cardSent;
+    private boolean updated;
     public TCPServer(){
         System.out.println("----- SERVER INITIALIZED -----");
         try {
+            usernamesSent = false;
+            cardSent = false;
+            player1Username = null;
+            player2Username = null;
             player1Lines = CardReader.ReadLines("src/com/company/Assets/Cards_Data.txt");
             player2Lines = CardReader.ReadLines("src/com/company/Assets/Cards_Data.txt");
             serverSocket = new ServerSocket(1331);
@@ -49,10 +57,10 @@ public class TCPServer implements Serializable{
                 t.start();
             }
 
-            sendLines(player1Lines, 1);
-            sendLines(player2Lines, 2);
-            sendOppLines(player2Lines, 1);
-            sendOppLines(player1Lines, 2);
+//            sendLines(player1Lines, 1);
+//            sendLines(player2Lines, 2);
+//            sendOppLines(player2Lines, 1);
+//            sendOppLines(player1Lines, 2);
             System.out.println("Possible to start a game.");
         }catch (IOException e){
             e.printStackTrace();
@@ -135,6 +143,8 @@ public class TCPServer implements Serializable{
                             player2.output.writeUTF(message);
                             player2.output.writeInt(buffIndexInHand);
                             player2.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("OppUsername")){
+                            player1Username = input.readUTF();
                         }
                     }else if(this.playerID == 2){
                         String message = input.readUTF();
@@ -181,7 +191,29 @@ public class TCPServer implements Serializable{
                             player1.output.writeUTF(message);
                             player1.output.writeInt(buffIndexInHand);
                             player1.output.flush();
+                        }else if(message.trim().equalsIgnoreCase("OppUsername")){
+                            player2Username = input.readUTF();
                         }
+                    }
+                    if(player1Username != null && player2Username != null && !usernamesSent){
+                        player1.output.writeUTF("OppUsername");
+                        player1.output.writeUTF(player2Username);
+                        player1.output.flush();
+                        player2.output.writeUTF("OppUsername");
+                        player2.output.writeUTF(player1Username);
+                        player2.output.flush();
+                        usernamesSent = true;
+                    }
+                    if(usernamesSent && !cardSent && player1 != null && player2 != null){
+                        sendLines(player1Lines, 1);
+                        sendLines(player2Lines, 2);
+                        sendOppLines(player2Lines, 1);
+                        sendOppLines(player1Lines, 2);
+                        long sentAt = System.currentTimeMillis();
+                        while(System.currentTimeMillis() - sentAt < 100){
+                            continue;
+                        }
+                        cardSent = true;
                     }
                 }
             }catch(IOException e){

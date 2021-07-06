@@ -18,6 +18,7 @@ public class TCPClient implements Runnable{
     public String[] cardOppLines;
     public Game game;
     public int playerNr;
+    public String oppUsername = null;
     public TCPClient(String hostIP, Game game){
         try {
             socket = new Socket(hostIP, 1331);
@@ -101,6 +102,9 @@ public class TCPClient implements Runnable{
                 CardSlot buffSlot = game.ME.opponent.playerHandSlots.get(buffInHandIndex);
                 Buff buff = (Buff)buffSlot.getCard();
                 buff.hpBuffLogic(game.ME.opponent, buffSlot);
+            }else if(message.trim().equalsIgnoreCase("OppUsername")){
+                this.oppUsername = input.readUTF();
+                System.out.println("Got opponent username: " + this.oppUsername);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -177,6 +181,16 @@ public class TCPClient implements Runnable{
             output.writeInt(buffInHandIndex);
             output.flush();
         }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendOppUsername(String username){
+        try{
+            System.out.println("Sending username: " + username);
+            output.writeUTF("OppUsername");
+            output.writeUTF(username);
+            output.flush();
+        }catch (IOException e){
             e.printStackTrace();
         }
     }
