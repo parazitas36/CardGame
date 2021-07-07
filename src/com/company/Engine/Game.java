@@ -16,7 +16,6 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Random;
 
 
 public class Game implements Runnable, Serializable {
@@ -27,12 +26,12 @@ public class Game implements Runnable, Serializable {
     private ImageIcon boardImg,
             backToMenu,
             backImg;
-    private Image destroy;
-    private Image stun;
-    private Image buffimg;
-    private Image curseimg;
-    private Image bleedimg;
-    private Image boosthpimg;
+    public Image destroy;
+    public Image stun;
+    public Image buffimg;
+    public Image curseimg;
+    public Image bleedimg;
+    public Image boosthpimg;
 
     public MusicPlayer musicPlayer;
     public AudioInputStream menuMusic;
