@@ -149,15 +149,15 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
                     }
                 }
             }
-            for (CardSlot c : game.ME.opponent.playerHandSlots) {
-                if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
-                    System.out.println(c.getId());
-                    if (c.getId() != ID.Player1_Deck) {
-                        if (c.getCard() != null)
-                            game.SlotClicked(c.getCard(), c);
-                    }
-                }
-            }
+//            for (CardSlot c : game.ME.opponent.playerHandSlots) {
+//                if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
+//                    System.out.println(c.getId());
+//                    if (c.getId() != ID.Player1_Deck) {
+//                        if (c.getCard() != null)
+//                            game.SlotClicked(c.getCard(), c);
+//                    }
+//                }
+//            }
             //---------------------------------------
 
             //---------------------------------------
