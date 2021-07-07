@@ -20,6 +20,7 @@ public class TCPClient implements Runnable{
     public Game game;
     public int playerNr;
     public String oppUsername = null;
+    public boolean connected = false;
     public TCPClient(String hostIP, Game game){
         try {
             socket = new Socket(hostIP, 1331);
@@ -27,10 +28,15 @@ public class TCPClient implements Runnable{
             output = new DataOutputStream(socket.getOutputStream());
             playerNr = input.readInt();
             System.out.println("You are a player #" + this.playerNr);
+            connected = true;
+            this.game = game;
+            this.game.gameState.isConnected = true;
         } catch (IOException e) {
             e.printStackTrace();
+            this.game.gameState.isConnected = false;
+            connected = false;
         }
-        this.game = game;
+
         thread = new Thread(this);
         thread.start();
     }
@@ -54,7 +60,7 @@ public class TCPClient implements Runnable{
                     cardOppLines[i] = input.readUTF();
                     System.out.println();
                 }
-                game.initMP();
+                //game.initMP();
             }else if(message.trim().equalsIgnoreCase("placedCard")){
                 System.out.println("Atejo placed card");
                 int oppHandSlotIndex = input.readInt();
@@ -110,6 +116,9 @@ public class TCPClient implements Runnable{
             }else if(message.trim().equalsIgnoreCase("OppUsername")){
                 this.oppUsername = input.readUTF();
                 System.out.println("Got opponent username: " + this.oppUsername);
+                game.gameState.isWaiting = false;
+            }else if(message.trim().equalsIgnoreCase("Ready")){
+                game.initMP();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -194,6 +203,15 @@ public class TCPClient implements Runnable{
             System.out.println("Sending username: " + username);
             output.writeUTF("OppUsername");
             output.writeUTF(username);
+            output.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+    public void sendReady(){
+        try{
+            System.out.println("Sending ready...");
+            output.writeUTF("Ready");
             output.flush();
         }catch (IOException e){
             e.printStackTrace();

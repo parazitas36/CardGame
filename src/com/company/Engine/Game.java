@@ -112,7 +112,7 @@ public class Game implements Runnable, Serializable {
         title = _title;
         width = _width;
         height = _height;
-        gameState = new GameState(_width, _height);
+        gameState = new GameState(_width, _height, this);
         clean = false;
 
         musicPlayer = new MusicPlayer();
@@ -560,6 +560,8 @@ public class Game implements Runnable, Serializable {
             g.drawString(winnerTitle, (int) (display.getWidth()*0.5 - winnerTitle.length() * 0.25 * 30), height/2);
             g.setFont(prevFont);
 
+        }else if(gameState.isMP){
+            gameState.render(g);
         }
         //-------------------------------
         buffer.show();

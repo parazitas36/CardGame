@@ -25,11 +25,13 @@ public class TCPServer implements Serializable{
     private boolean usernamesSent;
     private boolean cardSent;
     private boolean updated;
+    private boolean player1Ready, player2Ready;
     public TCPServer(){
         System.out.println("----- SERVER INITIALIZED -----");
         try {
             usernamesSent = false;
             cardSent = false;
+            player1Ready = player2Ready = false;
             player1Username = null;
             player2Username = null;
             player1Lines = CardReader.ReadLines("src/com/company/Assets/Cards_Data.txt");
@@ -145,6 +147,8 @@ public class TCPServer implements Serializable{
                             player2.output.flush();
                         }else if(message.trim().equalsIgnoreCase("OppUsername")){
                             player1Username = input.readUTF();
+                        }else if(message.trim().equalsIgnoreCase("Ready")){
+                            player1Ready = true;
                         }
                     }else if(this.playerID == 2){
                         String message = input.readUTF();
@@ -193,6 +197,8 @@ public class TCPServer implements Serializable{
                             player1.output.flush();
                         }else if(message.trim().equalsIgnoreCase("OppUsername")){
                             player2Username = input.readUTF();
+                        }else if(message.trim().equalsIgnoreCase("Ready")){
+                            player2Ready = true;
                         }
                     }
                     if(player1Username != null && player2Username != null && !usernamesSent){
@@ -214,6 +220,12 @@ public class TCPServer implements Serializable{
                             continue;
                         }
                         cardSent = true;
+                    }
+                    if(player1Ready && player2Ready){
+                        player1.output.writeUTF("Ready");
+                        player1.output.flush();
+                        player2.output.writeUTF("Ready");;
+                        player2.output.flush();
                     }
                 }
             }catch(IOException e){

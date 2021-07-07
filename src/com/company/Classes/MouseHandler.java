@@ -51,9 +51,11 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
             // Clicked on Multiplayer button
             else if(e.getX() >= 0 && e.getX() <= game.gameState.imgW && e.getY() <= game.gameState.imgH && e.getY() >= 0){
                 System.out.println("MP button");
-                //game.MP();
-                game.TCP_MP();
+               // game.TCP_MP();
+                game.gameState.isMenu = false;
+                game.gameState.isMP = true;
             }
+
             // CLicked on Options button
             else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 2*game.gameState.imgH + game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + game.gameState.imgH + game.gameState.imgYButtonOffSet){
                 game.gameState.isOptions = true;
@@ -78,6 +80,26 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
             }
             else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 4*game.gameState.imgH + 3*game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + 3*game.gameState.imgH + 3*game.gameState.imgYButtonOffSet){
                 game.gameState.isOptions = false;
+            }
+        }
+
+        //===================================
+        // MP
+        //===================================
+        // Clicked on Connect to Server
+        if(game.gameState.isMP && !game.gameState.isConnected){
+            if(e.getX() >= game.display.getWidth()/2 - game.gameState.connectButton.getIconWidth()/2 && e.getX() <= game.display.getWidth()/2 + game.gameState.connectButton.getIconWidth()/2 &&
+                    e.getY() >= game.display.getHeight()/2 - game.gameState.connectButton.getIconHeight()/2 && e.getY() <= game.display.getHeight()/2 + game.gameState.connectButton.getIconHeight()/2){
+                game.TCP_MP();
+            }
+        }
+        // Clicked on Ready button
+        if(game.gameState.isMP && game.gameState.isConnected && !game.gameState.isWaiting){
+            int yOffSet = game.display.getHeight() / 10;
+            if(e.getX() >= game.display.getWidth()/2 - game.gameState.readyBtn.getIconWidth() / 2 && e.getX() <= game.display.getWidth()/2 + game.gameState.readyBtn.getIconWidth() / 2 &&
+            e.getY() >= (int) (5.5 * yOffSet) && e.getY() <= (int) (5.5 * yOffSet) + game.gameState.readyBtn.getIconHeight()){
+                game.gameState.ready = true;
+                game.tcpClient.sendReady();
             }
         }
         //===================================
@@ -302,6 +324,15 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
                 game.gameState.overMP = false;
             }
             return;
+        }
+
+        if(game.gameState.isMP && !game.gameState.isConnected){
+            if(e.getX() >= game.display.getWidth()/2 - game.gameState.connectButton.getIconWidth()/2 && e.getX() <= game.display.getWidth()/2 + game.gameState.connectButton.getIconWidth()/2 &&
+            e.getY() >= game.display.getHeight()/2 - game.gameState.connectButton.getIconHeight()/2 && e.getY() <= game.display.getHeight()/2 + game.gameState.connectButton.getIconHeight()/2){
+                game.gameState.overConnectButton = true;
+            }else{
+                game.gameState.overConnectButton = false;
+            }
         }
 
         if(game.gameState.isGame) {
