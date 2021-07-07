@@ -71,6 +71,7 @@ public class Player  extends GameObject  implements Serializable {
         this.playerHandSlots = new ArrayList<>();
         for(int i = 0; i < playerSlots.size(); i++){
             CardSlot slot = playerSlots.get(i);
+            System.out.println("Player id: " + this.id + " cardSlot id: " + slot.getId());
             if(slot.getId().toString().contains(String.format("%s_HandSlot", this.id))){
                 playerHandSlots.add(slot);
             }else if(slot.getId().toString().contains(String.format("%s_Slot", this.id))){

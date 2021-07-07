@@ -279,7 +279,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        /*
+
         if(game.gameState.isMenu){
             if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + game.gameState.imgH && e.getY() >= game.gameState.imgYOffSet){
                 game.gameState.overStartButton = true;
@@ -296,10 +296,16 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
             }else{
                 game.gameState.overExitButton = false;
             }
+            if(e.getX() >= 0 && e.getX() <= game.gameState.imgW && e.getY() <= game.gameState.imgH && e.getY() >= 0){
+                game.gameState.overMP = true;
+            }else{
+                game.gameState.overMP = false;
+            }
             return;
         }
+
         if(game.gameState.isGame) {
-            for (CardSlot c : game.currentPlayer.playerHandSlots) {
+            for (CardSlot c : game.ME.playerHandSlots) {
                 if (e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
                     //--------------------------------------------------------
                     // When mouse is moved in/on the card that card is lifted.
@@ -319,14 +325,14 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
                 enteredSlot = null;
             }
             //---------------------------------------------------------------------------------------
-            CardSlot deck = game.currentPlayer.deckSlot;
+            CardSlot deck = game.ME.deckSlot;
             if(e.getX() >= deck.getX() && e.getX() <= deck.getX() + deck.getWidth() && e.getY() <= deck.getY() + deck.getHeight() && e.getY() >= deck.getY()){
                 deck.showCardsCount = true;
                 System.out.println(deck.getDeck().getSize());
             }else{
                 deck.showCardsCount = false;
             }
-            CardSlot oppDeck = game.currentPlayer.opponent.deckSlot;
+            CardSlot oppDeck = game.ME.opponent.deckSlot;
             if(e.getX() >= oppDeck.getX() && e.getX() <= oppDeck.getX() + oppDeck.getWidth() && e.getY() <= oppDeck.getY() + oppDeck.getHeight() && e.getY() >= oppDeck.getY()){
                 oppDeck.showCardsCount = true;
                 System.out.println(oppDeck.getDeck().getSize());
@@ -335,6 +341,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
             }
         }
 
-         */
+
     }
 }

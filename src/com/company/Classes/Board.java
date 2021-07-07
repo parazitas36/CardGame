@@ -91,7 +91,7 @@ public class Board  implements Serializable {
             slot.setHeight((int)(display.getHeight()*0.2));
             player2_slots.add(slot);
             if(i == 14){
-                ID id = this.game.ME.getID() == ID.Player1 ? ID.Player1_Deck : ID.Player2_Deck;
+                ID id = this.game.ME.opponent.getID() == ID.Player1 ? ID.Player1_Deck : ID.Player2_Deck;
                 slot = new CardSlot((Deck) null, firstPos + ((i-9)*(int)(int)(Math.ceil(display.getWidth()*0.05)) + (i-10)*(int)(display.getWidth()*0.1)), display.getHeight()/2 - (int)(display.getHeight() * 0.2) - (int)(display.getHeight()*0.05) + offsetY, id, i - 10, this.game);
                 slot.setWidth((int)(display.getWidth()*0.1));
                 slot.setHeight((int)(display.getHeight()*0.2));

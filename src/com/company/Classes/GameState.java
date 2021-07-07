@@ -1,16 +1,14 @@
 package com.company.Classes;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.Serializable;
 
 public class GameState  implements Serializable {
     public ImageIcon menuBackgroundImg, menuButton_StartGame, menuButton_Options, menuButton_Exit,
             optionsButton_res1, optionsButton_res2, optionsButton_res3, optionsButton_back, optionsButton_back2, optionsOver1, optionsOver2, optionsOver3, overStart, overOptions,
             overExit,
-            multiplayerButtion;
+            mpButton, mpHover;
     private int w, h; //display width and height
     public int imgW, imgH, imgYButtonOffSet, imgX, imgYOffSet;
     public GameState(int width, int height){
@@ -26,7 +24,8 @@ public class GameState  implements Serializable {
         try {
             menuBackgroundImg = new ImageIcon("src/com/company/Images/MenuBackgroundImg.png");
             menuButton_StartGame = new ImageIcon("src/com/company/Images/MenuButton_Start.png");
-            multiplayerButtion = new ImageIcon("src/com/company/Images/MenuButton_Start.png");
+            mpButton = new ImageIcon("src/com/company/Images/MultiPlayer_Button.png");
+            mpHover = new ImageIcon("src/com/company/Images/MultiPlayerHover.png");
             optionsButton_res1 = new ImageIcon("src/com/company/Images/options_1366x768.png");
             optionsButton_res2 = new ImageIcon("src/com/company/Images/options_1600x900.png");
             optionsButton_res3 = new ImageIcon("src/com/company/Images/options_1920x1080.png");
@@ -45,12 +44,12 @@ public class GameState  implements Serializable {
         }
     }
 
-    public boolean isMenu, isOptions, isGame, startGame, isLoading, overStartButton, overOptionsButton, overExitButton, overBackButton, someoneWon, celebrationWindow, isWaiting;
+    public boolean isMenu, isOptions, isGame, startGame, isLoading, isMP, overStartButton, overOptionsButton, overExitButton, overBackButton, overMP, someoneWon, celebrationWindow, isWaiting;
 
     public void render(Graphics g){
 
         g.drawImage(menuBackgroundImg.getImage(), 0, 0, w, h, null);
-        g.drawImage(multiplayerButtion.getImage(), 0, 0, imgW, imgH, null);
+        g.drawImage(mpButton.getImage(), 0, 0, imgW, imgH, null);
         if(!overStartButton) {
             g.drawImage(menuButton_StartGame.getImage(), imgX, imgYOffSet, imgW, imgH, null);
         }else{
@@ -65,6 +64,11 @@ public class GameState  implements Serializable {
             g.drawImage(menuButton_Exit.getImage(), imgX, imgYOffSet + 2*(imgH + imgYButtonOffSet), imgW, imgH, null );
         }else{
             g.drawImage(overExit.getImage(), imgX, imgYOffSet + 2*(imgH + imgYButtonOffSet), imgW, imgH, null );
+        }
+        if(!overMP) {
+            g.drawImage(mpButton.getImage(), 0, 0, imgW, imgH, null );
+        }else{
+            g.drawImage(mpHover.getImage(), 0, 0, imgW, imgH, null );
         }
 
         if(isOptions){

@@ -153,13 +153,13 @@ public class Game implements Runnable, Serializable {
     private void init(){
         display = new Display(title, width, height);
         backImg = null;
-//            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-//            destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-//            stun = new ImageIcon("src/com/company/Images/stun.gif").getImage();
-//            buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
-//            curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-//            boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
-//            bleedimg = new ImageIcon("src/com/company/Images/bleed2.gif").getImage();
+            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            stun = new ImageIcon("src/com/company/Images/stun.gif").getImage();
+            buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
+            curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
+            bleedimg = new ImageIcon("src/com/company/Images/bleed2.gif").getImage();
 
             backImg = new ImageIcon("src/com/company/Images/back.png");
             boardImg = new ImageIcon("src/com/company/Images/Board.png");
