@@ -3,10 +3,11 @@ package com.company.TCPMP;
 import com.company.Classes.Buff;
 import com.company.Classes.CardSlot;
 import com.company.Classes.Curse;
-import com.company.Classes.ID;
 import com.company.Engine.Game;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.Socket;
 
 public class TCPClient implements Runnable{
@@ -80,6 +81,7 @@ public class TCPClient implements Runnable{
                 CardSlot cursedSlot = game.ME.playerBoardSlots.get(cursedCardIndex);
                 Curse card = (Curse)curse.getCard();
                 card.curseLogicMP(cursedSlot, game.ME.opponent, game.ME);
+                game.drawffect(cursedSlot.getX(), cursedSlot.getY(), game.destroy, 1, "");
                 curse.removeCard();
             }else if(message.trim().equalsIgnoreCase("curseHP")){
                 System.out.println("Got curse hp...");
@@ -87,6 +89,7 @@ public class TCPClient implements Runnable{
                 CardSlot curse = game.ME.opponent.playerHandSlots.get(curseIndexInHand);
                 Curse card = (Curse)curse.getCard();
                 card.hpCurseLogicMP(game.ME.opponent, game.ME, curse);
+                game.drawffect(0, 0, game.bleedimg, 1, "-hp");
             }else if(message.trim().equalsIgnoreCase("buff")){
                 System.out.println("Got buff...");
                 int buffInHandIndex = input.readInt();
@@ -95,6 +98,7 @@ public class TCPClient implements Runnable{
                 CardSlot targetedSlot = game.ME.opponent.playerBoardSlots.get(targetedCardIndex);
                 Buff buff = (Buff)buffSlot.getCard();
                 buff.buffLogic(targetedSlot, game.ME.opponent);
+                game.drawffect(targetedSlot.getX(), targetedSlot.getY(), game.buffimg, 1, "buff");
                 buffSlot.removeCard();
             }else if(message.trim().equalsIgnoreCase("buffHP")){
                 System.out.println("Got HP buff...");
@@ -102,6 +106,7 @@ public class TCPClient implements Runnable{
                 CardSlot buffSlot = game.ME.opponent.playerHandSlots.get(buffInHandIndex);
                 Buff buff = (Buff)buffSlot.getCard();
                 buff.hpBuffLogic(game.ME.opponent, buffSlot);
+                game.drawffect(0, 0, game.boosthpimg, 1, "+hp");
             }else if(message.trim().equalsIgnoreCase("OppUsername")){
                 this.oppUsername = input.readUTF();
                 System.out.println("Got opponent username: " + this.oppUsername);

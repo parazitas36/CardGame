@@ -3,7 +3,6 @@ package com.company.Database;
 import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
-import java.util.Scanner;
 
 public class DatabaseHandler {
     private Connection conn;
@@ -20,7 +19,7 @@ public class DatabaseHandler {
             this.updated = false;
             String myUrl = "jdbc:mysql://"+host+":3306/game";
             System.out.println("Connecting to database...");
-            this.conn = DriverManager.getConnection(myUrl, "root", "");
+            this.conn = DriverManager.getConnection(myUrl, "user", "");
             System.out.println("Connected...");
         }catch (Exception e){
             e.printStackTrace();

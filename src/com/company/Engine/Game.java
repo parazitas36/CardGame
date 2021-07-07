@@ -16,7 +16,6 @@ import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Random;
 
 
 public class Game implements Runnable, Serializable {
@@ -27,12 +26,12 @@ public class Game implements Runnable, Serializable {
     private ImageIcon boardImg,
             backToMenu,
             backImg;
-    private Image destroy;
-    private Image stun;
-    private Image buffimg;
-    private Image curseimg;
-    private Image bleedimg;
-    private Image boosthpimg;
+    public Image destroy;
+    public Image stun;
+    public Image buffimg;
+    public Image curseimg;
+    public Image bleedimg;
+    public Image boosthpimg;
 
     public MusicPlayer musicPlayer;
     public AudioInputStream menuMusic;
@@ -153,13 +152,13 @@ public class Game implements Runnable, Serializable {
     private void init(){
         display = new Display(title, width, height);
         backImg = null;
-//            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-//            destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-//            stun = new ImageIcon("src/com/company/Images/stun.gif").getImage();
-//            buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
-//            curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
-//            boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
-//            bleedimg = new ImageIcon("src/com/company/Images/bleed2.gif").getImage();
+            new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            destroy = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            stun = new ImageIcon("src/com/company/Images/stun.gif").getImage();
+            buffimg = new ImageIcon("src/com/company/Images/Buff.gif").getImage();
+            curseimg = new ImageIcon("src/com/company/Images/destroy.gif").getImage();
+            boosthpimg = new ImageIcon("src/com/company/Images/Heal.gif").getImage();
+            bleedimg = new ImageIcon("src/com/company/Images/bleed2.gif").getImage();
 
             backImg = new ImageIcon("src/com/company/Images/back.png");
             boardImg = new ImageIcon("src/com/company/Images/Board.png");
