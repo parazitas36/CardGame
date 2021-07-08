@@ -140,8 +140,8 @@ public class Game implements Runnable, Serializable {
         sound_buffEffectClip = null;
         sound_hpBuffClip = null;
         sound_hpCurseClip = null;
-        menuMusicClip = musicPlayer.playMusic(menuMusic);
-        menuMusicClip.start();
+       // menuMusicClip = musicPlayer.playMusic(menuMusic);
+       // menuMusicClip.start();
     }
     public void SetDisplaySize(int width, int height){
         display.SetDisplaySize(width, height);
