@@ -226,6 +226,8 @@ public class TCPServer implements Serializable{
                         player1.output.flush();
                         player2.output.writeUTF("Ready");;
                         player2.output.flush();
+                        player1Ready = false;
+                        player2Ready = false;
                     }
                 }
             }catch(IOException e){

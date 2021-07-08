@@ -198,21 +198,19 @@ public class Game implements Runnable, Serializable {
             }
     }
     public void initMP(){
-        if(!this.gameState.isGame) {
-            ID id;
-            ID oppID;
-            id = tcpClient.playerNr == 1 ? ID.Player1 : ID.Player2;
-            oppID = id == ID.Player1 ? ID.Player2 : ID.Player1;
-            ME = new PlayerMP(id, null, null, display, this, null, -1);
-            ME.opponent = new PlayerMP(oppID, null, null, display, this, null, -1);
-            ME.setTCPClient(tcpClient);
-            this.gameState.isMenu = false;
-            this.gameState.isLoading = true;
-            startGameMP(new ArrayList<>());
-            this.gameState.isLoading = false;
-            this.gameState.isGame = true;
-            this.gameState.startGame = true;
-        }
+        ID id;
+        ID oppID;
+        id = tcpClient.playerNr == 1 ? ID.Player1 : ID.Player2;
+        oppID = id == ID.Player1 ? ID.Player2 : ID.Player1;
+        ME = new PlayerMP(id, null, null, display, this, null, -1);
+        ME.opponent = new PlayerMP(oppID, null, null, display, this, null, -1);
+        ME.setTCPClient(tcpClient);
+        this.gameState.isMenu = false;
+        this.gameState.isLoading = true;
+        startGameMP(new ArrayList<>());
+        this.gameState.isLoading = false;
+        this.gameState.isGame = true;
+        this.gameState.startGame = true;
     }
     /*
     public void MP(){
