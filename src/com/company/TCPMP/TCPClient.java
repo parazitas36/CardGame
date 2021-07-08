@@ -87,7 +87,13 @@ public class TCPClient implements Runnable{
                 CardSlot cursedSlot = game.ME.playerBoardSlots.get(cursedCardIndex);
                 Curse card = (Curse)curse.getCard();
                 card.curseLogicMP(cursedSlot, game.ME.opponent, game.ME);
-                game.drawffect(cursedSlot.getX(), cursedSlot.getY(), game.destroy, 1, "");
+                if(card.getEffect().contains("stun")) {
+                    game.drawffect(cursedSlot.getX(), cursedSlot.getY(), game.stun, 1, "Curse");
+                    game.TimeBefore = 0;
+                }else{
+                    game.drawffect(cursedSlot.getX(), cursedSlot.getY(), game.destroy, 1, "Curse");
+                    game.TimeBefore = 0;
+                }
                 curse.removeCard();
             }else if(message.trim().equalsIgnoreCase("curseHP")){
                 System.out.println("Got curse hp...");
@@ -96,6 +102,7 @@ public class TCPClient implements Runnable{
                 Curse card = (Curse)curse.getCard();
                 card.hpCurseLogicMP(game.ME.opponent, game.ME, curse);
                 game.drawffect(0, 0, game.bleedimg, 1, "-hp");
+                game.TimeBefore = 0;
             }else if(message.trim().equalsIgnoreCase("buff")){
                 System.out.println("Got buff...");
                 int buffInHandIndex = input.readInt();
@@ -104,7 +111,8 @@ public class TCPClient implements Runnable{
                 CardSlot targetedSlot = game.ME.opponent.playerBoardSlots.get(targetedCardIndex);
                 Buff buff = (Buff)buffSlot.getCard();
                 buff.buffLogic(targetedSlot, game.ME.opponent);
-                game.drawffect(targetedSlot.getX(), targetedSlot.getY(), game.buffimg, 1, "buff");
+                game.drawffect(targetedSlot.getX(), targetedSlot.getY(), game.buffimg, 2, "buff");
+                game.TimeBefore = 0;
                 buffSlot.removeCard();
             }else if(message.trim().equalsIgnoreCase("buffHP")){
                 System.out.println("Got HP buff...");
@@ -113,11 +121,13 @@ public class TCPClient implements Runnable{
                 Buff buff = (Buff)buffSlot.getCard();
                 buff.hpBuffLogic(game.ME.opponent, buffSlot);
                 game.drawffect(0, 0, game.boosthpimg, 1, "+hp");
+                game.TimeBefore = 0;
             }else if(message.trim().equalsIgnoreCase("OppUsername")){
                 this.oppUsername = input.readUTF();
                 System.out.println("Got opponent username: " + this.oppUsername);
                 game.gameState.isWaiting = false;
             }else if(message.trim().equalsIgnoreCase("Ready")){
+                game.gameState.isMP = false;
                 game.initMP();
             }
         } catch (IOException e) {

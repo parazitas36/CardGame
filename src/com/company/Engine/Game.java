@@ -63,7 +63,7 @@ public class Game implements Runnable, Serializable {
 
     public  DatabaseHandler dbHandler;
 
-    long TimeBefore = 0;
+    public long TimeBefore = 0;
 
     private Thread thread;
     public boolean running;
@@ -198,19 +198,21 @@ public class Game implements Runnable, Serializable {
             }
     }
     public void initMP(){
-        ID id;
-        ID oppID;
-        id = tcpClient.playerNr == 1 ? ID.Player1 : ID.Player2;
-        oppID = id == ID.Player1 ? ID.Player2 : ID.Player1;
-        ME = new PlayerMP(id, null, null, display, this, null, -1);
-        ME.opponent = new PlayerMP(oppID, null, null, display, this, null, -1);
-        ME.setTCPClient(tcpClient);
-        this.gameState.isMenu = false;
-        this.gameState.isLoading = true;
-        startGameMP(new ArrayList<>());
-        this.gameState.isLoading = false;
-        this.gameState.isGame = true;
-        this.gameState.startGame = true;
+        if(!this.gameState.isGame) {
+            ID id;
+            ID oppID;
+            id = tcpClient.playerNr == 1 ? ID.Player1 : ID.Player2;
+            oppID = id == ID.Player1 ? ID.Player2 : ID.Player1;
+            ME = new PlayerMP(id, null, null, display, this, null, -1);
+            ME.opponent = new PlayerMP(oppID, null, null, display, this, null, -1);
+            ME.setTCPClient(tcpClient);
+            this.gameState.isMenu = false;
+            this.gameState.isLoading = true;
+            startGameMP(new ArrayList<>());
+            this.gameState.isLoading = false;
+            this.gameState.isGame = true;
+            this.gameState.startGame = true;
+        }
     }
     /*
     public void MP(){
@@ -331,7 +333,6 @@ public class Game implements Runnable, Serializable {
         cards = CardReader.Read(tcpClient.cardOppLines);
 
         if(inGameMusicClip == null){
-            System.out.println("dd");
             inGameMusicClip = musicPlayer.playSound(inGameMusic);
         }
         if(!inGameMusicClip.isRunning()){
@@ -692,17 +693,17 @@ public class Game implements Runnable, Serializable {
                 // Buff
                 if(this.phase.attackPhase() && draggingCard != null && c.cardOnBoard() && c.getCard().getID() == ID.Monster && draggingCard.getID() == ID.Buff){
                     if(((Buff)(draggingCard)).buffLogic(c, phase.getCurrentPlayer())){
-                        this.tcpClient.sendBuff(slotClickedNr, targetCardIndex);
+                        this.tcpClient.sendBuff(slotClickedNr, targetCardIndex);drawffect(x, y, buffimg, 2, "Buff");
+                        TimeBefore = 0;
+                        chosenCardSlot.removeCard();
+                        chosenCardSlot = null;
                         if(sound_buffEffectClip == null){
                             sound_buffEffectClip = musicPlayer.playSound(sound_buffEffect);
                             musicPlayer.repeatSound(sound_buffEffectClip);
                         }else{
                             musicPlayer.repeatSound(sound_buffEffectClip);
                         }
-                        drawffect(x, y, buffimg, 2, "Buff");
-                        TimeBefore = 0;
-                        chosenCardSlot.removeCard();
-                        chosenCardSlot = null;
+
                     }
                     else if(draggingCard != null){
                         this.chosenCardSlot.setCard(draggingCard);
@@ -817,7 +818,6 @@ public class Game implements Runnable, Serializable {
         if(draws < 3) {
             currentPlayer.drawCard();
         }
-        System.out.println(draws);
         currentPlayer.opponent.drawCard();
         draws++;
         try {

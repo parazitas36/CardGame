@@ -91,6 +91,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
             if(e.getX() >= game.display.getWidth()/2 - game.gameState.connectButton.getIconWidth()/2 && e.getX() <= game.display.getWidth()/2 + game.gameState.connectButton.getIconWidth()/2 &&
                     e.getY() >= game.display.getHeight()/2 - game.gameState.connectButton.getIconHeight()/2 && e.getY() <= game.display.getHeight()/2 + game.gameState.connectButton.getIconHeight()/2){
                 game.TCP_MP();
+
             }
         }
         // Clicked on Ready button
