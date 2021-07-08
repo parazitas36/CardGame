@@ -545,15 +545,21 @@ public class Game implements Runnable, Serializable {
                 uname = dbHandler.getUser().username;
             }
             if(winner.getID() == ME.getID()){
-                if(!isGuest && !dbHandler.updated){
+                if(uname != null && !dbHandler.updated){
                     dbHandler.updateStats(true);
+                    winnerTitle = dbHandler.getUser().username + " won!";
+                }else if(isGuest){
+                    winnerTitle = "Guest won!";
+                }else{
+                    winnerTitle = dbHandler.getUser().username + " won!";
                 }
-                winnerTitle = dbHandler.getUser().username + " won!";
+                this.gameState.ready = false;
             }else{
-                if(!isGuest && !dbHandler.updated){
+                if(uname != null && !dbHandler.updated){
                     dbHandler.updateStats(false);
                 }
                 winnerTitle = tcpClient.oppUsername + " won!";
+                this.gameState.ready = false;
             }
             g.drawImage(backToMenu.getImage(), (int)(width * 0.5 - width * 0.1), (int)(height * 0.5) + (int)(height * 0.1), (int)(width * 0.2), (int)(height * 0.1), null);
             g.drawString(winnerTitle, (int) (display.getWidth()*0.5 - winnerTitle.length() * 0.25 * 30), height/2);

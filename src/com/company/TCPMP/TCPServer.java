@@ -37,7 +37,6 @@ public class TCPServer implements Serializable{
             player1Lines = CardReader.ReadLines("src/com/company/Assets/Cards_Data.txt");
             player2Lines = CardReader.ReadLines("src/com/company/Assets/Cards_Data.txt");
             serverSocket = new ServerSocket(1331);
-
         } catch (IOException e) {
             e.printStackTrace();
         }

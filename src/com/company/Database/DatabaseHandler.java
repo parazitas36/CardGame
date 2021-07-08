@@ -17,7 +17,7 @@ public class DatabaseHandler {
             this.loggedIn = false;
             this.user = null;
             this.updated = false;
-            String myUrl = "jdbc:mysql://"+host+":3306/game";
+            String myUrl = "jdbc:mysql://"+"192.168.1.105"+":3306/game";
             System.out.println("Connecting to database...");
             this.conn = DriverManager.getConnection(myUrl, "user", "");
             System.out.println("Connected...");

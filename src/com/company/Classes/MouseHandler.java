@@ -133,6 +133,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener, Seriali
 //                if(game.ME.getID() == ID.Player2){
 //                    game.phase.currentRound++;
 //                }
+                if(attacker != null) {
+                    attacker.attacking = false;
+                    attacker = null;
+                }
                 game.phase.nextPhase();
                 if(game.phase.sendToOther) {
                     game.ME.tcpClient.sendUpdate("phase");
