@@ -26,12 +26,14 @@ public class TCPServer implements Serializable{
     private boolean cardSent;
     private boolean updated;
     private boolean player1Ready, player2Ready;
+    private boolean player1Reset, player2Reset;
     public TCPServer(){
         System.out.println("----- SERVER INITIALIZED -----");
         try {
             usernamesSent = false;
             cardSent = false;
             player1Ready = player2Ready = false;
+            player1Reset = player2Reset = false;
             player1Username = null;
             player2Username = null;
             player1Lines = CardReader.ReadLines("src/com/company/Assets/Cards_Data.txt");
@@ -148,6 +150,10 @@ public class TCPServer implements Serializable{
                             player1Username = input.readUTF();
                         }else if(message.trim().equalsIgnoreCase("Ready")){
                             player1Ready = true;
+                        }else if(message.trim().equalsIgnoreCase("RESET")){
+                            player1Lines = null;
+                            player1Lines = CardReader.ReadLines("src/com/company/Assets/Cards_Data.txt");
+                            player1Reset = true;
                         }
                     }else if(this.playerID == 2){
                         String message = input.readUTF();
@@ -198,6 +204,10 @@ public class TCPServer implements Serializable{
                             player2Username = input.readUTF();
                         }else if(message.trim().equalsIgnoreCase("Ready")){
                             player2Ready = true;
+                        }else if(message.trim().equalsIgnoreCase("RESET")){
+                            player2Lines = null;
+                            player2Lines = CardReader.ReadLines("src/com/company/Assets/Cards_Data.txt");
+                            player2Reset = true;
                         }
                     }
                     if(player1Username != null && player2Username != null && !usernamesSent){
@@ -227,6 +237,14 @@ public class TCPServer implements Serializable{
                         player2.output.flush();
                         player1Ready = false;
                         player2Ready = false;
+                    }
+                    if(player1Reset && player2Reset){
+                        sendLines(player1Lines, 1);
+                        sendLines(player2Lines, 2);
+                        sendOppLines(player2Lines, 1);
+                        sendOppLines(player1Lines, 2);
+                        player1Reset = false;
+                        player2Reset = false;
                     }
                 }
             }catch(IOException e){

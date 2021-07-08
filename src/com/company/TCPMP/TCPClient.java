@@ -227,6 +227,15 @@ public class TCPClient implements Runnable{
             e.printStackTrace();
         }
     }
+    public void reset(){
+        try{
+            System.out.println("Sending reset...");
+            output.writeUTF("RESET");
+            output.flush();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
     @Override
     public void run() {
         while(true){

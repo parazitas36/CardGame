@@ -102,6 +102,7 @@ public class Game implements Runnable, Serializable {
     private double deltaTime;
     private boolean startOfGame;
     private int slotClickedNr;
+    private boolean reseted = false;
 
     Board board;
     Deck deck;
@@ -172,6 +173,7 @@ public class Game implements Runnable, Serializable {
         dbHandler = new DatabaseHandler(this.display.getFrame(), host);
         Object[] options = {"Create New Account", "Login", "Guest"};
         isGuest = false;
+        reseted = false;
         while(!dbHandler.loggedIn) {
             int value = JOptionPane.showOptionDialog(this.display.getFrame(), "How would you like to join?", "LOGIN", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
             if (value == 0) {
@@ -561,6 +563,10 @@ public class Game implements Runnable, Serializable {
                 winnerTitle = tcpClient.oppUsername + " won!";
                 this.gameState.ready = false;
             }
+            if(!reseted){
+                this.tcpClient.reset();
+                reseted = true;
+            }
             g.drawImage(backToMenu.getImage(), (int)(width * 0.5 - width * 0.1), (int)(height * 0.5) + (int)(height * 0.1), (int)(width * 0.2), (int)(height * 0.1), null);
             g.drawString(winnerTitle, (int) (display.getWidth()*0.5 - winnerTitle.length() * 0.25 * 30), height/2);
             g.setFont(prevFont);
@@ -749,10 +755,10 @@ public class Game implements Runnable, Serializable {
                 }
                 // Buff HP logic
             }else if(this.phase.attackPhase() &&draggingCard != null && draggingCard.getID() == ID.Buff && ((Buff)(draggingCard)).getEffect().equals("hp")){
-                this.tcpClient.sendBuffHP(slotClickedNr);
                 Buff buff = ((Buff)(draggingCard));
                 if(buff.getEffect().equals("hp") && display.getFrame().getMousePosition().y >= ((int)(display.getHeight()*0.4)) && display.getFrame().getMousePosition().y <= ((int)(display.getHeight()*0.8))){
                     if(buff.hpBuffLogic(phase.getCurrentPlayer(), chosenCardSlot)){
+                        this.tcpClient.sendBuffHP(slotClickedNr);
                         if(sound_hpBuffClip == null){
                             sound_hpBuffClip = musicPlayer.playSound(sound_hpBuff);
                             musicPlayer.repeatSound(sound_hpBuffClip);
