@@ -1,6 +1,7 @@
 package com.company.Classes;
 
 import com.company.Engine.Game;
+import com.company.Enums.ID;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -38,7 +39,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                     game.menuMusicClip.stop();
                     game.menuMusicClip.setFramePosition(0);
                 }
-                System.out.println("Start");
                 game.gameState.isMenu = false;
                 game.gameState.isLoading = true;
                 game.startGame();
@@ -49,7 +49,6 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             // CLicked on Options button
             else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 2*game.gameState.imgH + game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + game.gameState.imgH + game.gameState.imgYButtonOffSet){
                 game.gameState.isOptions = true;
-                System.out.println("Options");
             }
             // Clicked on Exit button
             else if(e.getX() >= game.gameState.imgX && e.getX() <= game.gameState.imgX +  game.gameState.imgW && e.getY() <= game.gameState.imgYOffSet + 3*game.gameState.imgH + 2*game.gameState.imgYButtonOffSet && e.getY() >= game.gameState.imgYOffSet + 2*game.gameState.imgH + 2*game.gameState.imgYButtonOffSet){
@@ -83,10 +82,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                 game.gameState.celebrationWindow = false;
                 game.gameState.isMenu = true;
                 if(game.menuMusicClip == null){
-                    game.menuMusicClip = game.musicPlayer.playMusic(game.menuMusic);
-                    game.musicPlayer.repeatMusic(game.menuMusicClip);
+                    //game.menuMusicClip = game.musicPlayer.playMusic(game.menuMusic);
+                    //game.musicPlayer.repeatMusic(game.menuMusicClip);
                 }else if(!game.menuMusicClip.isRunning()){
-                    game.musicPlayer.repeatMusic(game.menuMusicClip);
+                    //game.musicPlayer.repeatMusic(game.menuMusicClip);
                 }
             }
         }
@@ -105,7 +104,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             // If it's not an attack phase, but attacker is still selected.
             //-------------------------------------------------------------
             if (!game.phase.attackPhase() && attacker != null) {
-                attacker.attacking = false;
+                attacker.isAttacking = false;
                 attacker = null;
             }
             //---------------------------------------
@@ -115,7 +114,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             //---------------------------------------
             if (e.getModifiers() == MouseEvent.BUTTON3_MASK) {
                 if (attacker != null) {
-                    attacker.attacking = false;
+                    attacker.isAttacking = false;
                     attacker = null;
                 }
             }
@@ -141,28 +140,26 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             for (CardSlot c : game.currentPlayer.playerBoardSlots) {
                 index++;
                 if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
-                    if (c.cardOnBoard()) {
+                    if (c.isCardOnBoard()) {
                         if (game.phase.attackPhase()) {
-                            if (c.getCard().getID() == ID.Monster && !c.attackedThisTurn() && ((Monster) c.getCard()).stunTime == 0) {
+                            if (c.getCard().getID() == ID.Monster && !c.didAttackThisTurn() && ((MonsterCard) c.getCard()).stunTime == 0) {
                                 if (attacker == null) {
                                     attacker = c;
-                                    attacker.attacking = true;
+                                    attacker.isAttacking = true;
                                     selectedIndex = index;
                                     selectedOffsetX = c.getX();
-                                    System.out.println("111111111111111");
                                     return;
                                 } else {
-                                    if(!game.currentPlayer.opponentHasMonsterOnTheBoard() && attacker.equals(c) && !c.attackedThisTurn()){
+                                    if(!game.currentPlayer.opponentHasMonsterOnTheBoard() && attacker.equals(c) && !c.didAttackThisTurn()){
                                         game.attackOpponent(attacker, game.currentPlayer);
                                         attacker.setAttackedThisTurn();
-                                        attacker.attacking = false;
+                                        attacker.isAttacking = false;
                                         attacker = null;
                                         return;
                                     }else{
-                                        attacker.attacking = false;
+                                        attacker.isAttacking = false;
                                         attacker = c;
-                                        attacker.attacking = true;
-                                        System.out.println("22222222222222");
+                                        attacker.isAttacking = true;
                                         selectedIndex = index;
                                         selectedOffsetX = c.getX();
                                         return;
@@ -172,11 +169,10 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                             } else {
 
                                 if (attacker != null) {
-                                    System.out.println("333333333333333");
                                     selectedIndex = index;
                                     selectedOffsetX = c.getX();
 
-                                    attacker.attacking = false;
+                                    attacker.isAttacking = false;
                                     attacker = null;
                                     return;
                                 }
@@ -192,13 +188,8 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             //---------------------------------------
             for(CardSlot c : game.currentPlayer.opponent.playerBoardSlots){
                 if ((e.getModifiers() == MouseEvent.BUTTON1_MASK) && e.getX() >= c.getX() && e.getX() <= c.getX() + c.getWidth() && e.getY() <= c.getY() + c.getHeight() && e.getY() >= c.getY()) {
-                    if (c.cardOnBoard()) {
-                        System.out.println(c.getCard().getName());
-                        System.out.println(((Monster) c.getCard()).getStunTime());
-
+                    if (c.isCardOnBoard()) {
                         if (game.phase.attackPhase() && attacker != null && c.getCard().getID() == ID.Monster) {
-
-                            System.out.println("444444444444444444");
                             //game.setAttacking(selectedIndex - 1);
                             //game.targetX = c.getX() - selectedOffsetX;
                             game.currentPlayer.attack(attacker, c);
@@ -208,7 +199,7 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
                             }else{
                                 game.musicPlayer.repeatSound(game.sound_attackEffectClip);
                             }
-                            attacker.attacking = false;
+                            attacker.isAttacking = false;
                             attacker = null;
                             return;
                         }
@@ -287,17 +278,15 @@ public class MouseHandler implements MouseListener, MouseMotionListener {
             //---------------------------------------------------------------------------------------
             CardSlot deck = game.currentPlayer.deckSlot;
             if(e.getX() >= deck.getX() && e.getX() <= deck.getX() + deck.getWidth() && e.getY() <= deck.getY() + deck.getHeight() && e.getY() >= deck.getY()){
-                deck.showCardsCount = true;
-                System.out.println(deck.getDeck().getSize());
+                deck.shouldShowCardsCount = true;
             }else{
-                deck.showCardsCount = false;
+                deck.shouldShowCardsCount = false;
             }
             CardSlot oppDeck = game.currentPlayer.opponent.deckSlot;
             if(e.getX() >= oppDeck.getX() && e.getX() <= oppDeck.getX() + oppDeck.getWidth() && e.getY() <= oppDeck.getY() + oppDeck.getHeight() && e.getY() >= oppDeck.getY()){
-                oppDeck.showCardsCount = true;
-                System.out.println(oppDeck.getDeck().getSize());
+                oppDeck.shouldShowCardsCount = true;
             }else{
-                oppDeck.showCardsCount = false;
+                oppDeck.shouldShowCardsCount = false;
             }
         }
     }

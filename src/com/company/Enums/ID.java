@@ -1,4 +1,4 @@
-package com.company.Classes;
+package com.company.Enums;
 
 public enum ID {
     Buff,

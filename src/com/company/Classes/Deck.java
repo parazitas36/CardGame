@@ -35,7 +35,6 @@ public class Deck extends GameObject{
         if(getSize() != 0){
             return deck.pop();
         }else{
-            System.out.println("Deck is empty!");
             return null;
         }
     }

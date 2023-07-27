@@ -1,6 +1,7 @@
 package com.company.Classes;
 
 import com.company.Engine.*;
+import com.company.Enums.ID;
 
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;

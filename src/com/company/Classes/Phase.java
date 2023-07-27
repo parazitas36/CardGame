@@ -1,5 +1,7 @@
 package com.company.Classes;
 
+import com.company.Enums.ID;
+
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -77,8 +79,8 @@ public final class Phase {
             currentPhaseImg = phaseEndImg;
         }else if(this.endPhase()){
             for(CardSlot c : currentPlayer.playerBoardSlots){
-                if(c.cardOnBoard() && c.getCard().getID() == ID.Monster && ((Monster)c.getCard()).stunTime > 0){
-                    ((Monster)c.getCard()).removeStun();
+                if(c.isCardOnBoard() && c.getCard().getID() == ID.Monster && ((MonsterCard)c.getCard()).stunTime > 0){
+                    ((MonsterCard)c.getCard()).removeStun();
                 }
             }
             enemy = true;
@@ -103,9 +105,8 @@ public final class Phase {
         enemyAttackPhase();
         for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){
             CardSlot slot = currentPlayer.playerBoardSlots.get(i);
-            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster && ((Monster)slot.getCard()).stunTime > 0){
-                ((Monster)slot.getCard()).removeStun();
-                System.out.println("Removed stun");
+            if(slot.isCardOnBoard() && slot.getCard().getID() == ID.Monster && ((MonsterCard)slot.getCard()).stunTime > 0){
+                ((MonsterCard)slot.getCard()).removeStun();
             }
         }
     }
@@ -119,8 +120,8 @@ public final class Phase {
         for(int i = 0; i < currentPlayer.playerBoardSlots.size(); i++){
             CardSlot slot = currentPlayer.playerBoardSlots.get(i);
             slot.resetAttackedThisTurn();
-            if(slot.cardOnBoard() && slot.getCard().getID() == ID.Monster){
-                ((Monster)slot.getCard()).setWasAttacked(false);
+            if(slot.isCardOnBoard() && slot.getCard().getID() == ID.Monster){
+                ((MonsterCard)slot.getCard()).setWasAttacked(false);
             }
         }
         startTime = System.nanoTime();
